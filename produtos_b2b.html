@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cápsulas B2B - Nespresso Professional</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Biblioteca Oficial do Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+    <div class="container">
+        <!-- CABEÇALHO E NAVEGAÇÃO -->
+        <header class="header">
+            <div>
+                <h1>☕ Cápsulas B2B (Linha Professional)</h1>
+                <p>Catálogo, preços e notas de apresentação para clientes corporativos</p>
+            </div>
+            <div class="nav-menu">
+                <a href="index.html" class="btn btn-secondary">👥 Clientes</a>
+                <a href="produtos_b2b.html" class="btn btn-primary">☕ Cápsulas B2B</a>
+            </div>
+        </header>
+
+        <!-- BARRA DE AÇÕES -->
+        <div class="actions-bar">
+            <input type="text" id="searchInput" placeholder="🔍 Pesquisar por Nome do Blend ou SKU..." onkeyup="filtrarProdutos()">
+            <button class="btn btn-primary" onclick="abrirModal()">+ Nova Cápsula</button>
+        </div>
+
+        <!-- TABELA DE PRODUTOS B2B -->
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 80px; text-align: center;">Foto</th>
+                        <th>SKU</th>
+                        <th>Nome do Produto</th>
+                        <th>Cápsulas / Caixa</th>
+                        <th>Preço (Caixa/Unid)</th>
+                        <th style="text-align: center;">Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="produtosTableBody">
+                    <tr><td colspan="6" style="text-align:center; color: #64748b; padding: 24px;">Carregando catálogo da nuvem...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- MODAL DE VISUALIZAR / COLINHA DE APRESENTAÇÃO -->
+    <div id="detalhesModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📋 Detalhes & Notas para Apresentação</h2>
+                <button class="close-btn" onclick="fecharModalDetalhes()">&times;</button>
+            </div>
+            <div class="details-grid" id="detalhesConteudo">
+                <!-- Conteúdo preenchido via JS -->
+            </div>
+            <div class="modal-buttons">
+                <button type="button" class="btn btn-secondary" onclick="fecharModalDetalhes()">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE CADASTRO / EDIÇÃO -->
+    <div id="produtoModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Cadastrar Nova Cápsula</h2>
+                <button class="close-btn" onclick="fecharModal()">&times;</button>
+            </div>
+            <form id="produtoForm" onsubmit="salvarProduto(event)">
+                <input type="hidden" id="produtoId">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>SKU:</label>
+                        <input type="text" id="skuInput" required placeholder="Ex: 8639.84">
+                    </div>
+                    <div class="form-group">
+                        <label>Nome do Produto (Blend):</label>
+                        <input type="text" id="nomeInput" required placeholder="Ex: Amaretti Decaffeinato">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Cápsulas por Caixa:</label>
+                        <input type="number" id="caixaQtdInput" required value="50">
+                    </div>
+                    <div class="form-group">
+                        <label>Preço (R$):</label>
+                        <input type="text" id="precoInput" required placeholder="Ex: 3,25">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Foto (Link de imagem PNG ou selecione do computador):</label>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="text" id="fotoInput" placeholder="https://exemplo.com/foto.png" style="flex: 2;">
+                        <input type="file" id="fotoFileInput" accept="image/png, image/jpeg" onchange="converterImagem(event)" style="flex: 1; align-self: center; font-size: 12px; color: #94a3b8;">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Observações / Colinha para Apresentação:</label>
+                    <textarea id="observacoesInput" rows="4" placeholder="Notas aromáticas, intensidade, perfil de sabor, dicas de venda para o cliente..." style="background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 10px; color: #f8fafc; font-size: 14px; width: 100%; resize: vertical;"></textarea>
+                </div>
+
+                <div class="modal-buttons">
+                    <button type="button" class="btn btn-secondary" onclick="fecharModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar na Nuvem</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="produtos_b2b.js"></script>
+</body>
+</html>
