@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestão de Clientes - Pedidos</title>
     <link rel="stylesheet" href="styles.css">
+    <!-- Biblioteca Oficial do Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -12,8 +14,8 @@
         <!-- CABEÇALHO -->
         <header class="header">
             <div>
-                <h1>👥 Gestão de Clientes</h1>
-                <p>Cadastre, pesquise e visualize os dados dos clientes</p>
+                <h1>👥 Gestão de Clientes (Nuvem ☁️)</h1>
+                <p>Cadastre, pesquise e visualize seus clientes sincronizados em tempo real</p>
             </div>
         </header>
 
@@ -25,6 +27,7 @@
                 📁 Importar CSV
                 <input type="file" id="csvFileInput" accept=".csv" onchange="importarCSV(event)" style="display: none;">
             </label>
+            <button class="btn btn-secondary" onclick="migrarLocalStorageParaNuvem()" title="Sincronizar dados antigos salvos no computador">☁️ Migrar Dados Locais</button>
         </div>
 
         <!-- TABELA DE CLIENTES -->
@@ -41,7 +44,7 @@
                     </tr>
                 </thead>
                 <tbody id="clientesTableBody">
-                    <!-- Clientes aparecem aqui -->
+                    <tr><td colspan="6" style="text-align:center; color: #64748b; padding: 24px;">Carregando clientes da nuvem...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -128,7 +131,7 @@
 
                 <div class="modal-buttons">
                     <button type="button" class="btn btn-secondary" onclick="fecharModal()">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Salvar Cliente</button>
+                    <button type="submit" class="btn btn-primary">Salvar na Nuvem</button>
                 </div>
             </form>
         </div>
