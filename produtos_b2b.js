@@ -15,19 +15,24 @@ async function carregarProdutosNuvem() {
     const tbody = document.getElementById('produtosTableBody');
     tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: #64748b; padding: 24px;">🔄 Carregando catálogo da nuvem...</td></tr>`;
 
-    const { data, error } = await supabaseClient
-        .from('produtos_b2b')
-        .select('*')
-        .order('nome', { ascending: true });
+    try {
+        const { data, error } = await supabaseClient
+            .from('produtos_b2b')
+            .select('id, sku, nome, intensidade, capsulas_caixa, preco, foto, observacoes')
+            .order('nome', { ascending: true });
 
-    if (error) {
-        console.error('Erro ao buscar produtos:', error);
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: #ef4444; padding: 24px;">❌ Erro ao carregar dados. Verifique a tabela no Supabase.</td></tr>`;
-        return;
+        if (error) {
+            console.error('Erro detalhado do Supabase:', error);
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: #ef4444; padding: 24px;">❌ Erro ao carregar dados: ${error.message}</td></tr>`;
+            return;
+        }
+
+        produtos = data || [];
+        renderizarTabela(produtos);
+    } catch (err) {
+        console.error('Erro de conexão:', err);
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: #ef4444; padding: 24px;">❌ Falha na conexão com a nuvem. Verifique a sua internet.</td></tr>`;
     }
-
-    produtos = data || [];
-    renderizarTabela(produtos);
 }
 
 function renderizarTabela(dados = produtos) {
@@ -35,7 +40,7 @@ function renderizarTabela(dados = produtos) {
     tbody.innerHTML = '';
 
     if (dados.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: #64748b; padding: 24px;">Nenhuma cápsula cadastrada. Clique em <strong>+ Nova Cápsula</strong> ou importe seu CSV.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: #64748b; padding: 24px;">Nenhuma cápsula cadastrada. Clique em <strong>+ Nova Cápsula</strong> ou importe o seu CSV.</td></tr>`;
         return;
     }
 
@@ -112,15 +117,43 @@ function fecharModalDetalhes() {
     document.getElementById('detalhesModal').style.display = 'none';
 }
 
-/* CONVERTER IMAGEM DO COMPUTADOR (PNG/JPG) */
+/* CONVERTER IMAGEM DO COMPUTADOR (COM COMPRESSÃO/REDIMENSIONAMENTO) */
 function converterImagem(event) {
     const file = event.target.files[0];
     if (!file) return;
 
     const reader = new FileReader();
     reader.onload = function(e) {
-        imagemBase64Temp = e.target.result;
-        document.getElementById('fotoInput').value = "[Imagem do Computador Loaded]";
+        const img = new Image();
+        img.src = e.target.result;
+        img.onload = function() {
+            // Redimensiona para no máximo 200px para não pesar no banco
+            const canvas = document.createElement('canvas');
+            const MAX_WIDTH = 200;
+            const MAX_HEIGHT = 200;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > height) {
+                if (width > MAX_WIDTH) {
+                    height *= MAX_WIDTH / width;
+                    width = MAX_WIDTH;
+                }
+            } else {
+                if (height > MAX_HEIGHT) {
+                    width *= MAX_HEIGHT / height;
+                    height = MAX_HEIGHT;
+                }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+
+            imagemBase64Temp = canvas.toDataURL('image/png', 0.8);
+            document.getElementById('fotoInput').value = "[Imagem otimizada carregada]";
+        };
     };
     reader.readAsDataURL(file);
 }
