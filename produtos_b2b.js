@@ -35,7 +35,7 @@ function renderizarTabela(dados = produtos) {
     tbody.innerHTML = '';
 
     if (dados.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: #64748b; padding: 24px;">Nenhuma cápsula cadastrada. Clique em <strong>+ Nova Cápsula</strong>.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: #64748b; padding: 24px;">Nenhuma cápsula cadastrada. Clique em <strong>+ Nova Cápsula</strong> ou importe seu CSV.</td></tr>`;
         return;
     }
 
@@ -195,4 +195,47 @@ async function excluirProduto(id) {
             carregarProdutosNuvem();
         }
     }
+}
+
+/* IMPORTAR CSV DE PRODUTOS B2B */
+function importarCSVCapsulas(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+        const text = e.target.result;
+        const linhas = text.split('\n');
+        const novosProdutos = [];
+        
+        for (let i = 1; i < linhas.length; i++) {
+            if (!linhas[i].trim()) continue;
+            // Lê colunas separadas por ponto e vírgula ou vírgula
+            const cols = linhas[i].includes(';') ? linhas[i].split(';') : linhas[i].split(',');
+            if (cols.length >= 4) {
+                const precoLimpo = cols[3] ? cols[3].replace('R$', '').trim().replace('.', '').replace(',', '.') : '0';
+                novosProdutos.push({
+                    id: Date.now() + i,
+                    sku: cols[0] ? cols[0].trim() : '',
+                    nome: cols[1] ? cols[1].trim() : '',
+                    capsulas_caixa: cols[2] ? parseInt(cols[2].trim()) || 50 : 50,
+                    preco: parseFloat(precoLimpo) || 0
+                });
+            }
+        }
+
+        if (novosProdutos.length > 0) {
+            const { error } = await supabaseClient
+                .from('produtos_b2b')
+                .upsert(novosProdutos);
+
+            if (error) {
+                alert('Erro ao enviar CSV para a nuvem: ' + error.message);
+            } else {
+                alert('✅ Produtos importados com sucesso para a nuvem!');
+                carregarProdutosNuvem();
+            }
+        }
+    };
+    reader.readAsText(file, 'iso-8859-1');
 }
