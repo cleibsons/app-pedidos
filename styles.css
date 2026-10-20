@@ -1,3 +1,4 @@
+/* Configurações Gerais */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -8,29 +9,34 @@
 body {
     background-color: #0f172a;
     color: #f8fafc;
-    padding: 24px;
+    padding: 12px;
 }
 
+/* Container Principal em Tela Cheia */
 .container {
-    max-width: 1280px;
-    margin: 0 auto;
+    width: 100%;
+    max-width: none;
+    margin: 0;
     background: #1e293b;
-    padding: 28px;
-    border-radius: 12px;
+    padding: 24px;
+    border-radius: 8px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
     border: 1px solid #334155;
 }
 
+/* Cabeçalho */
 .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 24px;
     border-bottom: 1px solid #334155;
     padding-bottom: 16px;
 }
 
 .header h1 {
+    font-size: 24px;
     color: #f8fafc;
-    font-size: 26px;
-    font-weight: 700;
 }
 
 .header p {
@@ -39,6 +45,7 @@ body {
     margin-top: 4px;
 }
 
+/* Barra de Ações (Pesquisa e Botões) */
 .actions-bar {
     display: flex;
     gap: 12px;
@@ -46,39 +53,36 @@ body {
     flex-wrap: wrap;
 }
 
-#searchInput {
+.actions-bar input[type="text"] {
     flex: 1;
     min-width: 280px;
-    padding: 12px 16px;
-    background-color: #0f172a;
+    background: #0f172a;
     border: 1px solid #334155;
-    border-radius: 8px;
+    border-radius: 6px;
+    padding: 10px 16px;
     color: #f8fafc;
     font-size: 14px;
-    outline: none;
-    transition: border-color 0.2s;
 }
 
-#searchInput:focus {
+.actions-bar input[type="text"]:focus {
+    outline: none;
     border-color: #3b82f6;
 }
 
-#searchInput::placeholder {
-    color: #64748b;
-}
-
+/* Botões */
 .btn {
-    padding: 10px 18px;
+    padding: 10px 16px;
     border: none;
-    border-radius: 8px;
-    cursor: pointer;
+    border-radius: 6px;
     font-weight: 600;
+    cursor: pointer;
     font-size: 14px;
-    transition: all 0.2s;
+    transition: background 0.2s;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 6px;
+    text-decoration: none;
 }
 
 .btn-primary {
@@ -92,7 +96,7 @@ body {
 
 .btn-secondary {
     background-color: #334155;
-    color: #e2e8f0;
+    color: #f8fafc;
 }
 
 .btn-secondary:hover {
@@ -101,84 +105,69 @@ body {
 
 .btn-view {
     background-color: #0284c7;
-    color: #ffffff;
+    color: white;
     padding: 6px 10px;
-    font-size: 13px;
 }
-
-.btn-view:hover {
-    background-color: #0369a1;
-}
+.btn-view:hover { background-color: #0369a1; }
 
 .btn-edit {
     background-color: #d97706;
-    color: #ffffff;
+    color: white;
     padding: 6px 10px;
-    font-size: 13px;
 }
-
-.btn-edit:hover {
-    background-color: #b45309;
-}
+.btn-edit:hover { background-color: #b45309; }
 
 .btn-danger {
     background-color: #dc2626;
-    color: #ffffff;
+    color: white;
     padding: 6px 10px;
-    font-size: 13px;
 }
+.btn-danger:hover { background-color: #b91c1c; }
 
-.btn-danger:hover {
-    background-color: #b91c1c;
-}
-
+/* Tabela */
 .table-container {
     overflow-x: auto;
-    border-radius: 8px;
+    border-radius: 6px;
     border: 1px solid #334155;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    background-color: #1e293b;
-}
-
-th, td {
-    padding: 14px 16px;
     text-align: left;
-    border-bottom: 1px solid #334155;
     font-size: 14px;
 }
 
 th {
     background-color: #0f172a;
     color: #94a3b8;
+    padding: 14px 16px;
     font-weight: 600;
-    text-transform: uppercase;
-    font-size: 12px;
-    letter-spacing: 0.5px;
+    border-bottom: 1px solid #334155;
 }
 
-tr:last-child td {
-    border-bottom: none;
+td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #334155;
+    color: #e2e8f0;
 }
 
 tr:hover {
-    background-color: #26334d;
+    background-color: rgba(51, 65, 85, 0.4);
 }
 
+/* Tag Fantasia */
 .tag-fantasia {
     background-color: #1e3a8a;
     color: #93c5fd;
-    padding: 3px 10px;
-    border-radius: 6px;
-    font-weight: 600;
-    font-size: 13px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
     display: inline-block;
 }
 
-/* MODAL */
+/* Modais */
 .modal {
     display: none;
     position: fixed;
@@ -186,22 +175,23 @@ tr:hover {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.75);
-    backdrop-filter: blur(4px);
+    background-color: rgba(0, 0, 0, 0.7);
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    padding: 16px;
 }
 
 .modal-content {
-    background: #1e293b;
+    background-color: #1e293b;
     border: 1px solid #334155;
-    padding: 28px;
-    border-radius: 12px;
-    width: 90%;
-    max-width: 620px;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 650px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 24px;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
-    color: #f8fafc;
 }
 
 .modal-header {
@@ -214,7 +204,7 @@ tr:hover {
 }
 
 .modal-header h2 {
-    font-size: 20px;
+    font-size: 18px;
     color: #f8fafc;
 }
 
@@ -230,38 +220,38 @@ tr:hover {
     color: #f8fafc;
 }
 
-.form-group {
+/* Formulários nos Modais */
+.form-row {
+    display: flex;
+    gap: 16px;
     margin-bottom: 16px;
+}
+
+.form-group {
     flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .form-group label {
-    display: block;
-    font-size: 12px;
-    font-weight: 600;
+    font-size: 13px;
     color: #94a3b8;
     margin-bottom: 6px;
-    text-transform: uppercase;
+    font-weight: 500;
 }
 
 .form-group input {
-    width: 100%;
-    padding: 10px 12px;
-    background-color: #0f172a;
+    background: #0f172a;
     border: 1px solid #334155;
     border-radius: 6px;
+    padding: 10px 12px;
     color: #f8fafc;
     font-size: 14px;
-    outline: none;
 }
 
 .form-group input:focus {
+    outline: none;
     border-color: #3b82f6;
-}
-
-.form-row {
-    display: flex;
-    gap: 14px;
 }
 
 .modal-buttons {
@@ -269,9 +259,11 @@ tr:hover {
     justify-content: flex-end;
     gap: 12px;
     margin-top: 24px;
+    border-top: 1px solid #334155;
+    padding-top: 16px;
 }
 
-/* MODAL DE DETALHES DO CLIENTE */
+/* Grid de Detalhes do Cliente */
 .details-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -279,9 +271,9 @@ tr:hover {
 }
 
 .detail-item {
-    background-color: #0f172a;
-    padding: 12px 16px;
-    border-radius: 8px;
+    background: #0f172a;
+    padding: 12px;
+    border-radius: 6px;
     border: 1px solid #334155;
 }
 
@@ -290,20 +282,19 @@ tr:hover {
 }
 
 .detail-label {
-    font-size: 11px;
+    font-size: 12px;
     color: #94a3b8;
-    text-transform: uppercase;
-    font-weight: 600;
     margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .detail-value {
-    font-size: 14px;
+    font-size: 15px;
     color: #f8fafc;
     font-weight: 500;
 }
 
 .detail-value.highlight {
     color: #60a5fa;
-    font-weight: 700;
 }
