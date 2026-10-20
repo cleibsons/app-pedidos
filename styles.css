@@ -298,3 +298,9 @@ tr:hover {
 .detail-value.highlight {
     color: #60a5fa;
 }
+/* Menu de Navegação no Cabeçalho */
+.nav-menu {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
