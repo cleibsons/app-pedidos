@@ -14,7 +14,7 @@
         <!-- CABEÇALHO -->
         <header class="header">
             <div>
-                <h1>👥 Gestão de Clientes (Nuvem ☁️)</h1>
+                <h1>👥 Gestão de Clientes</h1>
                 <p>Cadastre, pesquise e visualize seus clientes sincronizados em tempo real</p>
             </div>
         </header>
@@ -23,11 +23,6 @@
         <div class="actions-bar">
             <input type="text" id="searchInput" placeholder="🔍 Pesquisar por Nome Fantasia, Razão Social, NN, CNPJ ou Contato..." onkeyup="filtrarClientes()">
             <button class="btn btn-primary" onclick="abrirModal()">+ Novo Cliente</button>
-            <label class="btn btn-secondary">
-                📁 Importar CSV
-                <input type="file" id="csvFileInput" accept=".csv" onchange="importarCSV(event)" style="display: none;">
-            </label>
-            <button class="btn btn-secondary" onclick="migrarLocalStorageParaNuvem()" title="Sincronizar dados antigos salvos no computador">☁️ Migrar Dados Locais</button>
         </div>
 
         <!-- TABELA DE CLIENTES -->
