@@ -51,7 +51,7 @@ function renderizarTabela(dados = produtos) {
             <td>${p.capsulas_caixa || 50} cápsulas</td>
             <td style="color: #34d399; font-weight: 600;">${precoFormatado}</td>
             <td style="text-align: center; white-space: nowrap;">
-                <button class="btn btn-view" title="Ver Detalhes e Colinha" onclick="visualizarProduto(${p.id})">👁️</button>
+                <button class="btn btn-view" title="Ver Detalhes" onclick="visualizarProduto(${p.id})">👁️</button>
                 <button class="btn btn-edit" title="Editar" onclick="editarProduto(${p.id})">✏️</button>
                 <button class="btn btn-danger" title="Excluir" onclick="excluirProduto(${p.id})">🗑️</button>
             </td>
@@ -69,7 +69,7 @@ function filtrarProdutos() {
     renderizarTabela(filtrados);
 }
 
-/* VISUALIZAR DETALHES E COLINHA */
+/* VISUALIZAR DETALHES */
 function visualizarProduto(id) {
     const p = produtos.find(item => item.id === id);
     if (!p) return;
@@ -87,15 +87,19 @@ function visualizarProduto(id) {
             <div class="detail-value highlight">${p.sku || '-'}</div>
         </div>
         <div class="detail-item">
-            <div class="detail-label">Preço (Unidade / Caixa)</div>
+            <div class="detail-label">PREÇO (UNIDADE / CAIXA)</div>
             <div class="detail-value" style="color: #34d399; font-weight: bold;">${precoFormatado}</div>
         </div>
         <div class="detail-item">
-            <div class="detail-label">Cápsulas por Embalagem</div>
+            <div class="detail-label">INTENSIDADE</div>
+            <div class="detail-value">${p.intensidade ? p.intensidade : '-'}</div>
+        </div>
+        <div class="detail-item">
+            <div class="detail-label">Cápsulas por caixa</div>
             <div class="detail-value">${p.capsulas_caixa || 50} unidades</div>
         </div>
         <div class="detail-item full-width" style="grid-column: span 2; background: #111827; border-color: #3b82f6;">
-            <div class="detail-label" style="color: #60a5fa; font-weight: bold;">📝 Colinha / Observações para Apresentação</div>
+            <div class="detail-label" style="color: #60a5fa; font-weight: bold;">Observação</div>
             <div class="detail-value" style="white-space: pre-wrap; margin-top: 8px; font-size: 14px; line-height: 1.5; color: #e2e8f0;">${p.observacoes || 'Nenhuma observação cadastrada para este blend.'}</div>
         </div>
     `;
@@ -133,6 +137,7 @@ function abrirModal(produto = null) {
         document.getElementById('produtoId').value = produto.id;
         document.getElementById('skuInput').value = produto.sku || '';
         document.getElementById('nomeInput').value = produto.nome || '';
+        document.getElementById('intensidadeInput').value = produto.intensidade || '';
         document.getElementById('caixaQtdInput').value = produto.capsulas_caixa || 50;
         document.getElementById('precoInput').value = produto.preco ? produto.preco.toString().replace('.', ',') : '';
         document.getElementById('fotoInput').value = produto.foto || '';
@@ -154,11 +159,13 @@ async function salvarProduto(e) {
     const id = document.getElementById('produtoId').value;
     const precoStr = document.getElementById('precoInput').value.trim().replace(',', '.');
     const fotoUrlInput = document.getElementById('fotoInput').value.trim();
+    const intVal = document.getElementById('intensidadeInput').value;
 
     const dadosProduto = {
         id: id ? parseInt(id) : Date.now(),
         sku: document.getElementById('skuInput').value.trim(),
         nome: document.getElementById('nomeInput').value.trim(),
+        intensidade: intVal ? parseInt(intVal) : null,
         capsulas_caixa: parseInt(document.getElementById('caixaQtdInput').value) || 50,
         preco: parseFloat(precoStr) || 0,
         foto: fotoUrlInput.startsWith('[Imagem') ? imagemBase64Temp : fotoUrlInput,
@@ -210,7 +217,6 @@ function importarCSVCapsulas(event) {
         
         for (let i = 1; i < linhas.length; i++) {
             if (!linhas[i].trim()) continue;
-            // Lê colunas separadas por ponto e vírgula ou vírgula
             const cols = linhas[i].includes(';') ? linhas[i].split(';') : linhas[i].split(',');
             if (cols.length >= 4) {
                 const precoLimpo = cols[3] ? cols[3].replace('R$', '').trim().replace('.', '').replace(',', '.') : '0';
