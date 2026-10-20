@@ -1,24 +1,52 @@
-let clientes = JSON.parse(localStorage.getItem('clientes_db')) || [];
+// Configuração da Conexão com o Supabase na Nuvem
+const SUPABASE_URL = 'https://awllwrltulzmjdcchlxs.supabase.co';
+const SUPABASE_KEY = 'sb_publishable__Cj-tdVffbiigN0-YczRkw_eVLEUIMZ';
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-document.addEventListener("DOMContentLoaded", renderizarTabela);
+let clientes = [];
+
+document.addEventListener("DOMContentLoaded", () => {
+    carregarClientesNuvem();
+});
+
+/* CARREGAR CLIENTES DA NUVEM */
+async function carregarClientesNuvem() {
+    const tbody = document.getElementById('clientesTableBody');
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: #64748b; padding: 24px;">🔄 Carregando dados da nuvem...</td></tr>`;
+
+    const { data, error } = await supabaseClient
+        .from('clientes')
+        .select('*')
+        .order('razao', { ascending: true });
+
+    if (error) {
+        console.error('Erro ao buscar clientes:', error);
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: #ef4444; padding: 24px;">❌ Erro ao carregar dados da nuvem. Verifique a tabela no Supabase.</td></tr>`;
+        return;
+    }
+
+    clientes = data || [];
+    renderizarTabela(clientes);
+
+    // Auto-migração inteligente: Se a nuvem estiver vazia e houver dados antigos no navegador, migra automaticamente
+    if (clientes.length === 0) {
+        const antigos = JSON.parse(localStorage.getItem('clientes_db')) || [];
+        if (antigos.length > 0) {
+            migrarLocalStorageParaNuvem();
+        }
+    }
+}
 
 function renderizarTabela(dados = clientes) {
     const tbody = document.getElementById('clientesTableBody');
     tbody.innerHTML = '';
 
-    // Ordena sempre por Razão Social em ordem alfabética (A-Z)
-    const dadosOrdenados = [...dados].sort((a, b) => {
-        const razaoA = (a.razao || '').toLowerCase();
-        const razaoB = (b.razao || '').toLowerCase();
-        return razaoA.localeCompare(razaoB, 'pt-BR');
-    });
-
-    if (dadosOrdenados.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: #64748b; padding: 24px;">Nenhum cliente encontrado. Clique em <strong>+ Novo Cliente</strong> ou importe seu CSV.</td></tr>`;
+    if (dados.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: #64748b; padding: 24px;">Nenhum cliente cadastrado na nuvem. Clique em <strong>+ Novo Cliente</strong> ou importe seu CSV.</td></tr>`;
         return;
     }
 
-    dadosOrdenados.forEach(c => {
+    dados.forEach(c => {
         const tr = document.createElement('tr');
         const fantasiaTag = c.fantasia ? `<span class="tag-fantasia">${c.fantasia}</span>` : '<span style="color:#64748b;">-</span>';
         const enderecoCompleto = `${c.endereco || ''}${c.bairro ? ' - ' + c.bairro : ''}, ${c.cidade || ''} - CEP ${c.cep || ''}`;
@@ -52,7 +80,7 @@ function filtrarClientes() {
     renderizarTabela(filtrados);
 }
 
-/* VISUALIZAR DETALHES */
+/* VER DETALHES */
 function visualizarCliente(id) {
     const c = clientes.find(item => item.id === id);
     if (!c) return;
@@ -104,16 +132,14 @@ function fecharModalDetalhes() {
     document.getElementById('detalhesModal').style.display = 'none';
 }
 
-/* CADASTRAR / EDITAR CLIENTE */
+/* CADASTRAR / EDITAR CLIENTE NA NUVEM */
 function abrirModal(cliente = null) {
-    // 1. Reseta completamente o formulário para evitar resíduos de outros cadastros
     document.getElementById('clienteForm').reset();
     document.getElementById('clienteId').value = '';
-
     document.getElementById('clienteModal').style.display = 'flex';
 
     if (cliente) {
-        document.getElementById('modalTitle').innerText = 'Editar Cliente';
+        document.getElementById('modalTitle').innerText = 'Editar Cliente (Nuvem)';
         document.getElementById('clienteId').value = cliente.id;
         document.getElementById('nnInput').value = cliente.nn || '';
         document.getElementById('cnpjInput').value = cliente.cnpj || '';
@@ -126,7 +152,7 @@ function abrirModal(cliente = null) {
         document.getElementById('cidadeInput').value = cliente.cidade || 'Foz do Iguaçu - PR';
         document.getElementById('cepInput').value = cliente.cep || '';
     } else {
-        document.getElementById('modalTitle').innerText = 'Cadastrar Cliente';
+        document.getElementById('modalTitle').innerText = 'Cadastrar Cliente na Nuvem';
         document.getElementById('cidadeInput').value = 'Foz do Iguaçu - PR';
     }
 }
@@ -136,11 +162,11 @@ function fecharModal() {
     document.getElementById('clienteForm').reset();
 }
 
-function salvarCliente(e) {
+async function salvarCliente(e) {
     e.preventDefault();
     const id = document.getElementById('clienteId').value;
     
-    const novoCliente = {
+    const dadosCliente = {
         id: id ? parseInt(id) : Date.now(),
         nn: document.getElementById('nnInput').value.trim(),
         cnpj: document.getElementById('cnpjInput').value.trim(),
@@ -154,18 +180,16 @@ function salvarCliente(e) {
         cep: document.getElementById('cepInput').value.trim()
     };
 
-    if (id) {
-        const index = clientes.findIndex(c => c.id === parseInt(id));
-        if (index !== -1) {
-            clientes[index] = novoCliente;
-        }
-    } else {
-        clientes.push(novoCliente);
-    }
+    const { error } = await supabaseClient
+        .from('clientes')
+        .upsert([dadosCliente]);
 
-    localStorage.setItem('clientes_db', JSON.stringify(clientes));
-    renderizarTabela();
-    fecharModal();
+    if (error) {
+        alert('Erro ao salvar no banco de dados da nuvem: ' + error.message);
+    } else {
+        fecharModal();
+        carregarClientesNuvem();
+    }
 }
 
 function editarCliente(id) {
@@ -173,29 +197,37 @@ function editarCliente(id) {
     if (cliente) abrirModal(cliente);
 }
 
-function excluirCliente(id) {
-    if (confirm("Tem certeza que deseja excluir este cliente?")) {
-        clientes = clientes.filter(c => c.id !== id);
-        localStorage.setItem('clientes_db', JSON.stringify(clientes));
-        renderizarTabela();
+async function excluirCliente(id) {
+    if (confirm("Tem certeza que deseja excluir este cliente da nuvem?")) {
+        const { error } = await supabaseClient
+            .from('clientes')
+            .delete()
+            .eq('id', id);
+
+        if (error) {
+            alert('Erro ao excluir do banco de dados: ' + error.message);
+        } else {
+            carregarClientesNuvem();
+        }
     }
 }
 
-/* IMPORTAR CSV */
+/* IMPORTAR CSV DIRETO PARA A NUVEM */
 function importarCSV(event) {
     const file = event.target.files[0];
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = async function(e) {
         const text = e.target.result;
         const linhas = text.split('\n');
+        const novosClientes = [];
         
         for (let i = 1; i < linhas.length; i++) {
             if (!linhas[i].trim()) continue;
             const cols = linhas[i].split(';');
             if (cols.length >= 5) {
-                clientes.push({
+                novosClientes.push({
                     id: Date.now() + i,
                     nn: cols[0] ? cols[0].trim() : '',
                     razao: cols[1] ? cols[1].trim() : '',
@@ -210,9 +242,42 @@ function importarCSV(event) {
                 });
             }
         }
-        localStorage.setItem('clientes_db', JSON.stringify(clientes));
-        renderizarTabela();
-        alert('Clientes importados com sucesso!');
+
+        if (novosClientes.length > 0) {
+            const { error } = await supabaseClient
+                .from('clientes')
+                .upsert(novosClientes);
+
+            if (error) {
+                alert('Erro ao enviar CSV para a nuvem: ' + error.message);
+            } else {
+                alert('✅ Clientes importados com sucesso para a nuvem!');
+                carregarClientesNuvem();
+            }
+        }
     };
     reader.readAsText(file, 'iso-8859-1');
+}
+
+/* MIGRAÇÃO AUTOMÁTICA DO LOCALSTORAGE PARA O SUPABASE */
+async function migrarLocalStorageParaNuvem() {
+    const salvosLocais = JSON.parse(localStorage.getItem('clientes_db')) || [];
+    if (salvosLocais.length === 0) {
+        alert("Nenhum dado antigo encontrado no seu computador para migrar.");
+        return;
+    }
+
+    if (confirm(`Encontrados ${salvosLocais.length} clientes salvos localmente neste computador. Deseja enviá-los para a nuvem agora?`)) {
+        const { error } = await supabaseClient
+            .from('clientes')
+            .upsert(salvosLocais);
+
+        if (error) {
+            alert("Erro ao migrar dados: " + error.message);
+        } else {
+            alert("🎉 Sucesso! Todos os seus clientes antigos foram salvos na nuvem!");
+            localStorage.removeItem('clientes_db'); // Limpa a memória local após migrar com sucesso
+            carregarClientesNuvem();
+        }
+    }
 }
