@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cápsulas B2C - Nespresso (Vertuo & Original)</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .filter-btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: 1px solid #334155;
+            background: #1e293b;
+            color: #94a3b8;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .filter-btn.active {
+            background: #2563eb;
+            color: #ffffff;
+            border-color: #3b82f6;
+        }
+        .badge-vertuo {
+            background: #7c3aed;
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        .badge-original {
+            background: #dc2626;
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- CABEÇALHO E NAVEGAÇÃO -->
+        <header class="header">
+            <div>
+                <h1>☕ Cápsulas B2C (Vertuo & Original)</h1>
+                <p>Catálogo e consulta de preços para linha doméstica</p>
+            </div>
+            <div class="nav-menu">
+                <a href="index.html" class="btn btn-secondary">👥 Clientes</a>
+                <a href="produtos_b2b.html" class="btn btn-secondary">☕ Cápsulas B2B</a>
+                <a href="produtos_b2c.html" class="btn btn-primary">🏠 Cápsulas B2C</a>
+            </div>
+        </header>
+
+        <!-- FILTROS DE LINHA -->
+        <div class="filter-tabs">
+            <button class="filter-btn active" id="btnFiltroTodos" onclick="filtrarSistema('Todos')">Todas as Cápsulas</button>
+            <button class="filter-btn" id="btnFiltroVertuo" onclick="filtrarSistema('Vertuo')">🌀 Linha Vertuo</button>
+            <button class="filter-btn" id="btnFiltroOriginal" onclick="filtrarSistema('Original')">🔴 Linha Original</button>
+        </div>
+
+        <!-- BARRA DE AÇÕES -->
+        <div class="actions-bar">
+            <input type="text" id="searchInput" placeholder="🔍 Pesquisar por Nome do Blend ou SKU..." onkeyup="filtrarProdutos()">
+            <button class="btn btn-primary" onclick="abrirModal()">+ Nova Cápsula B2C</button>
+        </div>
+
+        <!-- TABELA DE PRODUTOS B2C -->
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 80px; text-align: center;">Foto</th>
+                        <th>Sistema</th>
+                        <th>SKU</th>
+                        <th>Nome do Produto</th>
+                        <th>Cápsulas / Caixa</th>
+                        <th>Preço (Caixa/Unid)</th>
+                        <th style="text-align: center;">Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="produtosTableBody">
+                    <tr><td colspan="7" style="text-align:center; color: #64748b; padding: 24px;">Carregando catálogo B2C da nuvem...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- MODAL DE VISUALIZAR / DETALHES -->
+    <div id="detalhesModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📋 Detalhes do Blend B2C</h2>
+                <button class="close-btn" onclick="fecharModalDetalhes()">&times;</button>
+            </div>
+            <div class="details-grid" id="detalhesConteudo">
+                <!-- Conteúdo preenchido via JS -->
+            </div>
+            <div class="modal-buttons">
+                <button type="button" class="btn btn-secondary" onclick="fecharModalDetalhes()">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE CADASTRO / EDIÇÃO -->
+    <div id="produtoModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Cadastrar Nova Cápsula B2C</h2>
+                <button class="close-btn" onclick="fecharModal()">&times;</button>
+            </div>
+            <form id="produtoForm" onsubmit="salvarProduto(event)">
+                <input type="hidden" id="produtoId">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Linha / Sistema:</label>
+                        <select id="sistemaInput" required style="background: #0f172a; border: 1px solid #334155; color: #fff; padding: 8px; border-radius: 6px;">
+                            <option value="Vertuo">🌀 Linha Vertuo</option>
+                            <option value="Original">🔴 Linha Original</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>SKU:</label>
+                        <input type="text" id="skuInput" required placeholder="Ex: 7011.80">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nome do Produto (Blend):</label>
+                        <input type="text" id="nomeInput" required placeholder="Ex: Ristretto Intenso">
+                    </div>
+                    <div class="form-group">
+                        <label>Intensidade:</label>
+                        <input type="number" id="intensidadeInput" min="1" max="13" placeholder="Ex: 9">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Cápsulas por caixa:</label>
+                        <input type="number" id="caixaQtdInput" required value="10">
+                    </div>
+                    <div class="form-group">
+                        <label>Preço (R$):</label>
+                        <input type="text" id="precoInput" required placeholder="Ex: 3,90">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Foto (Link de imagem PNG ou selecione do computador):</label>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="text" id="fotoInput" placeholder="https://exemplo.com/foto.png" style="flex: 2;">
+                        <input type="file" id="fotoFileInput" accept="image/png, image/jpeg" onchange="converterImagem(event)" style="flex: 1; align-self: center; font-size: 12px; color: #94a3b8;">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Observação:</label>
+                    <textarea id="observacoesInput" rows="4" placeholder="Tamanho da xícara (ex: 25 ml, 40 ml, 230 ml), perfil aromático..." style="background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 10px; color: #f8fafc; font-size: 14px; width: 100%; resize: vertical;"></textarea>
+                </div>
+
+                <div class="modal-buttons">
+                    <button type="button" class="btn btn-secondary" onclick="fecharModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar na Nuvem</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="produtos_b2c.js"></script>
+</body>
+</html>
