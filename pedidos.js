@@ -48,7 +48,7 @@ async function carregarDadosNuvem() {
         const resB2B = await supabaseClient.from('produtos_b2b').select('*');
         produtosB2B = resB2B.data || [];
 
-        // 3. Carrega Produtos B2C (Unificados na tabela produtos_b2c, separados pela coluna 'sistema')
+        // 3. Carrega Produtos B2C (Vertuo e Original)
         const resB2C = await supabaseClient.from('produtos_b2c').select('*');
         const todosB2C = resB2C.data || [];
         
@@ -58,6 +58,7 @@ async function carregarDadosNuvem() {
         // 4. Carrega Acessórios
         const resAcessorios = await supabaseClient.from('acessorios').select('*');
         acessoriosLista = resAcessorios.data || [];
+        console.log("Acessórios carregados:", acessoriosLista); // Para depuração no F12 se necessário
 
     } catch (err) {
         console.error('Erro ao carregar dados do Supabase:', err);
@@ -165,7 +166,7 @@ function renderizarItensPedido() {
         div.className = 'item-linha';
         div.innerHTML = `
             <div>
-                <input type="text" list="${datalistId}" value="${valorInputProd}" placeholder="Digite o SKU ou nome do produto..." oninput="tratarSelecaoProduto(${item.idUnico}, this.value, '${item.tipo}')">
+                <input type="text" list="${datalistId}" value="${valorInputProd}" placeholder="Digite o SKU ou nome..." oninput="tratarSelecaoProduto(${item.idUnico}, this.value, '${item.tipo}')">
                 <datalist id="${datalistId}">
                     ${optionsHTML}
                 </datalist>
@@ -253,7 +254,9 @@ function atualizarPreview() {
             if (prod) {
                 let qtdEmb = parseInt(prod.qtd_embalagem) || 1;
                 totalAcessoriosEmbalagens += qtd;
-                acessoriosItens.push(`- ${String(qtd).padStart(2, '0')} ${prod.tipo_embalagem || 'caixa(s)'} - ${prod.sku} - ${prod.nome} (${qtdEmb * qtd} unidades)`);
+                let nomeAcessorio = prod.nome || prod.descricao || 'Item';
+                let tipoEmb = prod.tipo_embalagem || 'caixa(s)';
+                acessoriosItens.push(`- ${String(qtd).padStart(2, '0')} ${tipoEmb} - ${prod.sku} - ${nomeAcessorio} (${qtdEmb * qtd} unidades)`);
             }
         }
     });
@@ -324,7 +327,9 @@ function atualizarPreview() {
         if (originalItens.length > 0) {
             texto += `\nLINHA B2C - ORIGINAL:\n` + originalItens.join('\n');
         }
-        if (acessoriosItens.length > 0) {
+        if (acessoriosInstens && acessoriosItens.length > 0) {
+            texto += `\nACESSÓRIOS:\n` + acessoriosItens.join('\n');
+        } else if (acessoriosItens.length > 0) {
             texto += `\nACESSÓRIOS:\n` + acessoriosItens.join('\n');
         }
 
