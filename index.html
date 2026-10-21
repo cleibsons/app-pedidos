@@ -1,4 +1,79 @@
-<form id="clienteForm" onsubmit="salvarCliente(event)">
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Clientes - Pedidos</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Biblioteca Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+    <div class="container">
+        <!-- CABEÇALHO E NAVEGAÇÃO -->
+        <header class="header">
+            <div>
+                <h1>👥 Gestão de Clientes</h1>
+                <p>Cadastre, pesquise e visualize seus clientes sincronizados em tempo real</p>
+            </div>
+            <div class="nav-menu">
+                <a href="index.html" class="btn btn-primary">👥 Clientes</a>
+                <a href="produtos_b2b.html" class="btn btn-secondary">☕ Cápsulas B2B</a>
+                <a href="produtos_b2c.html" class="btn btn-secondary">🏠 Cápsulas B2C</a>
+            </div>
+        </header>
+
+        <!-- BARRA DE AÇÕES -->
+        <div class="actions-bar">
+            <input type="text" id="searchInput" placeholder="🔍 Pesquisar por Nome Fantasia, Razão Social, NN, CNPJ ou Contato..." onkeyup="filtrarClientes()">
+            <button class="btn btn-primary" onclick="abrirModal()">+ Novo Cliente</button>
+        </div>
+
+        <!-- TABELA DE CLIENTES -->
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>NN</th>
+                        <th>Nome Fantasia</th>
+                        <th>Razão Social</th>
+                        <th>CNPJ</th>
+                        <th>Endereço Completo</th>
+                        <th style="text-align: center;">Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="clientesTableBody">
+                    <tr><td colspan="6" style="text-align:center; color: #64748b; padding: 24px;">Carregando clientes da nuvem...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- MODAL DE VISUALIZAR / DETALHES -->
+    <div id="detalhesModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📋 Detalhes do Cliente</h2>
+                <button class="close-btn" onclick="fecharModalDetalhes()">&times;</button>
+            </div>
+            <div class="details-grid" id="detalhesConteudo">
+                <!-- Conteúdo preenchido via JS -->
+            </div>
+            <div class="modal-buttons">
+                <button type="button" class="btn btn-secondary" onclick="fecharModalDetalhes()">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE CADASTRO / EDIÇÃO -->
+    <div id="clienteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Cadastrar Novo Cliente</h2>
+                <button class="close-btn" onclick="fecharModal()">&times;</button>
+            </div>
+            <form id="clienteForm" onsubmit="salvarCliente(event)">
                 <input type="hidden" id="clienteId">
                 
                 <div class="form-row">
@@ -61,3 +136,10 @@
                     <button type="submit" class="btn btn-primary">Salvar na Nuvem</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- clientes.js -->
+    <script src="clientes.js"></script>
+</body>
+</html>
