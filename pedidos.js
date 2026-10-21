@@ -29,7 +29,7 @@ async function carregarDadosNuvem() {
     }
 
     try {
-        // Carrega Clientes alinhado com as colunas reais (razao, fantasia, nn, cnpj)
+        // 1. Carrega Clientes
         let resClientes = await supabaseClient.from('clientes').select('*').order('razao', { ascending: true });
         if (resClientes.error) {
             resClientes = await supabaseClient.from('cliente').select('*');
@@ -44,19 +44,18 @@ async function carregarDadosNuvem() {
             datalistCliente.appendChild(opt);
         });
 
-        // Carrega Produtos B2B
+        // 2. Carrega Produtos B2B
         const resB2B = await supabaseClient.from('produtos_b2b').select('*');
         produtosB2B = resB2B.data || [];
 
-        // Carrega Produtos Vertuo
-        const resVertuo = await supabaseClient.from('produtos_vertuo').select('*');
-        produtosVertuo = resVertuo.data || [];
+        // 3. Carrega Produtos B2C (Unificados na tabela produtos_b2c, separados pela coluna 'sistema')
+        const resB2C = await supabaseClient.from('produtos_b2c').select('*');
+        const todosB2C = resB2C.data || [];
+        
+        produtosVertuo = todosB2C.filter(p => p.sistema && p.sistema.toLowerCase() === 'vertuo');
+        produtosOriginal = todosB2C.filter(p => p.sistema && p.sistema.toLowerCase() === 'original');
 
-        // Carrega Produtos Original
-        const resOriginal = await supabaseClient.from('produtos_original').select('*');
-        produtosOriginal = resOriginal.data || [];
-
-        // Carrega Acessórios
+        // 4. Carrega Acessórios
         const resAcessorios = await supabaseClient.from('acessorios').select('*');
         acessoriosLista = resAcessorios.data || [];
 
@@ -82,7 +81,6 @@ function selecionarCanal(canal) {
 
 function selecionarClientePorBusca() {
     const valorDigitado = document.getElementById('buscaClienteInput').value;
-    // Procura o cliente cujo texto combine com o que foi digitado
     clienteSelecionado = clientesLista.find(c => {
         const textoCompleto = `${c.razao || ''} - NN: ${c.nn || ''} (CNPJ: ${c.cnpj || ''})`;
         return textoCompleto === valorDigitado || (c.razao && valorDigitado.includes(c.razao)) || (c.nn && valorDigitado.includes(c.nn));
@@ -105,7 +103,7 @@ function selecionarClientePorBusca() {
 
 function adicionarLinhaItem() {
     const tipo = document.getElementById('tipoItemAdd').value;
-    itensPedido.push({ idUnico: Date.now(), tipo, termoBusca: '', produtoId: '', quantidade: 1 });
+    itensPedido.push({ idUnico: Date.now(), tipo, produtoId: '', quantidade: 1 });
     renderizarItensPedido();
 }
 
@@ -148,7 +146,6 @@ function renderizarItensPedido() {
         else if (item.tipo === 'original') { listaProdutos = produtosOriginal; labelTipo = 'Original'; }
         else if (item.tipo === 'acessorios') { listaProdutos = acessoriosLista; labelTipo = 'Acessório'; }
 
-        // Cria um datalist único para cada linha para permitir busca digitada + barra de rolagem nos produtos
         const datalistId = `produtos_dl_${item.idUnico}`;
         let optionsHTML = '';
         listaProdutos.forEach(p => {
@@ -156,7 +153,6 @@ function renderizarItensPedido() {
             optionsHTML += `<option value="${p.sku} - ${nomeProd}" data-id="${p.id}"></option>`;
         });
 
-        // Acha o valor selecionado atual para exibir no input
         let valorInputProd = '';
         if (item.produtoId) {
             let prodObj = listaProdutos.find(p => p.id == item.produtoId);
@@ -237,7 +233,7 @@ function atualizarPreview() {
         } else if (i.tipo === 'vertuo') {
             prod = produtosVertuo.find(p => p.id == i.produtoId);
             if (prod) {
-                let capsPorCaixa = prod.capsulas_por_caixa || 10;
+                let capsPorCaixa = prod.capsulas_caixa || prod.capsulas_por_caixa || 10;
                 let totalCaps = qtd * capsPorCaixa;
                 totalCapsulasB2C += totalCaps;
                 totalCaixasB2C += qtd;
@@ -246,7 +242,7 @@ function atualizarPreview() {
         } else if (i.tipo === 'original') {
             prod = produtosOriginal.find(p => p.id == i.produtoId);
             if (prod) {
-                let capsPorCaixa = prod.capsulas_por_caixa || 10;
+                let capsPorCaixa = prod.capsulas_caixa || prod.capsulas_por_caixa || 10;
                 let totalCaps = qtd * capsPorCaixa;
                 totalCapsulasB2C += totalCaps;
                 totalCaixasB2C += qtd;
