@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cápsulas B2B - Nespresso Professional</title>
     <link rel="stylesheet" href="styles.css">
-    <!-- Biblioteca Oficial do Supabase -->
+    <!-- Biblioteca Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -14,23 +14,20 @@
         <!-- CABEÇALHO E NAVEGAÇÃO -->
         <header class="header">
             <div>
-                <h1>☕ Cápsulas B2B (Linha Professional)</h1>
-                <p>Catálogo, preços e notas de apresentação para clientes corporativos</p>
+                <h1>☕ Cápsulas B2B (Nespresso Professional)</h1>
+                <p>Catálogo e consulta de preços para linha profissional</p>
             </div>
             <div class="nav-menu">
                 <a href="index.html" class="btn btn-secondary">👥 Clientes</a>
                 <a href="produtos_b2b.html" class="btn btn-primary">☕ Cápsulas B2B</a>
+                <a href="produtos_b2c.html" class="btn btn-secondary">🏠 Cápsulas B2C</a>
             </div>
         </header>
 
         <!-- BARRA DE AÇÕES -->
         <div class="actions-bar">
             <input type="text" id="searchInput" placeholder="🔍 Pesquisar por Nome do Blend ou SKU..." onkeyup="filtrarProdutos()">
-            <button class="btn btn-primary" onclick="abrirModal()">+ Nova Cápsula</button>
-            <label class="btn btn-secondary">
-                📁 Importar CSV
-                <input type="file" id="csvFileInput" accept=".csv" onchange="importarCSVCapsulas(event)" style="display: none;">
-            </label>
+            <button class="btn btn-primary" onclick="abrirModal()">+ Novo Produto B2B</button>
         </div>
 
         <!-- TABELA DE PRODUTOS B2B -->
@@ -41,13 +38,14 @@
                         <th style="width: 80px; text-align: center;">Foto</th>
                         <th>SKU</th>
                         <th>Nome do Produto</th>
+                        <th>Intensidade</th>
                         <th>Cápsulas / Caixa</th>
-                        <th>Preço (Caixa/Unid)</th>
+                        <th>Preço Unitário / Caixa</th>
                         <th style="text-align: center;">Ações</th>
                     </tr>
                 </thead>
                 <tbody id="produtosTableBody">
-                    <tr><td colspan="6" style="text-align:center; color: #64748b; padding: 24px;">Carregando catálogo da nuvem...</td></tr>
+                    <tr><td colspan="7" style="text-align:center; color: #64748b; padding: 24px;">Carregando catálogo B2B da nuvem...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -57,7 +55,7 @@
     <div id="detalhesModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>📋 Detalhes & Notas para Apresentação</h2>
+                <h2>📋 Detalhes do Blend B2B</h2>
                 <button class="close-btn" onclick="fecharModalDetalhes()">&times;</button>
             </div>
             <div class="details-grid" id="detalhesConteudo">
@@ -73,7 +71,7 @@
     <div id="produtoModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="modalTitle">Cadastrar Nova Cápsula</h2>
+                <h2 id="modalTitle">Cadastrar Novo Produto B2B</h2>
                 <button class="close-btn" onclick="fecharModal()">&times;</button>
             </div>
             <form id="produtoForm" onsubmit="salvarProduto(event)">
@@ -82,11 +80,11 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label>SKU:</label>
-                        <input type="text" id="skuInput" required placeholder="Ex: 8639.84">
+                        <input type="text" id="skuInput" required placeholder="Ex: 7011.80">
                     </div>
                     <div class="form-group">
                         <label>Nome do Produto (Blend):</label>
-                        <input type="text" id="nomeInput" required placeholder="Ex: Amaretti Decaffeinato">
+                        <input type="text" id="nomeInput" required placeholder="Ex: Ristretto Intenso">
                     </div>
                 </div>
 
@@ -99,23 +97,27 @@
                         <label>Cápsulas por caixa:</label>
                         <input type="number" id="caixaQtdInput" required value="50">
                     </div>
+                </div>
+
+                <div class="form-row">
                     <div class="form-group">
-                        <label>Preço (R$):</label>
-                        <input type="text" id="precoInput" required placeholder="Ex: 3,25">
+                        <label>Preço da Caixa (R$):</label>
+                        <input type="text" id="precoCaixaInput" required placeholder="Ex: 215,00" oninput="calcularPrecoUnid()">
+                    </div>
+                    <div class="form-group">
+                        <label>Preço por Cápsula (R$):</label>
+                        <input type="text" id="precoUnidInput" readonly style="background: #1e293b; color: #34d399;" placeholder="Calculado automaticamente">
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label>Foto (Link de imagem PNG ou selecione do computador):</label>
-                    <div style="display: flex; gap: 8px;">
-                        <input type="text" id="fotoInput" placeholder="https://exemplo.com/foto.png" style="flex: 2;">
-                        <input type="file" id="fotoFileInput" accept="image/png, image/jpeg" onchange="converterImagem(event)" style="flex: 1; align-self: center; font-size: 12px; color: #94a3b8;">
-                    </div>
+                    <label>Foto (Link de imagem PNG):</label>
+                    <input type="text" id="fotoInput" placeholder="https://exemplo.com/foto.png">
                 </div>
 
                 <div class="form-group">
                     <label>Observação:</label>
-                    <textarea id="observacoesInput" rows="4" placeholder="Notas aromáticas, intensidade, perfil de sabor, dicas de venda para o cliente..." style="background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 10px; color: #f8fafc; font-size: 14px; width: 100%; resize: vertical;"></textarea>
+                    <textarea id="observacoesInput" rows="4" placeholder="Perfil aromático, notas de cata..." style="background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 10px; color: #f8fafc; font-size: 14px; width: 100%; resize: vertical;"></textarea>
                 </div>
 
                 <div class="modal-buttons">
@@ -126,6 +128,7 @@
         </div>
     </div>
 
+    <!-- Script JS -->
     <script src="produtos_b2b.js"></script>
 </body>
 </html>
