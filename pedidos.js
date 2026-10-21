@@ -58,7 +58,6 @@ async function carregarDadosNuvem() {
         // 4. Carrega Acessórios
         const resAcessorios = await supabaseClient.from('acessorios').select('*');
         acessoriosLista = resAcessorios.data || [];
-        console.log("Acessórios carregados:", acessoriosLista); // Para depuração no F12 se necessário
 
     } catch (err) {
         console.error('Erro ao carregar dados do Supabase:', err);
@@ -256,6 +255,7 @@ function atualizarPreview() {
                 totalAcessoriosEmbalagens += qtd;
                 let nomeAcessorio = prod.nome || prod.descricao || 'Item';
                 let tipoEmb = prod.tipo_embalagem || 'caixa(s)';
+                // Formato idêntico ao que aprovamos: - 02 caixas - 3519/BULK - Açúcar (300 unidades cada / Total: 600 un.)
                 acessoriosItens.push(`- ${String(qtd).padStart(2, '0')} ${tipoEmb} - ${prod.sku} - ${nomeAcessorio} (${qtdEmb * qtd} unidades)`);
             }
         }
@@ -327,9 +327,7 @@ function atualizarPreview() {
         if (originalItens.length > 0) {
             texto += `\nLINHA B2C - ORIGINAL:\n` + originalItens.join('\n');
         }
-        if (acessoriosInstens && acessoriosItens.length > 0) {
-            texto += `\nACESSÓRIOS:\n` + acessoriosItens.join('\n');
-        } else if (acessoriosItens.length > 0) {
+        if (acessoriosItens.length > 0) {
             texto += `\nACESSÓRIOS:\n` + acessoriosItens.join('\n');
         }
 
