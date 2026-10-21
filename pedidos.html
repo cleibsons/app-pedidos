@@ -57,6 +57,16 @@
             max-height: 400px;
             overflow-y: auto;
         }
+        .item-linha {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr auto;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+            background: #1e293b;
+            padding: 10px;
+            border-radius: 6px;
+        }
     </style>
 </head>
 <body>
@@ -77,7 +87,7 @@
             </div>
         </header>
 
-        <!-- ESCOLHA DO CANAL DE PEDIDO (LOGO NO INÍCIO) -->
+        <!-- ESCOLHA DO CANAL DE PEDIDO -->
         <div class="card" style="background: #0f172a; border: 1px solid #1e293b; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
             <h2 style="font-size: 16px; margin-bottom: 14px; color: #f8fafc;">1. Escolha o Canal de Envio do Pedido:</h2>
             <div class="canal-selector">
@@ -117,12 +127,30 @@
                     <option value="">Carregando clientes...</option>
                 </select>
             </div>
-            <div id="clienteInfoCard" style="margin-top: 12px; font-size: 13px; color: #94a3b8; background: #1e293b; padding: 12px; border-radius: 6px; display: none;">
-                <!-- Preenchido via JS -->
+            <div id="clienteInfoCard" style="margin-top: 12px; font-size: 13px; color: #94a3b8; background: #1e293b; padding: 12px; border-radius: 6px; display: none;"></div>
+        </div>
+
+        <!-- SELEÇÃO DE ITENS DO PEDIDO -->
+        <div class="card" style="background: #0f172a; border: 1px solid #1e293b; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                <h2 style="font-size: 16px; color: #f8fafc;">3. Adicionar Itens ao Pedido:</h2>
+                <div>
+                    <select id="tipoItemAdd" style="background: #1e293b; border: 1px solid #334155; color: #fff; padding: 8px; border-radius: 6px;">
+                        <option value="b2b">Cápsulas B2B</option>
+                        <option value="vertuo">Cápsulas Vertuo</option>
+                        <option value="original">Cápsulas Original</option>
+                        <option value="acessorios">Acessórios</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="adicionarLinhaItem()" style="padding: 8px 14px; margin-left: 8px;">+ Adicionar Item</button>
+                </div>
+            </div>
+
+            <div id="listaItensContainer">
+                <p style="color: #64748b; font-size: 13px; text-align: center; padding: 16px;">Nenhum item adicionado ainda. Clique em "+ Adicionar Item" acima.</p>
             </div>
         </div>
 
-        <!-- PREVISUALIZAÇÃO DO TEXTO PRONTO -->
+        <!-- PRÉ-VISUALIZAÇÃO DO TEXTO -->
         <div class="card" style="background: #0f172a; border: 1px solid #1e293b; border-radius: 12px; padding: 24px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                 <h2 style="font-size: 16px; color: #f8fafc;">📋 Pré-visualização da Mensagem:</h2>
