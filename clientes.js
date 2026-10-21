@@ -24,6 +24,7 @@ async function carregarClientesNuvem() {
     }
 
     try {
+        // Busca todos os registros mantendo o suporte flexível para razao_social ou nome_do_cliente
         const { data, error } = await supabaseClient
             .from('clientes')
             .select('*');
@@ -50,14 +51,14 @@ function renderizarTabela() {
 
     const filtrados = clientes.filter(c => {
         const nn = c.nn ? c.nn.toString().toLowerCase() : '';
-        const nomeCliente = (c.nome_do_cliente || c.razao_social || '').toLowerCase();
-        const nomeFantasia = (c.nome_fantasia || '').toLowerCase();
+        const nomeFantasia = (c.nome_fantasia || c.nomefantasia || '').toLowerCase();
+        const razaoSocial = (c.razao_social || c.nome_do_cliente || c.razaosocial || '').toLowerCase();
         const cnpj = c.cnpj ? c.cnpj.toLowerCase() : '';
         const contato = (c.contato || '').toLowerCase();
 
         return nn.includes(termo) || 
-               nomeCliente.includes(termo) || 
                nomeFantasia.includes(termo) || 
+               razaoSocial.includes(termo) || 
                cnpj.includes(termo) || 
                contato.includes(termo);
     });
@@ -70,22 +71,26 @@ function renderizarTabela() {
     filtrados.forEach(c => {
         const tr = document.createElement('tr');
         
-        const nomeCliente = c.nome_do_cliente || c.razao_social || '-';
-        const nomeFantasia = c.nome_fantasia ? `<span class="badge-vertuo" style="background: #2563eb; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 11px;">${c.nome_fantasia}</span>` : '-';
+        const razaoSocialExibir = c.razao_social || c.nome_do_cliente || c.razaosocial || '-';
+        const nomeFantasiaExibir = c.nome_fantasia || c.nomefantasia || '';
         
-        // Monta o endereço completo combinando as colunas da planilha
-        let enderecoCompleto = c.endereco || '';
-        if (c.bairro) enderecoCompleto += `, ${c.bairro}`;
-        if (c.cidade) enderecoCompleto += ` - ${c.cidade}`;
-        if (c.cep) enderecoCompleto += ` - CEP ${c.cep}`;
-        if (!enderecoCompleto) enderecoCompleto = '-';
+        const badgeNome = nomeFantasiaExibir 
+            ? `<span class="badge-vertuo" style="background: #2563eb; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 11px;">${nomeFantasiaExibir}</span>` 
+            : '-';
+
+        // Suporte para o endereço unificado ou montado a partir dos campos
+        let enderecoExibir = c.endereco || c.endereco_completo || '';
+        if (!enderecoExibir && (c.bairro || c.cidade)) {
+            enderecoExibir = `${c.bairro ? c.bairro + ', ' : ''}${c.cidade || ''} ${c.cep ? '- CEP ' + c.cep : ''}`;
+        }
+        if (!enderecoExibir) enderecoExibir = '-';
 
         tr.innerHTML = `
             <td><strong style="color: #60a5fa;">${c.nn || ''}</strong></td>
-            <td>${nomeFantasia}</td>
-            <td style="font-weight: 500;">${nomeCliente}</td>
+            <td>${badgeNome}</td>
+            <td style="font-weight: bold; color: #f8fafc;">${razaoSocialExibir}</td>
             <td style="color: #94a3b8;">${c.cnpj || ''}</td>
-            <td style="font-size: 13px; color: #cbd5e1;">${enderecoCompleto}</td>
+            <td style="font-size: 13px; color: #cbd5e1;">${enderecoExibir}</td>
             <td style="text-align: center; white-space: nowrap;">
                 <button class="btn btn-view" style="padding: 4px 8px; font-size: 12px;" title="Ver Detalhes" onclick="visualizarCliente(${c.id})">👁️</button>
                 <button class="btn btn-edit" style="padding: 4px 8px; font-size: 12px;" title="Editar" onclick="editarCliente(${c.id})">✏️</button>
@@ -105,6 +110,10 @@ function visualizarCliente(id) {
     const c = clientes.find(item => item.id === id);
     if (!c) return;
 
+    const razaoSocialExibir = c.razao_social || c.nome_do_cliente || c.razaosocial || '-';
+    const nomeFantasiaExibir = c.nome_fantasia || c.nomefantasia || '-';
+    let enderecoExibir = c.endereco || c.endereco_completo || '-';
+
     const detalhesHTML = `
         <div class="detail-item">
             <div class="detail-label">NN (Número de Negócio)</div>
@@ -116,11 +125,11 @@ function visualizarCliente(id) {
         </div>
         <div class="detail-item">
             <div class="detail-label">NOME FANTASIA</div>
-            <div class="detail-value">${c.nome_fantasia || '-'}</div>
+            <div class="detail-value">${nomeFantasiaExibir}</div>
         </div>
         <div class="detail-item">
-            <div class="detail-label">NOME DO CLIENTE</div>
-            <div class="detail-value highlight">${c.nome_do_cliente || c.razao_social || '-'}</div>
+            <div class="detail-label">RAZÃO SOCIAL</div>
+            <div class="detail-value highlight">${razaoSocialExibir}</div>
         </div>
         <div class="detail-item">
             <div class="detail-label">CONTATO / RESPONSÁVEL</div>
@@ -130,17 +139,9 @@ function visualizarCliente(id) {
             <div class="detail-label">TELEFONE / WHATSAPP</div>
             <div class="detail-value" style="color: #34d399;">${c.telefone || '-'}</div>
         </div>
-        <div class="detail-item">
-            <div class="detail-label">BAIRRO</div>
-            <div class="detail-value">${c.bairro || '-'}</div>
-        </div>
-        <div class="detail-item">
-            <div class="detail-label">CIDADE / CEP</div>
-            <div class="detail-value">${c.cidade || '-'}[cite: 5] ${c.cep ? '- CEP ' + c.cep : ''}</div>
-        </div>
         <div class="detail-item full-width" style="grid-column: span 2; background: #111827; border-color: #3b82f6;">
             <div class="detail-label" style="color: #60a5fa; font-weight: bold;">ENDEREÇO COMPLETO</div>
-            <div class="detail-value" style="margin-top: 6px; font-size: 14px; color: #e2e8f0;">${c.endereco || '-'}[cite: 5]</div>
+            <div class="detail-value" style="margin-top: 6px; font-size: 14px; color: #e2e8f0;">${enderecoExibir}</div>
         </div>
     `;
 
@@ -163,11 +164,11 @@ function abrirModal(cliente = null) {
         document.getElementById('clienteId').value = cliente.id;
         document.getElementById('nnInput').value = cliente.nn || '';
         document.getElementById('cnpjInput').value = cliente.cnpj || '';
-        document.getElementById('nomeFantasiaInput').value = cliente.nome_fantasia || '';
-        document.getElementById('razaoSocialInput').value = cliente.nome_do_cliente || cliente.razao_social || '';
+        document.getElementById('nomeFantasiaInput').value = cliente.nome_fantasia || cliente.nomefantasia || '';
+        document.getElementById('razaoSocialInput').value = cliente.razao_social || cliente.nome_do_cliente || '';
         document.getElementById('contatoInput').value = cliente.contato || '';
         document.getElementById('telefoneInput').value = cliente.telefone || '';
-        document.getElementById('enderecoInput').value = cliente.endereco || '';
+        document.getElementById('enderecoInput').value = cliente.endereco || cliente.endereco_completo || '';
     } else {
         document.getElementById('modalTitle').innerText = 'Cadastrar Novo Cliente';
     }
@@ -187,7 +188,7 @@ async function salvarCliente(e) {
         nn: document.getElementById('nnInput').value.trim(),
         cnpj: document.getElementById('cnpjInput').value.trim(),
         nome_fantasia: document.getElementById('nomeFantasiaInput').value.trim(),
-        nome_do_cliente: document.getElementById('razaoSocialInput').value.trim(),
+        razao_social: document.getElementById('razaoSocialInput').value.trim(),
         contato: document.getElementById('contatoInput').value.trim(),
         telefone: document.getElementById('telefoneInput').value.trim(),
         endereco: document.getElementById('enderecoInput').value.trim()
