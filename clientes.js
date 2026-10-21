@@ -50,16 +50,14 @@ function renderizarTabela() {
 
     const filtrados = clientes.filter(c => {
         const nn = c.nn ? c.nn.toString().toLowerCase() : '';
-        const nomeFantasia = (c.nome_fantasia || '').toLowerCase();
-        const nomeCliente = (c.nome_do_cliente || c.razao_social || '').toLowerCase();
+        const fantasia = (c.fantasia && c.fantasia !== 'EMPTY') ? c.fantasia.toLowerCase() : '';
+        const razao = (c.razao || '').toLowerCase();
         const cnpj = c.cnpj ? c.cnpj.toLowerCase() : '';
-        const contato = (c.contato || '').toLowerCase();
 
         return nn.includes(termo) || 
-               nomeFantasia.includes(termo) || 
-               nomeCliente.includes(termo) || 
-               cnpj.includes(termo) || 
-               contato.includes(termo);
+               fantasia.includes(termo) || 
+               razao.includes(termo) || 
+               cnpj.includes(termo);
     });
 
     if (filtrados.length === 0) {
@@ -70,26 +68,26 @@ function renderizarTabela() {
     filtrados.forEach(c => {
         const tr = document.createElement('tr');
         
-        // Mapeamento correto para o nome do cliente e nome fantasia
-        const nomeClienteExibir = c.nome_do_cliente || c.razao_social || '-';
-        const nomeFantasiaExibir = c.nome_fantasia || '';
+        const razaoExibir = c.razao || '-';
+        const fantasiaExibir = (c.fantasia && c.fantasia !== 'EMPTY') ? c.fantasia : '';
         
-        const badgeNome = nomeFantasiaExibir 
-            ? `<span class="badge-vertuo" style="background: #2563eb; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 11px;">${nomeFantasiaExibir}</span>` 
+        const badgeNome = fantasiaExibir 
+            ? `<span class="badge-vertuo" style="background: #2563eb; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 11px;">${fantasiaExibir}</span>` 
             : '-';
 
-        let enderecoExibir = c.endereco || '';
-        if (c.bairro) enderecoExibir += `, ${c.bairro}`;
-        if (c.cidade) enderecoExibir += ` - ${c.cidade}`;
-        if (c.cep) enderecoExibir += ` - CEP ${c.cep}`;
-        if (!enderecoExibir) enderecoExibir = '-';
+        // Monta o endereço completo unindo rua, bairro, cidade e cep
+        let enderecoCompleto = c.endereco || '';
+        if (c.bairro && c.bairro !== 'EMPTY') enderecoCompleto += `, ${c.bairro}`;
+        if (c.cidade) enderecoCompleto += ` - ${c.cidade}`;
+        if (c.cep) enderecoCompleto += ` - CEP ${c.cep}`;
+        if (!enderecoCompleto) enderecoCompleto = '-';
 
         tr.innerHTML = `
             <td><strong style="color: #60a5fa;">${c.nn || ''}</strong></td>
             <td>${badgeNome}</td>
-            <td style="font-weight: bold; color: #f8fafc;">${nomeClienteExibir}</td>
+            <td style="font-weight: bold; color: #f8fafc;">${razaoExibir}</td>
             <td style="color: #94a3b8;">${c.cnpj || ''}</td>
-            <td style="font-size: 13px; color: #cbd5e1;">${enderecoExibir}</td>
+            <td style="font-size: 13px; color: #cbd5e1;">${enderecoCompleto}</td>
             <td style="text-align: center; white-space: nowrap;">
                 <button class="btn btn-view" style="padding: 4px 8px; font-size: 12px;" title="Ver Detalhes" onclick="visualizarCliente(${c.id})">👁️</button>
                 <button class="btn btn-edit" style="padding: 4px 8px; font-size: 12px;" title="Editar" onclick="editarCliente(${c.id})">✏️</button>
@@ -109,12 +107,14 @@ function visualizarCliente(id) {
     const c = clientes.find(item => item.id === id);
     if (!c) return;
 
-    const nomeClienteExibir = c.nome_do_cliente || c.razao_social || '-';
-    const nomeFantasiaExibir = c.nome_fantasia || '-';
-    let enderecoExibir = c.endereco || '-';
-    if (c.bairro) enderecoExibir += `, ${c.bairro}`;
+    const razaoExibir = c.razao || '-';
+    const fantasiaExibir = (c.fantasia && c.fantasia !== 'EMPTY') ? c.fantasia : '-';
+    
+    let enderecoExibir = c.endereco || '';
+    if (c.bairro && c.bairro !== 'EMPTY') enderecoExibir += `, ${c.bairro}`;
     if (c.cidade) enderecoExibir += ` - ${c.cidade}`;
     if (c.cep) enderecoExibir += ` - CEP ${c.cep}`;
+    if (!enderecoExibir) enderecoExibir = '-';
 
     const detalhesHTML = `
         <div class="detail-item">
@@ -127,19 +127,11 @@ function visualizarCliente(id) {
         </div>
         <div class="detail-item">
             <div class="detail-label">NOME FANTASIA</div>
-            <div class="detail-value">${nomeFantasiaExibir}</div>
+            <div class="detail-value">${fantasiaExibir}</div>
         </div>
         <div class="detail-item">
-            <div class="detail-label">NOME DO CLIENTE</div>
-            <div class="detail-value highlight">${nomeClienteExibir}</div>
-        </div>
-        <div class="detail-item">
-            <div class="detail-label">CONTATO / RESPONSÁVEL</div>
-            <div class="detail-value">${c.contato || '-'}</div>
-        </div>
-        <div class="detail-item">
-            <div class="detail-label">TELEFONE / WHATSAPP</div>
-            <div class="detail-value" style="color: #34d399;">${c.telefone || '-'}</div>
+            <div class="detail-label">RAZÃO SOCIAL</div>
+            <div class="detail-value highlight">${razaoExibir}</div>
         </div>
         <div class="detail-item full-width" style="grid-column: span 2; background: #111827; border-color: #3b82f6;">
             <div class="detail-label" style="color: #60a5fa; font-weight: bold;">ENDEREÇO COMPLETO</div>
@@ -166,10 +158,8 @@ function abrirModal(cliente = null) {
         document.getElementById('clienteId').value = cliente.id;
         document.getElementById('nnInput').value = cliente.nn || '';
         document.getElementById('cnpjInput').value = cliente.cnpj || '';
-        document.getElementById('nomeFantasiaInput').value = cliente.nome_fantasia || '';
-        document.getElementById('razaoSocialInput').value = cliente.nome_do_cliente || cliente.razao_social || '';
-        document.getElementById('contatoInput').value = cliente.contato || '';
-        document.getElementById('telefoneInput').value = cliente.telefone || '';
+        document.getElementById('nomeFantasiaInput').value = (cliente.fantasia && cliente.fantasia !== 'EMPTY') ? cliente.fantasia : '';
+        document.getElementById('razaoSocialInput').value = cliente.razao || '';
         document.getElementById('enderecoInput').value = cliente.endereco || '';
     } else {
         document.getElementById('modalTitle').innerText = 'Cadastrar Novo Cliente';
@@ -189,10 +179,8 @@ async function salvarCliente(e) {
         id: id ? parseInt(id) : Date.now(),
         nn: document.getElementById('nnInput').value.trim(),
         cnpj: document.getElementById('cnpjInput').value.trim(),
-        nome_fantasia: document.getElementById('nomeFantasiaInput').value.trim(),
-        nome_do_cliente: document.getElementById('razaoSocialInput').value.trim(),
-        contato: document.getElementById('contatoInput'.trim()).value.trim(),
-        telefone: document.getElementById('telefoneInput').value.trim(),
+        fantasia: document.getElementById('nomeFantasiaInput').value.trim() || 'EMPTY',
+        razao: document.getElementById('razaoSocialInput').value.trim(),
         endereco: document.getElementById('enderecoInput').value.trim()
     };
 
