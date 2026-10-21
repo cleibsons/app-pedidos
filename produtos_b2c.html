@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cápsulas B2C - Nespresso (Vertuo & Original)</title>
     <link rel="stylesheet" href="styles.css">
+    <!-- Biblioteca Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         .filter-tabs {
@@ -157,11 +158,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Foto (Link de imagem PNG ou selecione do computador):</label>
-                    <div style="display: flex; gap: 8px;">
-                        <input type="text" id="fotoInput" placeholder="https://exemplo.com/foto.png" style="flex: 2;">
-                        <input type="file" id="fotoFileInput" accept="image/png, image/jpeg" onchange="converterImagem(event)" style="flex: 1; align-self: center; font-size: 12px; color: #94a3b8;">
-                    </div>
+                    <label>Foto (Link de imagem PNG):</label>
+                    <input type="text" id="fotoInput" placeholder="https://exemplo.com/foto.png">
                 </div>
 
                 <div class="form-group">
@@ -177,6 +175,7 @@
         </div>
     </div>
 
+    <!-- Script JS -->
     <script src="produtos_b2c.js"></script>
 </body>
 </html>
