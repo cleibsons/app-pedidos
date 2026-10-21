@@ -75,7 +75,7 @@ function renderizarTabela() {
             ? `<span style="background: #1e3a8a; color: #93c5fd; padding: 3px 10px; border-radius: 6px; font-size: 12px; font-weight: 500; border: 1px solid #3b82f6;">${fantasiaExibir}</span>` 
             : '-';
 
-        // Monta o endereço completo unindo rua, bairro, cidade e cep de forma fluida
+        // Monta o endereço completo unindo rua, bairro, cidade e cep
         let enderecoCompleto = c.endereco || '';
         if (c.bairro && c.bairro !== 'EMPTY') enderecoCompleto += `, ${c.bairro}`;
         if (c.cidade) enderecoCompleto += `, ${c.cidade}`;
@@ -162,12 +162,10 @@ function abrirModal(cliente = null) {
         document.getElementById('razaoSocialInput').value = cliente.razao || '';
         document.getElementById('contatoInput').value = cliente.contato || '';
         document.getElementById('telefoneInput').value = cliente.telefone || '';
-        
-        // Campos separados de endereço
-        if (document.getElementById('enderecoInput')) document.getElementById('enderecoInput').value = cliente.endereco || '';
-        if (document.getElementById('bairroInput')) document.getElementById('bairroInput').value = cliente.bairro || '';
-        if (document.getElementById('cidadeInput')) document.getElementById('cidadeInput').value = cliente.cidade || '';
-        if (document.getElementById('cepInput')) document.getElementById('cepInput').value = cliente.cep || '';
+        document.getElementById('enderecoInput').value = cliente.endereco || '';
+        document.getElementById('bairroInput').value = cliente.bairro || '';
+        document.getElementById('cidadeInput').value = cliente.cidade || '';
+        document.getElementById('cepInput').value = cliente.cep || '';
     } else {
         document.getElementById('modalTitle').innerText = 'Cadastrar Novo Cliente';
     }
@@ -190,10 +188,10 @@ async function salvarCliente(e) {
         razao: document.getElementById('razaoSocialInput').value.trim(),
         contato: document.getElementById('contatoInput').value.trim(),
         telefone: document.getElementById('telefoneInput').value.trim(),
-        endereco: document.getElementById('enderecoInput') ? document.getElementById('enderecoInput').value.trim() : '',
-        bairro: document.getElementById('bairroInput') ? document.getElementById('bairroInput').value.trim() : '',
-        cidade: document.getElementById('cidadeInput') ? document.getElementById('cidadeInput').value.trim() : '',
-        cep: document.getElementById('cepInput') ? document.getElementById('cepInput').value.trim() : ''
+        endereco: document.getElementById('enderecoInput').value.trim(),
+        bairro: document.getElementById('bairroInput').value.trim(),
+        cidade: document.getElementById('cidadeInput').value.trim(),
+        cep: document.getElementById('cepInput').value.trim()
     };
 
     const { error } = await supabaseClient
