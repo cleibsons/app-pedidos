@@ -71,7 +71,6 @@ function renderizarTabela() {
         const razaoExibir = c.razao || '-';
         const fantasiaExibir = (c.fantasia && c.fantasia !== 'EMPTY') ? c.fantasia : '';
         
-        // Estilo de badge azul idêntico à imagem de referência
         const badgeNome = fantasiaExibir 
             ? `<span style="background: #1e3a8a; color: #93c5fd; padding: 3px 10px; border-radius: 6px; font-size: 12px; font-weight: 500; border: 1px solid #3b82f6;">${fantasiaExibir}</span>` 
             : '-';
@@ -161,7 +160,14 @@ function abrirModal(cliente = null) {
         document.getElementById('cnpjInput').value = cliente.cnpj || '';
         document.getElementById('nomeFantasiaInput').value = (cliente.fantasia && cliente.fantasia !== 'EMPTY') ? cliente.fantasia : '';
         document.getElementById('razaoSocialInput').value = cliente.razao || '';
-        document.getElementById('enderecoInput').value = cliente.endereco || '';
+        document.getElementById('contatoInput').value = cliente.contato || '';
+        document.getElementById('telefoneInput').value = cliente.telefone || '';
+        
+        // Campos separados de endereço
+        if (document.getElementById('enderecoInput')) document.getElementById('enderecoInput').value = cliente.endereco || '';
+        if (document.getElementById('bairroInput')) document.getElementById('bairroInput').value = cliente.bairro || '';
+        if (document.getElementById('cidadeInput')) document.getElementById('cidadeInput').value = cliente.cidade || '';
+        if (document.getElementById('cepInput')) document.getElementById('cepInput').value = cliente.cep || '';
     } else {
         document.getElementById('modalTitle').innerText = 'Cadastrar Novo Cliente';
     }
@@ -182,7 +188,12 @@ async function salvarCliente(e) {
         cnpj: document.getElementById('cnpjInput').value.trim(),
         fantasia: document.getElementById('nomeFantasiaInput').value.trim() || 'EMPTY',
         razao: document.getElementById('razaoSocialInput').value.trim(),
-        endereco: document.getElementById('enderecoInput').value.trim()
+        contato: document.getElementById('contatoInput').value.trim(),
+        telefone: document.getElementById('telefoneInput').value.trim(),
+        endereco: document.getElementById('enderecoInput') ? document.getElementById('enderecoInput').value.trim() : '',
+        bairro: document.getElementById('bairroInput') ? document.getElementById('bairroInput').value.trim() : '',
+        cidade: document.getElementById('cidadeInput') ? document.getElementById('cidadeInput').value.trim() : '',
+        cep: document.getElementById('cepInput') ? document.getElementById('cepInput').value.trim() : ''
     };
 
     const { error } = await supabaseClient
