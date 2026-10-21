@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novo Pedido - Sistema Nespresso</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Biblioteca Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .canal-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .canal-card {
+            background: #1e293b;
+            border: 2px solid #334155;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .canal-card:hover {
+            border-color: #3b82f6;
+        }
+        .canal-card.active {
+            background: #1d4ed8;
+            border-color: #60a5fa;
+            color: #fff;
+        }
+        .canal-card h3 {
+            margin-bottom: 6px;
+            font-size: 18px;
+        }
+        .canal-card p {
+            font-size: 13px;
+            color: #94a3b8;
+        }
+        .canal-card.active p {
+            color: #bfdbfe;
+        }
+        .hidden-section {
+            display: none;
+        }
+        .preview-box {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 16px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            color: #e2e8f0;
+            margin-top: 16px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- CABEÇALHO E NAVEGAÇÃO -->
+        <header class="header">
+            <div>
+                <h1>📦 Central de Pedidos</h1>
+                <p>Monte pedidos automatizados para WhatsApp ou E-mail</p>
+            </div>
+            <div class="nav-menu">
+                <a href="index.html" class="btn btn-secondary">👥 Clientes</a>
+                <a href="produtos_b2b.html" class="btn btn-secondary">☕ Cápsulas B2B</a>
+                <a href="produtos_b2c.html" class="btn btn-secondary">🏠 Cápsulas B2C</a>
+                <a href="acessorios.html" class="btn btn-secondary">🥄 Acessórios</a>
+                <a href="pedidos.html" class="btn btn-primary">📦 Pedidos</a>
+            </div>
+        </header>
+
+        <!-- ESCOLHA DO CANAL DE PEDIDO (LOGO NO INÍCIO) -->
+        <div class="card" style="background: #0f172a; border: 1px solid #1e293b; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+            <h2 style="font-size: 16px; margin-bottom: 14px; color: #f8fafc;">1. Escolha o Canal de Envio do Pedido:</h2>
+            <div class="canal-selector">
+                <div class="canal-card active" id="cardWhats" onclick="selecionarCanal('whatsapp')">
+                    <h3>📱 WhatsApp Nespresso</h3>
+                    <p>Modelo estruturado por categorias e resumo rápido</p>
+                </div>
+                <div class="canal-card" id="cardEmail" onclick="selecionarCanal('email')">
+                    <h3>✉️ E-mail (Time de Compras)</h3>
+                    <p>Modelo formal com opções de Broker, Estoque 3A e Ordem de Compra</p>
+                </div>
+            </div>
+
+            <!-- OPÇÕES EXCLUSIVAS PARA E-MAIL -->
+            <div id="secaoEmailOpcoes" class="hidden-section" style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #334155;">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Tipo de Faturamento / Logística:</label>
+                        <select id="tipoLogisticaInput" onchange="atualizarPreview()" style="background: #1e293b; border: 1px solid #334155; color: #fff; padding: 10px; border-radius: 6px; width: 100%;">
+                            <option value="broker">VIA BROKER (Padrão)</option>
+                            <option value="estoque3a">VIA ESTOQUE 3A (Sem estoque no Broker / Transp. Total Express)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Ordem de Compra (OC) ou Autorização:</label>
+                        <input type="text" id="ordemCompraInput" placeholder="Ex: 1350030044 ou Autorizado pelo comprador João" oninput="atualizarPreview()" style="background: #1e293b; border: 1px solid #334155; color: #fff; padding: 10px; border-radius: 6px; width: 100%;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SELEÇÃO DE CLIENTE -->
+        <div class="card" style="background: #0f172a; border: 1px solid #1e293b; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+            <h2 style="font-size: 16px; margin-bottom: 14px; color: #f8fafc;">2. Selecione o Cliente:</h2>
+            <div class="form-group">
+                <select id="clienteSelect" onchange="carregarDadosCliente()" style="background: #1e293b; border: 1px solid #334155; color: #fff; padding: 10px; border-radius: 6px; width: 100%;">
+                    <option value="">Carregando clientes...</option>
+                </select>
+            </div>
+            <div id="clienteInfoCard" style="margin-top: 12px; font-size: 13px; color: #94a3b8; background: #1e293b; padding: 12px; border-radius: 6px; display: none;">
+                <!-- Preenchido via JS -->
+            </div>
+        </div>
+
+        <!-- PREVISUALIZAÇÃO DO TEXTO PRONTO -->
+        <div class="card" style="background: #0f172a; border: 1px solid #1e293b; border-radius: 12px; padding: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h2 style="font-size: 16px; color: #f8fafc;">📋 Pré-visualização da Mensagem:</h2>
+                <button class="btn btn-primary" onclick="copiarMensagem()">📋 Copiar Texto</button>
+            </div>
+            <div class="preview-box" id="previewMensagem">
+                Selecione um cliente e adicione itens para gerar o pedido...
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Script JS -->
+    <script src="pedidos.js"></script>
+</body>
+</html>
