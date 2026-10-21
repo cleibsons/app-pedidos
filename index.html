@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestão de Clientes - Pedidos</title>
     <link rel="stylesheet" href="styles.css">
-    <!-- Biblioteca Oficial do Supabase -->
+    <!-- Biblioteca Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
     <div class="container">
-        <!-- CABEÇALHO E MENU DE NAVEGAÇÃO -->
+        <!-- CABEÇALHO E NAVEGAÇÃO -->
         <header class="header">
             <div>
                 <h1>👥 Gestão de Clientes</h1>
@@ -20,6 +20,7 @@
             <div class="nav-menu">
                 <a href="index.html" class="btn btn-primary">👥 Clientes</a>
                 <a href="produtos_b2b.html" class="btn btn-secondary">☕ Cápsulas B2B</a>
+                <a href="produtos_b2c.html" class="btn btn-secondary">🏠 Cápsulas B2C</a>
             </div>
         </header>
 
@@ -49,7 +50,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE VISUALIZAÇÃO DE DETALHES -->
+    <!-- MODAL DE VISUALIZAR / DETALHES -->
     <div id="detalhesModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -57,7 +58,7 @@
                 <button class="close-btn" onclick="fecharModalDetalhes()">&times;</button>
             </div>
             <div class="details-grid" id="detalhesConteudo">
-                <!-- Dados preenchidos via JS -->
+                <!-- Conteúdo preenchido via JS -->
             </div>
             <div class="modal-buttons">
                 <button type="button" class="btn btn-secondary" onclick="fecharModalDetalhes()">Fechar</button>
@@ -69,7 +70,7 @@
     <div id="clienteModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="modalTitle">Cadastrar Cliente</h2>
+                <h2 id="modalTitle">Cadastrar Novo Cliente</h2>
                 <button class="close-btn" onclick="fecharModal()">&times;</button>
             </div>
             <form id="clienteForm" onsubmit="salvarCliente(event)">
@@ -77,29 +78,29 @@
                 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>NN (Número do Cliente):</label>
-                        <input type="text" id="nnInput" required placeholder="Ex: 410191">
+                        <label>NN (Número de Negócio):</label>
+                        <input type="text" id="nnInput" required placeholder="Ex: 5730465">
                     </div>
                     <div class="form-group">
                         <label>CNPJ:</label>
-                        <input type="text" id="cnpjInput" required placeholder="Ex: 00.000.000/0000-00">
+                        <input type="text" id="cnpjInput" required placeholder="Ex: 01.795.809/0004-62">
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Nome Fantasia (Busca Fácil):</label>
-                        <input type="text" id="fantasiaInput" placeholder="Ex: Belmond Hotel">
+                        <label>Nome Fantasia:</label>
+                        <input type="text" id="nomeFantasiaInput" placeholder="Ex: Loja Exemplo">
                     </div>
                     <div class="form-group">
-                        <label>Razão Social (Oficial):</label>
-                        <input type="text" id="razaoInput" required placeholder="Ex: Belmond Brasil Hotéis S.A">
+                        <label>Razão Social:</label>
+                        <input type="text" id="razaoSocialInput" required placeholder="Ex: Comércio Ltda">
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Pessoa de Contato:</label>
+                        <label>Contato / Responsável:</label>
                         <input type="text" id="contatoInput" placeholder="Ex: João Silva">
                     </div>
                     <div class="form-group">
@@ -108,24 +109,20 @@
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label>Endereço (Rua e Número):</label>
-                    <input type="text" id="enderecoInput" required placeholder="Ex: Rodovia BR-469, S/N, Km 32">
-                </div>
-
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Bairro:</label>
-                        <input type="text" id="bairroInput" placeholder="Ex: Centro">
+                        <label>E-mail:</label>
+                        <input type="email" id="emailInput" placeholder="exemplo@email.com">
                     </div>
                     <div class="form-group">
-                        <label>Cidade / UF:</label>
-                        <input type="text" id="cidadeInput" required value="Foz do Iguaçu - PR">
+                        <label>Segmento / Canal:</label>
+                        <input type="text" id="segmentoInput" placeholder="Ex: Restaurante, Hotel...">
                     </div>
-                    <div class="form-group">
-                        <label>CEP:</label>
-                        <input type="text" id="cepInput" required placeholder="Ex: 85850-000">
-                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Endereço Completo:</label>
+                    <input type="text" id="enderecoInput" placeholder="Ex: Rua Exemplo, 123 - Centro, Foz do Iguaçu - PR">
                 </div>
 
                 <div class="modal-buttons">
@@ -136,6 +133,7 @@
         </div>
     </div>
 
-    <script src="clientes.js"></script>
+    <!-- Script JS -->
+    <script src="script.js"></script>
 </body>
 </html>
