@@ -24,10 +24,10 @@ async function carregarClientesNuvem() {
     }
 
     try {
+        // Busca todos os campos da tabela 'clientes' sem forçar ordenação por coluna específica
         const { data, error } = await supabaseClient
             .from('clientes')
-            .select('*')
-            .order('razao_social', { ascending: true });
+            .select('*');
 
         if (error) {
             console.error('Erro ao buscar clientes:', error);
@@ -51,8 +51,8 @@ function renderizarTabela() {
 
     const filtrados = clientes.filter(c => {
         const nn = c.nn ? c.nn.toString().toLowerCase() : '';
-        const nomeFantasia = c.nome_fantasia ? c.nome_fantasia.toLowerCase() : '';
-        const razaoSocial = c.razao_social ? c.razao_social.toLowerCase() : '';
+        const nomeFantasia = (c.nome_fantasia || c.nomefantasia || c.nome || '').toLowerCase();
+        const razaoSocial = (c.razao_social || c.razaosocial || c.razao || '').toLowerCase();
         const cnpj = c.cnpj ? c.cnpj.toLowerCase() : '';
         const contato = c.contato ? c.contato.toLowerCase() : '';
 
@@ -71,14 +71,18 @@ function renderizarTabela() {
     filtrados.forEach(c => {
         const tr = document.createElement('tr');
         
-        const badgeNome = c.nome_fantasia ? `<span class="badge-vertuo" style="background: #2563eb; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 11px;">${c.nome_fantasia}</span>` : '-';
+        const nomeFantasiaExibir = c.nome_fantasia || c.nomefantasia || c.nome || '';
+        const razaoSocialExibir = c.razao_social || c.razaosocial || c.razao || '-';
+        const enderecoExibir = c.endereco || c.endereco_completo || c.logradouro || '-';
+
+        const badgeNome = nomeFantasiaExibir ? `<span class="badge-vertuo" style="background: #2563eb; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 11px;">${nomeFantasiaExibir}</span>` : '-';
 
         tr.innerHTML = `
             <td><strong style="color: #60a5fa;">${c.nn || ''}</strong></td>
             <td>${badgeNome}</td>
-            <td style="font-weight: 500;">${c.razao_social || ''}</td>
+            <td style="font-weight: 500;">${razaoSocialExibir}</td>
             <td style="color: #94a3b8;">${c.cnpj || ''}</td>
-            <td style="font-size: 13px; color: #cbd5e1;">${c.endereco || ''}</td>
+            <td style="font-size: 13px; color: #cbd5e1;">${enderecoExibir}</td>
             <td style="text-align: center; white-space: nowrap;">
                 <button class="btn btn-view" style="padding: 4px 8px; font-size: 12px;" title="Ver Detalhes" onclick="visualizarCliente(${c.id})">👁️</button>
                 <button class="btn btn-edit" style="padding: 4px 8px; font-size: 12px;" title="Editar" onclick="editarCliente(${c.id})">✏️</button>
@@ -98,6 +102,10 @@ function visualizarCliente(id) {
     const c = clientes.find(item => item.id === id);
     if (!c) return;
 
+    const razaoSocialExibir = c.razao_social || c.razaosocial || c.razao || '-';
+    const nomeFantasiaExibir = c.nome_fantasia || c.nomefantasia || c.nome || '-';
+    const enderecoExibir = c.endereco || c.endereco_completo || c.logradouro || '-';
+
     const detalhesHTML = `
         <div class="detail-item">
             <div class="detail-label">NN (Número de Negócio)</div>
@@ -109,11 +117,11 @@ function visualizarCliente(id) {
         </div>
         <div class="detail-item">
             <div class="detail-label">NOME FANTASIA</div>
-            <div class="detail-value">${c.nome_fantasia || '-'}</div>
+            <div class="detail-value">${nomeFantasiaExibir}</div>
         </div>
         <div class="detail-item">
             <div class="detail-label">RAZÃO SOCIAL</div>
-            <div class="detail-value highlight">${c.razao_social || '-'}</div>
+            <div class="detail-value highlight">${razaoSocialExibir}</div>
         </div>
         <div class="detail-item">
             <div class="detail-label">CONTATO / RESPONSÁVEL</div>
@@ -133,7 +141,7 @@ function visualizarCliente(id) {
         </div>
         <div class="detail-item full-width" style="grid-column: span 2; background: #111827; border-color: #3b82f6;">
             <div class="detail-label" style="color: #60a5fa; font-weight: bold;">ENDEREÇO COMPLETO</div>
-            <div class="detail-value" style="margin-top: 6px; font-size: 14px; color: #e2e8f0;">${c.endereco || '-'}</div>
+            <div class="detail-value" style="margin-top: 6px; font-size: 14px; color: #e2e8f0;">${enderecoExibir}</div>
         </div>
     `;
 
@@ -156,13 +164,13 @@ function abrirModal(cliente = null) {
         document.getElementById('clienteId').value = cliente.id;
         document.getElementById('nnInput').value = cliente.nn || '';
         document.getElementById('cnpjInput').value = cliente.cnpj || '';
-        document.getElementById('nomeFantasiaInput').value = cliente.nome_fantasia || '';
-        document.getElementById('razaoSocialInput').value = cliente.razao_social || '';
+        document.getElementById('nomeFantasiaInput').value = cliente.nome_fantasia || cliente.nomefantasia || cliente.nome || '';
+        document.getElementById('razaoSocialInput').value = cliente.razao_social || cliente.razaosocial || cliente.razao || '';
         document.getElementById('contatoInput').value = cliente.contato || '';
         document.getElementById('telefoneInput').value = cliente.telefone || '';
         document.getElementById('emailInput').value = cliente.email || '';
         document.getElementById('segmentoInput').value = cliente.segmento || '';
-        document.getElementById('enderecoInput').value = cliente.endereco || '';
+        document.getElementById('enderecoInput').value = cliente.endereco || cliente.endereco_completo || '';
     } else {
         document.getElementById('modalTitle').innerText = 'Cadastrar Novo Cliente';
     }
