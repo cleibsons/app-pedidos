@@ -11,13 +11,11 @@ let canalAtual = 'whatsapp';
 let clientesLista = [];
 let clienteSelecionado = null;
 
-// Produtos carregados do Supabase
 let produtosB2B = [];
 let produtosVertuo = [];
 let produtosOriginal = [];
 let acessoriosLista = [];
 
-// Itens adicionados no pedido atual
 let itensPedido = [];
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -31,20 +29,19 @@ async function carregarDadosNuvem() {
     }
 
     try {
-        // Carrega Clientes (com fallback para singular/plural)
-        let resClientes = await supabaseClient.from('clientes').select('*').order('razao_social', { ascending: true });
+        // Carrega Clientes alinhado com as colunas reais (razao, fantasia, nn, cnpj)
+        let resClientes = await supabaseClient.from('clientes').select('*').order('razao', { ascending: true });
         if (resClientes.error) {
             resClientes = await supabaseClient.from('cliente').select('*');
         }
         clientesLista = resClientes.data || [];
         
-        const selectCliente = document.getElementById('clienteSelect');
-        selectCliente.innerHTML = `<option value="">-- Selecione um cliente cadastrado --</option>`;
+        const datalistCliente = document.getElementById('listaClientesOpts');
+        datalistCliente.innerHTML = '';
         clientesLista.forEach(c => {
             const opt = document.createElement('option');
-            opt.value = c.id;
-            opt.text = `${c.razao_social || c.nome_fantasia} (NN: ${c.nn})`;
-            selectCliente.appendChild(opt);
+            opt.value = `${c.razao || ''} - NN: ${c.nn || ''} (CNPJ: ${c.cnpj || ''})`;
+            datalistCliente.appendChild(opt);
         });
 
         // Carrega Produtos B2B
@@ -83,17 +80,22 @@ function selecionarCanal(canal) {
     atualizarPreview();
 }
 
-function carregarDadosCliente() {
-    const id = document.getElementById('clienteSelect').value;
-    clienteSelecionado = clientesLista.find(c => c.id == id);
-    
+function selecionarClientePorBusca() {
+    const valorDigitado = document.getElementById('buscaClienteInput').value;
+    // Procura o cliente cujo texto combine com o que foi digitado
+    clienteSelecionado = clientesLista.find(c => {
+        const textoCompleto = `${c.razao || ''} - NN: ${c.nn || ''} (CNPJ: ${c.cnpj || ''})`;
+        return textoCompleto === valorDigitado || (c.razao && valorDigitado.includes(c.razao)) || (c.nn && valorDigitado.includes(c.nn));
+    });
+
     const infoCard = document.getElementById('clienteInfoCard');
     if (clienteSelecionado) {
         infoCard.style.display = 'block';
         infoCard.innerHTML = `
-            <strong>Razão Social:</strong> ${clienteSelecionado.razao_social}<br>
-            <strong>CNPJ:</strong> ${clienteSelecionado.cnpj} | <strong>NN:</strong> ${clienteSelecionado.nn}<br>
-            <strong>Endereço:</strong> ${clienteSelecionado.endereco}, ${clienteSelecionado.bairro} - ${clienteSelecionado.cidade} - CEP ${clienteSelecionado.cep}
+            <strong>Razão Social:</strong> ${clienteSelecionado.razao || 'N/A'}<br>
+            <strong>Nome Fantasia:</strong> ${clienteSelecionado.fantasia || 'N/A'}<br>
+            <strong>CNPJ:</strong> ${clienteSelecionado.cnpj || 'N/A'} | <strong>NN:</strong> ${clienteSelecionado.nn || 'N/A'}<br>
+            <strong>Endereço:</strong> ${clienteSelecionado.endereco || 'N/A'}, ${clienteSelecionado.bairro || ''} - ${clienteSelecionado.cidade || ''} - CEP ${clienteSelecionado.cep || ''}
         `;
     } else {
         infoCard.style.display = 'none';
@@ -103,7 +105,7 @@ function carregarDadosCliente() {
 
 function adicionarLinhaItem() {
     const tipo = document.getElementById('tipoItemAdd').value;
-    itensPedido.push({ idUnico: Date.now(), tipo, produtoId: '', quantidade: 1 });
+    itensPedido.push({ idUnico: Date.now(), tipo, termoBusca: '', produtoId: '', quantidade: 1 });
     renderizarItensPedido();
 }
 
@@ -113,10 +115,18 @@ function removerLinhaItem(idUnico) {
     atualizarPreview();
 }
 
-function atualizarItemPedido(idUnico, campo, valor) {
+function atualizarProdutoItem(idUnico, produtoId) {
     const item = itensPedido.find(i => i.idUnico === idUnico);
     if (item) {
-        item[campo] = valor;
+        item.produtoId = produtoId;
+        atualizarPreview();
+    }
+}
+
+function atualizarQuantidadeItem(idUnico, qtd) {
+    const item = itensPedido.find(i => i.idUnico === idUnico);
+    if (item) {
+        item.quantidade = qtd;
         atualizarPreview();
     }
 }
@@ -138,23 +148,57 @@ function renderizarItensPedido() {
         else if (item.tipo === 'original') { listaProdutos = produtosOriginal; labelTipo = 'Original'; }
         else if (item.tipo === 'acessorios') { listaProdutos = acessoriosLista; labelTipo = 'Acessório'; }
 
-        let optionsHTML = `<option value="">-- Selecione o produto (${labelTipo}) --</option>`;
+        // Cria um datalist único para cada linha para permitir busca digitada + barra de rolagem nos produtos
+        const datalistId = `produtos_dl_${item.idUnico}`;
+        let optionsHTML = '';
         listaProdutos.forEach(p => {
-            optionsHTML += `<option value="${p.id}" ${item.produtoId == p.id ? 'selected' : ''}>${p.sku} - ${p.nome || p.descricao}</option>`;
+            const nomeProd = p.nome || p.descricao || '';
+            optionsHTML += `<option value="${p.sku} - ${nomeProd}" data-id="${p.id}"></option>`;
         });
+
+        // Acha o valor selecionado atual para exibir no input
+        let valorInputProd = '';
+        if (item.produtoId) {
+            let prodObj = listaProdutos.find(p => p.id == item.produtoId);
+            if (prodObj) {
+                valorInputProd = `${prodObj.sku} - ${prodObj.nome || prodObj.descricao || ''}`;
+            }
+        }
 
         const div = document.createElement('div');
         div.className = 'item-linha';
         div.innerHTML = `
-            <select onchange="atualizarItemPedido(${item.idUnico}, 'produtoId', this.value)" style="background: #0f172a; border: 1px solid #334155; color: #fff; padding: 8px; border-radius: 6px; width: 100%;">
-                ${optionsHTML}
-            </select>
-            <input type="number" min="1" value="${item.quantidade}" oninput="atualizarItemPedido(${item.idUnico}, 'quantidade', this.value)" style="background: #0f172a; border: 1px solid #334155; color: #fff; padding: 8px; border-radius: 6px; width: 100%;" placeholder="Qtd caixas">
-            <span style="font-size: 12px; color: #94a3b8; text-transform: uppercase;">${labelTipo}</span>
+            <div>
+                <input type="text" list="${datalistId}" value="${valorInputProd}" placeholder="Digite o SKU ou nome do produto..." oninput="tratarSelecaoProduto(${item.idUnico}, this.value, '${item.tipo}')">
+                <datalist id="${datalistId}">
+                    ${optionsHTML}
+                </datalist>
+            </div>
+            <input type="number" min="1" value="${item.quantidade}" oninput="atualizarQuantidadeItem(${item.idUnico}, this.value)" placeholder="Qtd">
+            <span style="font-size: 12px; color: #94a3b8; text-transform: uppercase; text-align: center;">${labelTipo}</span>
             <button class="btn btn-danger" onclick="removerLinhaItem(${item.idUnico})" style="padding: 6px 10px;">🗑️</button>
         `;
         container.appendChild(div);
     });
+}
+
+function tratarSelecaoProduto(idUnico, valorDigitado, tipo) {
+    let listaProdutos = [];
+    if (tipo === 'b2b') listaProdutos = produtosB2B;
+    else if (tipo === 'vertuo') listaProdutos = produtosVertuo;
+    else if (tipo === 'original') listaProdutos = produtosOriginal;
+    else if (tipo === 'acessorios') listaProdutos = acessoriosLista;
+
+    const prodEncontrado = listaProdutos.find(p => {
+        const str = `${p.sku} - ${p.nome || p.descricao || ''}`;
+        return str === valorDigitado || valorDigitado.includes(p.sku);
+    });
+
+    if (prodEncontrado) {
+        atualizarProdutoItem(idUnico, prodEncontrado.id);
+    } else {
+        atualizarProdutoItem(idUnico, '');
+    }
 }
 
 function atualizarPreview() {
@@ -165,7 +209,6 @@ function atualizarPreview() {
         return;
     }
 
-    // Separa os itens por categoria
     let b2bItens = [];
     let vertuoItens = [];
     let originalItens = [];
@@ -189,7 +232,7 @@ function atualizarPreview() {
                 let totalCaps = qtd * capsPorCaixa;
                 totalCapsulasB2B += totalCaps;
                 totalCaixasB2B += qtd;
-                b2bItens.push(`- ${String(qtd).padStart(2, '0')} caixa(s) - ${prod.sku} - ${prod.nome || prod.descricao} (${capsPorCapsTexto(totalCaps, capsPorCaixa)})`);
+                b2bItens.push(`- ${String(qtd).padStart(2, '0')} caixa(s) - ${prod.sku} - ${prod.nome || prod.descricao} (${totalCaps} cápsulas)`);
             }
         } else if (i.tipo === 'vertuo') {
             prod = produtosVertuo.find(p => p.id == i.produtoId);
@@ -213,7 +256,6 @@ function atualizarPreview() {
             prod = acessoriosLista.find(p => p.id == i.produtoId);
             if (prod) {
                 let qtdEmb = parseInt(prod.qtd_embalagem) || 1;
-                let totalPecas = qtd * qtdEmb;
                 totalAcessoriosEmbalagens += qtd;
                 acessoriosItens.push(`- ${String(qtd).padStart(2, '0')} ${prod.tipo_embalagem || 'caixa(s)'} - ${prod.sku} - ${prod.nome} (${qtdEmb * qtd} unidades)`);
             }
@@ -222,10 +264,10 @@ function atualizarPreview() {
 
     if (canalAtual === 'whatsapp') {
         let texto = `Gostaria de solicitar a inserção do pedido abaixo, por favor:\n\n`;
-        texto += `📌 Cliente: ${clienteSelecionado.razao_social}\n`;
+        texto += `📌 Cliente: ${clienteSelecionado.razao || clienteSelecionado.fantasia}\n`;
         texto += `📌 NN: ${clienteSelecionado.nn}\n`;
         texto += `📌 CNPJ: ${clienteSelecionado.cnpj}\n`;
-        texto += `📍 Endereço de entrega: ${clienteSelecionado.endereco}, ${clienteSelecionado.bairro} - ${clienteSelecionado.cidade} - CEP ${clienteSelecionado.cep}.\n`;
+        texto += `📍 Endereço de entrega: ${clienteSelecionado.endereco || ''}, ${clienteSelecionado.bairro || ''} - ${clienteSelecionado.cidade || ''} - CEP ${clienteSelecionado.cep || ''}.\n`;
 
         if (b2bItens.length > 0) {
             texto += `\n☕ LINHA B2B (Nespresso Professional):\n` + b2bItens.join('\n');
@@ -268,10 +310,10 @@ function atualizarPreview() {
         }
 
         texto += `Dados do Cliente:\n`;
-        texto += `- Razão Social: ${clienteSelecionado.razao_social}\n`;
-        texto += `- CNPJ: ${clienteSelecionado.cnpj}\n`;
-        texto += `- NN: ${clienteSelecionado.nn}\n`;
-        texto += `- Endereço: ${clienteSelecionado.endereco}, ${clienteSelecionado.bairro} - ${clienteSelecionado.cidade} - CEP ${clienteSelecionado.cep}\n\n`;
+        texto += `- Razão Social: ${clienteSelecionado.razao || ''}\n`;
+        texto += `- CNPJ: ${clienteSelecionado.cnpj || ''}\n`;
+        texto += `- NN: ${clienteSelecionado.nn || ''}\n`;
+        texto += `- Endereço: ${clienteSelecionado.endereco || ''}, ${clienteSelecionado.bairro || ''} - ${clienteSelecionado.cidade || ''} - CEP ${clienteSelecionado.cep || ''}\n\n`;
 
         texto += `Detalhes do Pedido:\n`;
         texto += `- Condição de Pagamento: Boleto faturado para 30 dias.\n\n`;
@@ -293,10 +335,6 @@ function atualizarPreview() {
         texto += `\n\nDesde já, agradeço pela atenção e colaboração.`;
         preview.innerText = texto;
     }
-}
-
-function caps_por_caps_texto(total, porCaixa) {
-    return `${total} cápsulas`;
 }
 
 function copiarMensagem() {
