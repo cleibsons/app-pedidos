@@ -67,6 +67,14 @@
             padding: 10px;
             border-radius: 6px;
         }
+        input[type="text"], input[type="number"], select {
+            background: #0f172a;
+            border: 1px solid #334155;
+            color: #fff;
+            padding: 10px;
+            border-radius: 6px;
+            width: 100%;
+        }
     </style>
 </head>
 <body>
@@ -106,26 +114,25 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label>Tipo de Faturamento / Logística:</label>
-                        <select id="tipoLogisticaInput" onchange="atualizarPreview()" style="background: #1e293b; border: 1px solid #334155; color: #fff; padding: 10px; border-radius: 6px; width: 100%;">
+                        <select id="tipoLogisticaInput" onchange="atualizarPreview()">
                             <option value="broker">VIA BROKER (Padrão)</option>
                             <option value="estoque3a">VIA ESTOQUE 3A (Sem estoque no Broker / Transp. Total Express)</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>Ordem de Compra (OC) ou Autorização:</label>
-                        <input type="text" id="ordemCompraInput" placeholder="Ex: 1350030044 ou Autorizado pelo comprador João" oninput="atualizarPreview()" style="background: #1e293b; border: 1px solid #334155; color: #fff; padding: 10px; border-radius: 6px; width: 100%;">
+                        <input type="text" id="ordemCompraInput" placeholder="Ex: 1350030044 ou Autorizado pelo comprador João" oninput="atualizarPreview()">
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- SELEÇÃO DE CLIENTE -->
+        <!-- SELEÇÃO DE CLIENTE COM BUSCA LIVRE -->
         <div class="card" style="background: #0f172a; border: 1px solid #1e293b; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
-            <h2 style="font-size: 16px; margin-bottom: 14px; color: #f8fafc;">2. Selecione o Cliente:</h2>
+            <h2 style="font-size: 16px; margin-bottom: 14px; color: #f8fafc;">2. Selecione o Cliente (Digite para buscar):</h2>
             <div class="form-group">
-                <select id="clienteSelect" onchange="carregarDadosCliente()" style="background: #1e293b; border: 1px solid #334155; color: #fff; padding: 10px; border-radius: 6px; width: 100%;">
-                    <option value="">Carregando clientes...</option>
-                </select>
+                <input type="text" id="buscaClienteInput" list="listaClientesOpts" placeholder="Digite o nome, razão social ou NN do cliente..." oninput="selecionarClientePorBusca()">
+                <datalist id="listaClientesOpts"></datalist>
             </div>
             <div id="clienteInfoCard" style="margin-top: 12px; font-size: 13px; color: #94a3b8; background: #1e293b; padding: 12px; border-radius: 6px; display: none;"></div>
         </div>
@@ -135,7 +142,7 @@
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
                 <h2 style="font-size: 16px; color: #f8fafc;">3. Adicionar Itens ao Pedido:</h2>
                 <div>
-                    <select id="tipoItemAdd" style="background: #1e293b; border: 1px solid #334155; color: #fff; padding: 8px; border-radius: 6px;">
+                    <select id="tipoItemAdd" style="padding: 8px; width: auto; display: inline-block;">
                         <option value="b2b">Cápsulas B2B</option>
                         <option value="vertuo">Cápsulas Vertuo</option>
                         <option value="original">Cápsulas Original</option>
