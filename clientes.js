@@ -71,21 +71,22 @@ function renderizarTabela() {
         const razaoExibir = c.razao || '-';
         const fantasiaExibir = (c.fantasia && c.fantasia !== 'EMPTY') ? c.fantasia : '';
         
+        // Estilo de badge azul idêntico à imagem de referência
         const badgeNome = fantasiaExibir 
-            ? `<span class="badge-vertuo" style="background: #2563eb; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 11px;">${fantasiaExibir}</span>` 
+            ? `<span style="background: #1e3a8a; color: #93c5fd; padding: 3px 10px; border-radius: 6px; font-size: 12px; font-weight: 500; border: 1px solid #3b82f6;">${fantasiaExibir}</span>` 
             : '-';
 
-        // Monta o endereço completo unindo rua, bairro, cidade e cep
+        // Monta o endereço completo unindo rua, bairro, cidade e cep de forma fluida
         let enderecoCompleto = c.endereco || '';
         if (c.bairro && c.bairro !== 'EMPTY') enderecoCompleto += `, ${c.bairro}`;
-        if (c.cidade) enderecoCompleto += ` - ${c.cidade}`;
+        if (c.cidade) enderecoCompleto += `, ${c.cidade}`;
         if (c.cep) enderecoCompleto += ` - CEP ${c.cep}`;
         if (!enderecoCompleto) enderecoCompleto = '-';
 
         tr.innerHTML = `
             <td><strong style="color: #60a5fa;">${c.nn || ''}</strong></td>
             <td>${badgeNome}</td>
-            <td style="font-weight: bold; color: #f8fafc;">${razaoExibir}</td>
+            <td style="font-weight: 600; color: #f8fafc;">${razaoExibir}</td>
             <td style="color: #94a3b8;">${c.cnpj || ''}</td>
             <td style="font-size: 13px; color: #cbd5e1;">${enderecoCompleto}</td>
             <td style="text-align: center; white-space: nowrap;">
@@ -112,7 +113,7 @@ function visualizarCliente(id) {
     
     let enderecoExibir = c.endereco || '';
     if (c.bairro && c.bairro !== 'EMPTY') enderecoExibir += `, ${c.bairro}`;
-    if (c.cidade) enderecoExibir += ` - ${c.cidade}`;
+    if (c.cidade) enderecoExibir += `, ${c.cidade}`;
     if (c.cep) enderecoExibir += ` - CEP ${c.cep}`;
     if (!enderecoExibir) enderecoExibir = '-';
 
