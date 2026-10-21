@@ -1,11 +1,14 @@
-// Configuração da Conexão com o Supabase
+// Conexão com o Supabase
 const SUPABASE_URL = 'https://awllwrltulzmjdcchlxs.supabase.co';
 const SUPABASE_KEY = 'sb_publishable__Cj-tdVffbiigN0-YczRkw_eVLEUIMZ';
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let supabaseClient;
+if (typeof supabase !== 'undefined') {
+    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+}
 
 let produtos = [];
 let filtroSistemaAtual = 'Todos';
-let imagemBase64Temp = '';
 
 document.addEventListener("DOMContentLoaded", () => {
     carregarProdutosNuvem();
@@ -15,6 +18,11 @@ document.addEventListener("DOMContentLoaded", () => {
 async function carregarProdutosNuvem() {
     const tbody = document.getElementById('produtosTableBody');
     tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: #64748b; padding: 24px;">🔄 Carregando catálogo B2C da nuvem...</td></tr>`;
+
+    if (!supabaseClient) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: #ef4444; padding: 24px;">❌ Erro ao conectar com o Supabase. Verifique a chave de API.</td></tr>`;
+        return;
+    }
 
     try {
         const { data, error } = await supabaseClient
@@ -67,9 +75,9 @@ function renderizarTabela() {
             <td>${p.capsulas_caixa || 10} cápsulas</td>
             <td style="color: #34d399; font-weight: 600;">${precoFormatado}</td>
             <td style="text-align: center; white-space: nowrap;">
-                <button class="btn btn-view" title="Ver Detalhes" onclick="visualizarProduto(${p.id})">👁️</button>
-                <button class="btn btn-edit" title="Editar" onclick="editarProduto(${p.id})">✏️</button>
-                <button class="btn btn-danger" title="Excluir" onclick="excluirProduto(${p.id})">🗑️</button>
+                <button class="btn btn-view" style="padding: 4px 8px; font-size: 12px;" title="Ver Detalhes" onclick="visualizarProduto(${p.id})">👁️</button>
+                <button class="btn btn-edit" style="padding: 4px 8px; font-size: 12px;" title="Editar" onclick="editarProduto(${p.id})">✏️</button>
+                <button class="btn btn-danger" style="padding: 4px 8px; font-size: 12px;" title="Excluir" onclick="excluirProduto(${p.id})">🗑️</button>
             </td>
         `;
         tbody.appendChild(tr);
@@ -136,51 +144,10 @@ function fecharModalDetalhes() {
     document.getElementById('detalhesModal').style.display = 'none';
 }
 
-/* CONVERTER IMAGEM DO COMPUTADOR */
-function converterImagem(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const img = new Image();
-        img.src = e.target.result;
-        img.onload = function() {
-            const canvas = document.createElement('canvas');
-            const MAX_WIDTH = 200;
-            const MAX_HEIGHT = 200;
-            let width = img.width;
-            let height = img.height;
-
-            if (width > height) {
-                if (width > MAX_WIDTH) {
-                    height *= MAX_WIDTH / width;
-                    width = MAX_WIDTH;
-                }
-            } else {
-                if (height > MAX_HEIGHT) {
-                    width *= MAX_HEIGHT / height;
-                    height = MAX_HEIGHT;
-                }
-            }
-
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
-
-            imagemBase64Temp = canvas.toDataURL('image/png', 0.8);
-            document.getElementById('fotoInput').value = "[Imagem otimizada carregada]";
-        };
-    };
-    reader.readAsDataURL(file);
-}
-
 /* CADASTRAR / EDITAR PRODUTO B2C */
 function abrirModal(produto = null) {
     document.getElementById('produtoForm').reset();
     document.getElementById('produtoId').value = '';
-    imagemBase64Temp = '';
     document.getElementById('produtoModal').style.display = 'flex';
 
     if (produto) {
@@ -194,7 +161,6 @@ function abrirModal(produto = null) {
         document.getElementById('precoInput').value = produto.preco ? produto.preco.toString().replace('.', ',') : '';
         document.getElementById('fotoInput').value = produto.foto || '';
         document.getElementById('observacoesInput').value = produto.observacoes || '';
-        imagemBase64Temp = produto.foto || '';
     } else {
         document.getElementById('modalTitle').innerText = 'Cadastrar Nova Cápsula B2C';
     }
@@ -203,7 +169,6 @@ function abrirModal(produto = null) {
 function fecharModal() {
     document.getElementById('produtoModal').style.display = 'none';
     document.getElementById('produtoForm').reset();
-    imagemBase64Temp = '';
 }
 
 async function salvarProduto(e) {
@@ -221,7 +186,7 @@ async function salvarProduto(e) {
         intensidade: intVal ? parseInt(intVal) : null,
         capsulas_caixa: parseInt(document.getElementById('caixaQtdInput').value) || 10,
         preco: parseFloat(precoStr) || 0,
-        foto: fotoUrlInput.startsWith('[Imagem') ? imagemBase64Temp : fotoUrlInput,
+        foto: fotoUrlInput,
         observacoes: document.getElementById('observacoesInput').value.trim()
     };
 
