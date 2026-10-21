@@ -14,25 +14,7 @@ let clienteSelecionado = null;
 let produtosB2B = [];
 let produtosVertuo = [];
 let produtosOriginal = [];
-
-// Acessórios pré-carregados para garantir funcionamento imediato
-let acessoriosLista = [
-    { id: 1, sku: '3541', nome: 'Pires LUME Cappuccino 12 Unidades', tipo_embalagem: 'Caixa / Kit', qtd_embalagem: 12 },
-    { id: 2, sku: '3545', nome: 'Pires LUME Espresso 12 Unidades', tipo_embalagem: 'Caixa / Kit', qtd_embalagem: 12 },
-    { id: 3, sku: '3532', nome: 'Xícaras LUME Cappuccino (180 Ml) 12 Unidades', tipo_embalagem: 'Caixa / Kit', qtd_embalagem: 12 },
-    { id: 4, sku: '3533', nome: 'Xícaras LUME Espresso (80 Ml) 12 Unidades', tipo_embalagem: 'Caixa / Kit', qtd_embalagem: 12 },
-    { id: 5, sku: '3791', nome: 'Canecas Lume', tipo_embalagem: 'Caixa / Kit', qtd_embalagem: 2 },
-    { id: 6, sku: '3790', nome: 'Xícaras Lume Espresso', tipo_embalagem: 'Caixa / Kit', qtd_embalagem: 2 },
-    { id: 7, sku: '3793', nome: 'Xícaras Lume Lungo', tipo_embalagem: 'Caixa / Kit', qtd_embalagem: 2 },
-    { id: 8, sku: '3519/BULK', nome: 'Açúcar (300 unidades)', tipo_embalagem: 'Caixa Bulk', qtd_embalagem: 300 },
-    { id: 9, sku: '3516/BULK', nome: 'Açúcar Branco B2C (bulk - 500 sticks)', tipo_embalagem: 'Caixa Bulk', qtd_embalagem: 500 },
-    { id: 10, sku: '3517', nome: 'Sachê de Açúcar Mascavo (60 Sachês)', tipo_embalagem: 'Caixa / Pacote', qtd_embalagem: 60 },
-    { id: 11, sku: '3562', nome: 'Mexedores de Bambu - Pequeno (100 Unidades)', tipo_embalagem: 'Pacote', qtd_embalagem: 100 },
-    { id: 12, sku: '3561', nome: 'Mexedores de Bambu - Médio (100 Unidades)', tipo_embalagem: 'Pacote', qtd_embalagem: 100 },
-    { id: 13, sku: '132077', nome: 'Caneca Térmica Terracotta Pequena', tipo_embalagem: 'Unidade', qtd_embalagem: 1 },
-    { id: 14, sku: '136877', nome: 'Caneca Térmica Laranja Média', tipo_embalagem: 'Unidade', qtd_embalagem: 1 },
-    { id: 15, sku: '136876', nome: 'Caneca Térmica Aquarelle Grande', tipo_embalagem: 'Unidade', qtd_embalagem: 1 }
-];
+let acessoriosLista = [];
 
 let itensPedido = [];
 
@@ -73,11 +55,10 @@ async function carregarDadosNuvem() {
         produtosVertuo = todosB2C.filter(p => p.sistema && p.sistema.toLowerCase() === 'vertuo');
         produtosOriginal = todosB2C.filter(p => p.sistema && p.sistema.toLowerCase() === 'original');
 
-        // Tenta carregar do Supabase também caso a permissão esteja aberta
+        // 4. Carrega Acessórios 100% da Nuvem
         const resAcessorios = await supabaseClient.from('acessorios').select('*');
-        if (resAcessorios.data && resAcessorios.data.length > 0) {
-            acessoriosLista = resAcessorios.data;
-        }
+        acessoriosLista = resAcessorios.data || [];
+        console.log("Acessórios carregados da nuvem:", acessoriosLista);
 
     } catch (err) {
         console.error('Erro ao carregar dados do Supabase:', err);
@@ -358,7 +339,7 @@ function atualizarPreview() {
 }
 
 function copiarMensagem() {
-    const texto = document.getElementById('previewMensagem').innerText;
+    const texto = document.getElementById('previewMensagem'].innerText;
     navigator.clipboard.writeText(texto).then(() => {
         alert('Texto copiado para a área de transferência!');
     });
