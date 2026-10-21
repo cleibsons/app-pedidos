@@ -24,7 +24,6 @@ async function carregarClientesNuvem() {
     }
 
     try {
-        // Busca todos os registros mantendo o suporte flexível para razao_social ou nome_do_cliente
         const { data, error } = await supabaseClient
             .from('clientes')
             .select('*');
@@ -51,14 +50,14 @@ function renderizarTabela() {
 
     const filtrados = clientes.filter(c => {
         const nn = c.nn ? c.nn.toString().toLowerCase() : '';
-        const nomeFantasia = (c.nome_fantasia || c.nomefantasia || '').toLowerCase();
-        const razaoSocial = (c.razao_social || c.nome_do_cliente || c.razaosocial || '').toLowerCase();
+        const nomeFantasia = (c.nome_fantasia || '').toLowerCase();
+        const nomeCliente = (c.nome_do_cliente || c.razao_social || '').toLowerCase();
         const cnpj = c.cnpj ? c.cnpj.toLowerCase() : '';
         const contato = (c.contato || '').toLowerCase();
 
         return nn.includes(termo) || 
                nomeFantasia.includes(termo) || 
-               razaoSocial.includes(termo) || 
+               nomeCliente.includes(termo) || 
                cnpj.includes(termo) || 
                contato.includes(termo);
     });
@@ -71,24 +70,24 @@ function renderizarTabela() {
     filtrados.forEach(c => {
         const tr = document.createElement('tr');
         
-        const razaoSocialExibir = c.razao_social || c.nome_do_cliente || c.razaosocial || '-';
-        const nomeFantasiaExibir = c.nome_fantasia || c.nomefantasia || '';
+        // Mapeamento correto para o nome do cliente e nome fantasia
+        const nomeClienteExibir = c.nome_do_cliente || c.razao_social || '-';
+        const nomeFantasiaExibir = c.nome_fantasia || '';
         
         const badgeNome = nomeFantasiaExibir 
             ? `<span class="badge-vertuo" style="background: #2563eb; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 11px;">${nomeFantasiaExibir}</span>` 
             : '-';
 
-        // Suporte para o endereço unificado ou montado a partir dos campos
-        let enderecoExibir = c.endereco || c.endereco_completo || '';
-        if (!enderecoExibir && (c.bairro || c.cidade)) {
-            enderecoExibir = `${c.bairro ? c.bairro + ', ' : ''}${c.cidade || ''} ${c.cep ? '- CEP ' + c.cep : ''}`;
-        }
+        let enderecoExibir = c.endereco || '';
+        if (c.bairro) enderecoExibir += `, ${c.bairro}`;
+        if (c.cidade) enderecoExibir += ` - ${c.cidade}`;
+        if (c.cep) enderecoExibir += ` - CEP ${c.cep}`;
         if (!enderecoExibir) enderecoExibir = '-';
 
         tr.innerHTML = `
             <td><strong style="color: #60a5fa;">${c.nn || ''}</strong></td>
             <td>${badgeNome}</td>
-            <td style="font-weight: bold; color: #f8fafc;">${razaoSocialExibir}</td>
+            <td style="font-weight: bold; color: #f8fafc;">${nomeClienteExibir}</td>
             <td style="color: #94a3b8;">${c.cnpj || ''}</td>
             <td style="font-size: 13px; color: #cbd5e1;">${enderecoExibir}</td>
             <td style="text-align: center; white-space: nowrap;">
@@ -110,9 +109,12 @@ function visualizarCliente(id) {
     const c = clientes.find(item => item.id === id);
     if (!c) return;
 
-    const razaoSocialExibir = c.razao_social || c.nome_do_cliente || c.razaosocial || '-';
-    const nomeFantasiaExibir = c.nome_fantasia || c.nomefantasia || '-';
-    let enderecoExibir = c.endereco || c.endereco_completo || '-';
+    const nomeClienteExibir = c.nome_do_cliente || c.razao_social || '-';
+    const nomeFantasiaExibir = c.nome_fantasia || '-';
+    let enderecoExibir = c.endereco || '-';
+    if (c.bairro) enderecoExibir += `, ${c.bairro}`;
+    if (c.cidade) enderecoExibir += ` - ${c.cidade}`;
+    if (c.cep) enderecoExibir += ` - CEP ${c.cep}`;
 
     const detalhesHTML = `
         <div class="detail-item">
@@ -128,8 +130,8 @@ function visualizarCliente(id) {
             <div class="detail-value">${nomeFantasiaExibir}</div>
         </div>
         <div class="detail-item">
-            <div class="detail-label">RAZÃO SOCIAL</div>
-            <div class="detail-value highlight">${razaoSocialExibir}</div>
+            <div class="detail-label">NOME DO CLIENTE</div>
+            <div class="detail-value highlight">${nomeClienteExibir}</div>
         </div>
         <div class="detail-item">
             <div class="detail-label">CONTATO / RESPONSÁVEL</div>
@@ -164,11 +166,11 @@ function abrirModal(cliente = null) {
         document.getElementById('clienteId').value = cliente.id;
         document.getElementById('nnInput').value = cliente.nn || '';
         document.getElementById('cnpjInput').value = cliente.cnpj || '';
-        document.getElementById('nomeFantasiaInput').value = cliente.nome_fantasia || cliente.nomefantasia || '';
-        document.getElementById('razaoSocialInput').value = cliente.razao_social || cliente.nome_do_cliente || '';
+        document.getElementById('nomeFantasiaInput').value = cliente.nome_fantasia || '';
+        document.getElementById('razaoSocialInput').value = cliente.nome_do_cliente || cliente.razao_social || '';
         document.getElementById('contatoInput').value = cliente.contato || '';
         document.getElementById('telefoneInput').value = cliente.telefone || '';
-        document.getElementById('enderecoInput').value = cliente.endereco || cliente.endereco_completo || '';
+        document.getElementById('enderecoInput').value = cliente.endereco || '';
     } else {
         document.getElementById('modalTitle').innerText = 'Cadastrar Novo Cliente';
     }
@@ -188,8 +190,8 @@ async function salvarCliente(e) {
         nn: document.getElementById('nnInput').value.trim(),
         cnpj: document.getElementById('cnpjInput').value.trim(),
         nome_fantasia: document.getElementById('nomeFantasiaInput').value.trim(),
-        razao_social: document.getElementById('razaoSocialInput').value.trim(),
-        contato: document.getElementById('contatoInput').value.trim(),
+        nome_do_cliente: document.getElementById('razaoSocialInput').value.trim(),
+        contato: document.getElementById('contatoInput'.trim()).value.trim(),
         telefone: document.getElementById('telefoneInput').value.trim(),
         endereco: document.getElementById('enderecoInput').value.trim()
     };
