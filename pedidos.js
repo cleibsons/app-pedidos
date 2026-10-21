@@ -55,10 +55,9 @@ async function carregarDadosNuvem() {
         produtosVertuo = todosB2C.filter(p => p.sistema && p.sistema.toLowerCase() === 'vertuo');
         produtosOriginal = todosB2C.filter(p => p.sistema && p.sistema.toLowerCase() === 'original');
 
-        // 4. Carrega Acessórios 100% da Nuvem
+        // 4. Carrega Acessórios da Nuvem
         const resAcessorios = await supabaseClient.from('acessorios').select('*');
         acessoriosLista = resAcessorios.data || [];
-        console.log("Acessórios carregados da nuvem:", acessoriosLista);
 
     } catch (err) {
         console.error('Erro ao carregar dados do Supabase:', err);
@@ -339,7 +338,7 @@ function atualizarPreview() {
 }
 
 function copiarMensagem() {
-    const texto = document.getElementById('previewMensagem'].innerText;
+    const texto = document.getElementById('previewMensagem').innerText;
     navigator.clipboard.writeText(texto).then(() => {
         alert('Texto copiado para a área de transferência!');
     });
