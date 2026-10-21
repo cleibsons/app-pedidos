@@ -58,6 +58,7 @@ async function carregarDadosNuvem() {
         // 4. Carrega Acessórios
         const resAcessorios = await supabaseClient.from('acessorios').select('*');
         acessoriosLista = resAcessorios.data || [];
+        console.log("Acessórios carregados com sucesso:", acessoriosLista);
 
     } catch (err) {
         console.error('Erro ao carregar dados do Supabase:', err);
@@ -149,7 +150,8 @@ function renderizarItensPedido() {
         const datalistId = `produtos_dl_${item.idUnico}`;
         let optionsHTML = '';
         listaProdutos.forEach(p => {
-            const nomeProd = p.nome || p.descricao || '';
+            // Pega qualquer campo de texto disponível para garantir exibição
+            const nomeProd = p.nome || p.descricao || p.tipo_embalagem || '';
             optionsHTML += `<option value="${p.sku} - ${nomeProd}" data-id="${p.id}"></option>`;
         });
 
@@ -157,7 +159,8 @@ function renderizarItensPedido() {
         if (item.produtoId) {
             let prodObj = listaProdutos.find(p => p.id == item.produtoId);
             if (prodObj) {
-                valorInputProd = `${prodObj.sku} - ${prodObj.nome || prodObj.descricao || ''}`;
+                const nomeProd = prodObj.nome || prodObj.descricao || prodObj.tipo_embalagem || '';
+                valorInputProd = `${prodObj.sku} - ${nomeProd}`;
             }
         }
 
@@ -186,7 +189,8 @@ function tratarSelecaoProduto(idUnico, valorDigitado, tipo) {
     else if (tipo === 'acessorios') listaProdutos = acessoriosLista;
 
     const prodEncontrado = listaProdutos.find(p => {
-        const str = `${p.sku} - ${p.nome || p.descricao || ''}`;
+        const nomeProd = p.nome || p.descricao || p.tipo_embalagem || '';
+        const str = `${p.sku} - ${nomeProd}`;
         return str === valorDigitado || valorDigitado.includes(p.sku);
     });
 
@@ -255,7 +259,6 @@ function atualizarPreview() {
                 totalAcessoriosEmbalagens += qtd;
                 let nomeAcessorio = prod.nome || prod.descricao || 'Item';
                 let tipoEmb = prod.tipo_embalagem || 'caixa(s)';
-                // Formato idêntico ao que aprovamos: - 02 caixas - 3519/BULK - Açúcar (300 unidades cada / Total: 600 un.)
                 acessoriosItens.push(`- ${String(qtd).padStart(2, '0')} ${tipoEmb} - ${prod.sku} - ${nomeAcessorio} (${qtdEmb * qtd} unidades)`);
             }
         }
@@ -328,7 +331,7 @@ function atualizarPreview() {
             texto += `\nLINHA B2C - ORIGINAL:\n` + originalItens.join('\n');
         }
         if (acessoriosItens.length > 0) {
-            texto += `\nACESSÓRIOS:\n` + acessoriosItens.join('\n');
+            texto += `\nACESSÓRIOS:\n` + acessoriosItens.json?.() ? acessoriosItens.join('\n') : acessoriosItens.join('\n');
         }
 
         texto += `\n\nDesde já, agradeço pela atenção e colaboração.`;
