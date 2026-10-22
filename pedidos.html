@@ -77,7 +77,7 @@
         }
     </style>
     <link rel="stylesheet" href="theme-dark.css?v=8">
-    <link rel="stylesheet" href="pedidos.css?v=9">
+    <link rel="stylesheet" href="pedidos.css?v=10">
 </head>
 <body class="app-page">
 
@@ -128,8 +128,8 @@
         <div class="card" style="background: var(--field); border: 1px solid var(--surface); border-radius: 12px; padding: 24px; margin-bottom: 24px;">
             <h2 style="font-size: 16px; margin-bottom: 14px; color: var(--ink);">2. Selecione o Cliente (Digite para buscar):</h2>
             <div class="form-group">
-                <input type="text" id="buscaClienteInput" list="listaClientesOpts" placeholder="Digite o nome, razão social ou NN do cliente..." oninput="selecionarClientePorBusca()">
-                <datalist id="listaClientesOpts"></datalist>
+                <input type="text" id="buscaClienteInput" placeholder="Busque por nome fantasia, razão social, NN ou CNPJ..." oninput="selecionarClientePorBusca()">
+
             </div>
             <div id="clienteInfoCard" style="margin-top: 12px; font-size: 13px; color: var(--muted); background: var(--surface); padding: 12px; border-radius: 6px; display: none;"></div>
         </div>
@@ -172,7 +172,7 @@
     </div>
 
     <!-- Script JS -->
-    <script src="pedidos.js?v=9"></script>
+    <script src="pedidos.js?v=10"></script>
     <script src="ui.js?v=4"></script>
 </body>
 </html>
