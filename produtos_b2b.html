@@ -8,6 +8,7 @@
     <!-- Biblioteca Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="theme-dark.css?v=8">
+    <link rel="stylesheet" href="produtos-pro.css?v=15">
 </head>
 <body class="app-page">
 
@@ -15,36 +16,21 @@
         <!-- CABEÇALHO E NAVEGAÇÃO -->
         <header class="header">
             <div>
-                <h1>Cápsulas B2B</h1>
-                <p>Catálogo e consulta de preços para linha profissional</p>
+                <span class="pro-eyebrow">Nespresso Professional</span>
+                <h1>Cápsulas profissionais</h1>
+                <p>Encontre o café para cada momento do seu negócio.</p>
             </div>
             
         </header>
 
         <!-- BARRA DE AÇÕES -->
         <div class="actions-bar">
-            <input type="text" id="searchInput" placeholder="🔍 Pesquisar por Nome do Blend ou SKU..." onkeyup="filtrarProdutos()">
-            <button class="btn btn-primary" onclick="abrirModal()">+ Novo Produto B2B</button>
+            <input type="text" id="searchInput" placeholder="Pesquisar café pelo nome ou SKU..." oninput="filtrarProdutos()" aria-label="Pesquisar cápsulas por nome ou SKU">
+            <button class="btn btn-primary" onclick="abrirModal()">+ Nova cápsula</button>
         </div>
 
-        <!-- TABELA DE PRODUTOS B2B -->
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 80px; text-align: center;">Foto</th>
-                        <th>SKU</th>
-                        <th>Nome do Produto</th>
-                        <th>Cápsulas / Caixa</th>
-                        <th>Preço Unitário / Caixa</th>
-                        <th style="text-align: center;">Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="produtosTableBody">
-                    <tr><td colspan="6" style="text-align:center; color: var(--muted); padding: 24px;">Carregando catálogo B2B da nuvem...</td></tr>
-                </tbody>
-            </table>
-        </div>
+        <div class="pro-catalog-heading"><h2>Explore nossos cafés</h2><span id="produtosContagem" role="status"></span></div>
+        <div class="pro-grid" id="produtosGrid" aria-label="Catálogo de cápsulas profissionais"><p class="pro-status">Carregando catálogo profissional...</p></div>
     </div>
 
     <!-- MODAL DE VISUALIZAR / DETALHES -->
@@ -91,18 +77,18 @@
                     </div>
                     <div class="form-group">
                         <label>Cápsulas por caixa:</label>
-                        <input type="number" id="caixaQtdInput" required value="50">
+                        <input type="number" id="caixaQtdInput" required min="1" step="1" value="50" oninput="calcularPrecoCaixa()">
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Preço da Caixa (R$):</label>
-                        <input type="text" id="precoCaixaInput" required placeholder="Ex: 215,00" oninput="calcularPrecoUnid()">
+                        <label>Preço por cápsula (R$):</label>
+                        <input type="text" id="precoInput" required placeholder="Ex: 3,25" oninput="calcularPrecoCaixa()">
                     </div>
                     <div class="form-group">
-                        <label>Preço por Cápsula (R$):</label>
-                        <input type="text" id="precoUnidInput" readonly style="background: var(--surface); color: var(--success);" placeholder="Calculado automaticamente">
+                        <label>Valor da caixa (R$):</label>
+                        <input type="text" id="precoCaixaCalculado" readonly style="background: var(--surface); color: var(--success);" placeholder="Calculado automaticamente">
                     </div>
                 </div>
 
@@ -125,7 +111,7 @@
     </div>
 
     <!-- Script JS -->
-    <script src="produtos_b2b.js?v=8"></script>
+    <script src="produtos_b2b.js?v=15"></script>
     <script src="ui.js?v=4"></script>
 </body>
 </html>
