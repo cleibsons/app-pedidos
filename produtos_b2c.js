@@ -83,7 +83,7 @@ function renderizarTabela() {
 
     filtrados.forEach(p => {
         const tr = document.createElement('tr');
-        const imgTag = p.foto ? `<img src="${p.foto}" style="width: 36px; height: 36px; object-fit: contain; border-radius: 4px; background: #f7f5f2; padding: 2px;">` : `<span style="font-size: 20px;">☕</span>`;
+        const imgTag = criarImagemProdutoB2C(p);
         const precoFormatado = Number(p.preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         const badgeSistema = p.sistema === 'Vertuo' ? `<span class="badge-vertuo">Vertuo</span>` : `<span class="badge-original">Original</span>`;
 
@@ -125,7 +125,7 @@ function visualizarProduto(id) {
     if (!p) return;
 
     const precoFormatado = Number(p.preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-    const imgHtml = p.foto ? `<img src="${p.foto}" style="max-height: 100px; object-fit: contain; margin-bottom: 8px;">` : `<span style="font-size: 32px;">☕</span>`;
+    const imgHtml = criarImagemProdutoB2C(p, true);
     const badgeSistema = p.sistema === 'Vertuo' ? `<span class="badge-vertuo">Vertuo</span>` : `<span class="badge-original">Original</span>`;
 
     const detalhesHTML = `
