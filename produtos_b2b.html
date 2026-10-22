@@ -4,26 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cápsulas B2B - Nespresso Professional</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=2">
     <!-- Biblioteca Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body>
+<body class="app-page">
 
     <div class="container">
         <!-- CABEÇALHO E NAVEGAÇÃO -->
         <header class="header">
             <div>
-                <h1>☕ Cápsulas B2B (Nespresso Professional)</h1>
+                <h1>Cápsulas B2B</h1>
                 <p>Catálogo e consulta de preços para linha profissional</p>
             </div>
-            <div class="nav-menu">
-                <a href="index.html" class="btn btn-secondary">👥 Clientes</a>
-                <a href="produtos_b2b.html" class="btn btn-primary">☕ Cápsulas B2B</a>
-                <a href="produtos_b2c.html" class="btn btn-secondary">🏠 Cápsulas B2C</a>
-                <a href="acessorios.html" class="btn btn-secondary">🥄 Acessórios</a>
-                <a href="pedidos.html" class="btn btn-secondary">📦 Pedidos</a>
-            </div>
+            
         </header>
 
         <!-- BARRA DE AÇÕES -->
@@ -46,7 +40,7 @@
                     </tr>
                 </thead>
                 <tbody id="produtosTableBody">
-                    <tr><td colspan="6" style="text-align:center; color: #64748b; padding: 24px;">Carregando catálogo B2B da nuvem...</td></tr>
+                    <tr><td colspan="6" style="text-align:center; color: #78717a; padding: 24px;">Carregando catálogo B2B da nuvem...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -107,7 +101,7 @@
                     </div>
                     <div class="form-group">
                         <label>Preço por Cápsula (R$):</label>
-                        <input type="text" id="precoUnidInput" readonly style="background: #1e293b; color: #34d399;" placeholder="Calculado automaticamente">
+                        <input type="text" id="precoUnidInput" readonly style="background: #ffffff; color: #23745d;" placeholder="Calculado automaticamente">
                     </div>
                 </div>
 
@@ -118,7 +112,7 @@
 
                 <div class="form-group">
                     <label>Observação:</label>
-                    <textarea id="observacoesInput" rows="4" placeholder="Perfil aromático, notas de cata..." style="background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 10px; color: #f8fafc; font-size: 14px; width: 100%; resize: vertical;"></textarea>
+                    <textarea id="observacoesInput" rows="4" placeholder="Perfil aromático, notas de cata..." style="background: #f7f5f2; border: 1px solid #e6e1dc; border-radius: 6px; padding: 10px; color: #242326; font-size: 14px; width: 100%; resize: vertical;"></textarea>
                 </div>
 
                 <div class="modal-buttons">
@@ -130,6 +124,7 @@
     </div>
 
     <!-- Script JS -->
-    <script src="produtos_b2b.js"></script>
+    <script src="produtos_b2b.js?v=2"></script>
+    <script src="ui.js?v=2"></script>
 </body>
 </html>

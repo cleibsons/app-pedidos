@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cápsulas B2C - Nespresso (Vertuo & Original)</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=2">
     <!-- Biblioteca Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -16,16 +16,16 @@
         .filter-btn {
             padding: 8px 16px;
             border-radius: 6px;
-            border: 1px solid #334155;
-            background: #1e293b;
-            color: #94a3b8;
+            border: 1px solid #e6e1dc;
+            background: #ffffff;
+            color: #706b73;
             cursor: pointer;
             font-weight: 600;
         }
         .filter-btn.active {
-            background: #2563eb;
+            background: #771d37;
             color: #ffffff;
-            border-color: #3b82f6;
+            border-color: #771d37;
         }
         .badge-vertuo {
             background: #7c3aed;
@@ -45,22 +45,16 @@
         }
     </style>
 </head>
-<body>
+<body class="app-page">
 
     <div class="container">
         <!-- CABEÇALHO E NAVEGAÇÃO -->
         <header class="header">
             <div>
-                <h1>☕ Cápsulas B2C (Vertuo & Original)</h1>
+                <h1>Cápsulas B2C</h1>
                 <p>Catálogo e consulta de preços para linha doméstica</p>
             </div>
-            <div class="nav-menu">
-                <a href="index.html" class="btn btn-secondary">👥 Clientes</a>
-                <a href="produtos_b2b.html" class="btn btn-secondary">☕ Cápsulas B2B</a>
-                <a href="produtos_b2c.html" class="btn btn-primary">🏠 Cápsulas B2C</a>
-                <a href="acessorios.html" class="btn btn-secondary">🥄 Acessórios</a>
-                <a href="pedidos.html" class="btn btn-secondary">📦 Pedidos</a>
-            </div>
+            
         </header>
 
         <!-- FILTROS DE LINHA -->
@@ -91,7 +85,7 @@
                     </tr>
                 </thead>
                 <tbody id="produtosTableBody">
-                    <tr><td colspan="7" style="text-align:center; color: #64748b; padding: 24px;">Carregando catálogo B2C da nuvem...</td></tr>
+                    <tr><td colspan="7" style="text-align:center; color: #78717a; padding: 24px;">Carregando catálogo B2C da nuvem...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -126,7 +120,7 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label>Linha / Sistema:</label>
-                        <select id="sistemaInput" required style="background: #0f172a; border: 1px solid #334155; color: #fff; padding: 8px; border-radius: 6px;">
+                        <select id="sistemaInput" required style="background: #f7f5f2; border: 1px solid #e6e1dc; color: #fff; padding: 8px; border-radius: 6px;">
                             <option value="Vertuo">🌀 Linha Vertuo</option>
                             <option value="Original">🔴 Linha Original</option>
                         </select>
@@ -166,7 +160,7 @@
 
                 <div class="form-group">
                     <label>Observação:</label>
-                    <textarea id="observacoesInput" rows="4" placeholder="Tamanho da xícara (ex: 25 ml, 40 ml, 230 ml), perfil aromático..." style="background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 10px; color: #f8fafc; font-size: 14px; width: 100%; resize: vertical;"></textarea>
+                    <textarea id="observacoesInput" rows="4" placeholder="Tamanho da xícara (ex: 25 ml, 40 ml, 230 ml), perfil aromático..." style="background: #f7f5f2; border: 1px solid #e6e1dc; border-radius: 6px; padding: 10px; color: #242326; font-size: 14px; width: 100%; resize: vertical;"></textarea>
                 </div>
 
                 <div class="modal-buttons">
@@ -178,6 +172,7 @@
     </div>
 
     <!-- Script JS -->
-    <script src="produtos_b2c.js"></script>
+    <script src="produtos_b2c.js?v=2"></script>
+    <script src="ui.js?v=2"></script>
 </body>
 </html>

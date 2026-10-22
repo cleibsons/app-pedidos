@@ -3,145 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestão de Clientes - Pedidos</title>
-    <link rel="stylesheet" href="styles.css">
-    <!-- Biblioteca Supabase -->
+    <meta name="theme-color" content="#771d37">
+    <meta name="description" content="Central de gestão de clientes, catálogos e pedidos Nespresso.">
+    <title>Visão geral · Central Nespresso</title>
+    <link rel="stylesheet" href="styles.css?v=2">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body>
-
-    <div class="container">
-        <!-- CABEÇALHO E NAVEGAÇÃO -->
-        <header class="header">
-            <div>
-                <h1>👥 Gestão de Clientes</h1>
-                <p>Cadastre, pesquise e visualize seus clientes sincronizados em tempo real</p>
-            </div>
-            <div class="nav-menu">
-                <a href="index.html" class="btn btn-primary">👥 Clientes</a>
-                <a href="produtos_b2b.html" class="btn btn-secondary">☕ Cápsulas B2B</a>
-                <a href="produtos_b2c.html" class="btn btn-secondary">🏠 Cápsulas B2C</a>
-                <a href="acessorios.html" class="btn btn-secondary">🥄 Acessórios</a>
-                <a href="pedidos.html" class="btn btn-secondary">📦 Pedidos</a>
-            </div>
-        </header>
-
-        <!-- BARRA DE AÇÕES -->
-        <div class="actions-bar">
-            <input type="text" id="searchInput" placeholder="🔍 Pesquisar por Nome Fantasia, Razão Social, NN, CNPJ ou Contato..." onkeyup="filtrarClientes()">
-            <button class="btn btn-primary" onclick="abrirModal()">+ Novo Cliente</button>
-        </div>
-
-        <!-- TABELA DE CLIENTES -->
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>NN</th>
-                        <th>Nome Fantasia</th>
-                        <th>Razão Social</th>
-                        <th>CNPJ</th>
-                        <th>Endereço Completo</th>
-                        <th style="text-align: center;">Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="clientesTableBody">
-                    <tr><td colspan="6" style="text-align:center; color: #64748b; padding: 24px;">Carregando clientes da nuvem...</td></tr>
-                </tbody>
-            </table>
-        </div>
+<body class="app-page dashboard-page">
+    <div class="container dashboard">
+        <header class="header dashboard-heading"><div><p id="dashboardDate" class="page-date"></p><h1><span id="greetingTime">Olá</span>, <span id="greetingName">bem-vindo</span><span class="greeting-dot">.</span></h1><p>Uma visão do seu negócio. Tudo pronto para o próximo pedido.</p></div><button class="btn btn-secondary" id="refreshDashboard"><span data-icon="refresh"></span>Atualizar</button></header>
+        <section class="welcome-banner" aria-labelledby="welcomeTitle"><div><span class="banner-eyebrow">SUA ROTINA, MAIS SIMPLES</span><h2 id="welcomeTitle">Grandes relações começam<br>com um bom café.</h2><p>Do cadastro ao pedido, cuide de cada detalhe em um só lugar.</p><a href="pedidos.html" class="btn banner-button"><span data-icon="plus"></span>Criar novo pedido<span data-icon="arrow"></span></a></div><div class="coffee-art" aria-hidden="true"><span class="coffee-ring ring-one"></span><span class="coffee-ring ring-two"></span><div class="coffee-cup"><span>N</span></div><span class="coffee-caption">NESPRESSO · CADA DETALHE IMPORTA</span></div></section>
+        <section class="overview-section" aria-labelledby="overviewTitle"><div class="section-heading"><div><p class="eyebrow">SEU NEGÓCIO EM NÚMEROS</p><h2 id="overviewTitle">Visão geral dos cadastros</h2></div><span class="section-note">Dados dos seus catálogos</span></div><div class="stats-grid">
+            <a href="clientes.html" class="stat-card"><span class="stat-top"><span class="stat-icon rose" data-icon="users"></span><span class="stat-arrow" data-icon="arrow"></span></span><span class="stat-label">Clientes</span><strong class="stat-number" id="count-clientes">…</strong><span class="stat-note" id="note-clientes">Consultando cadastros</span></a>
+            <a href="produtos_b2b.html" class="stat-card"><span class="stat-top"><span class="stat-icon sand" data-icon="cup"></span><span class="stat-arrow" data-icon="arrow"></span></span><span class="stat-label">Cápsulas B2B</span><strong class="stat-number" id="count-b2b">…</strong><span class="stat-note" id="note-b2b">Consultando catálogo</span></a>
+            <a href="produtos_b2c.html" class="stat-card"><span class="stat-top"><span class="stat-icon sage" data-icon="home"></span><span class="stat-arrow" data-icon="arrow"></span></span><span class="stat-label">Cápsulas B2C</span><strong class="stat-number" id="count-b2c">…</strong><span class="stat-note" id="note-b2c">Consultando catálogo</span></a>
+            <a href="acessorios.html" class="stat-card"><span class="stat-top"><span class="stat-icon lilac" data-icon="box"></span><span class="stat-arrow" data-icon="arrow"></span></span><span class="stat-label">Acessórios</span><strong class="stat-number" id="count-acessorios">…</strong><span class="stat-note" id="note-acessorios">Consultando catálogo</span></a>
+        </div></section>
+        <div class="dashboard-columns"><section class="panel clients-panel" aria-labelledby="clientsTitle"><div class="panel-heading"><div><span class="eyebrow">RELACIONAMENTO</span><h2 id="clientsTitle">Seus clientes</h2></div><a class="text-link" href="clientes.html">Ver todos <span data-icon="arrow"></span></a></div><div class="table-container dashboard-table"><table><thead><tr><th>Cliente</th><th>NN</th><th>Cidade</th></tr></thead><tbody id="dashboardClients"><tr><td colspan="3" class="empty-state">Consultando seus clientes...</td></tr></tbody></table></div><a class="panel-footer-link" href="clientes.html"><span data-icon="users"></span>Gerenciar base de clientes<span data-icon="arrow"></span></a></section>
+        <section class="panel catalog-panel" aria-labelledby="catalogTitle"><div class="panel-heading"><div><span class="eyebrow">SEU MIX DE PRODUTOS</span><h2 id="catalogTitle">Catálogos organizados</h2></div><span class="muted-icon" data-icon="box"></span></div><div class="catalog-summary"><strong id="catalogTotal">…</strong><span>itens nos três catálogos</span></div><div class="catalog-bar" aria-hidden="true"><span id="bar-b2b"></span><span id="bar-b2c"></span><span id="bar-acessorios"></span></div><div class="catalog-legend"><a href="produtos_b2b.html"><span class="legend-dot dot-b2b"></span>Cápsulas B2B<strong id="legend-b2b">…</strong><span data-icon="arrow"></span></a><a href="produtos_b2c.html"><span class="legend-dot dot-b2c"></span>Cápsulas B2C<strong id="legend-b2c">…</strong><span data-icon="arrow"></span></a><a href="acessorios.html"><span class="legend-dot dot-acessorios"></span>Acessórios<strong id="legend-acessorios">…</strong><span data-icon="arrow"></span></a></div><div class="catalog-tip"><span data-icon="check"></span><p>Consulte preços e detalhes antes de montar seu próximo pedido.</p></div></section></div>
+        <section class="quick-section" aria-labelledby="quickTitle"><div class="section-heading"><h2 id="quickTitle">Por onde vamos começar?</h2><span class="section-note">Acesso rápido</span></div><div class="quick-grid"><a href="pedidos.html" class="quick-card"><span class="quick-icon" data-icon="bag"></span><div><strong>Montar um pedido</strong><span>WhatsApp ou e-mail, do seu jeito.</span></div><span class="quick-arrow" data-icon="arrow"></span></a><a href="clientes.html" class="quick-card"><span class="quick-icon" data-icon="users"></span><div><strong>Cuidar dos clientes</strong><span>Consulte, cadastre e atualize contatos.</span></div><span class="quick-arrow" data-icon="arrow"></span></a><a href="produtos_b2b.html" class="quick-card"><span class="quick-icon" data-icon="cup"></span><div><strong>Explorar os catálogos</strong><span>Encontre o café para cada momento.</span></div><span class="quick-arrow" data-icon="arrow"></span></a></div></section>
+        <footer class="dashboard-footer"><span>Central Nespresso <span class="footer-separator">/</span> Seu negócio, bem cuidado.</span><span id="dashboardStatus" role="status" aria-live="polite">Conectando...</span></footer>
     </div>
-
-    <!-- MODAL DE VISUALIZAR / DETALHES -->
-    <div id="detalhesModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>📋 Detalhes do Cliente</h2>
-                <button class="close-btn" onclick="fecharModalDetalhes()">&times;</button>
-            </div>
-            <div class="details-grid" id="detalhesConteudo">
-                <!-- Conteúdo preenchido via JS -->
-            </div>
-            <div class="modal-buttons">
-                <button type="button" class="btn btn-secondary" onclick="fecharModalDetalhes()">Fechar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL DE CADASTRO / EDIÇÃO -->
-    <div id="clienteModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modalTitle">Cadastrar Novo Cliente</h2>
-                <button class="close-btn" onclick="fecharModal()">&times;</button>
-            </div>
-            <form id="clienteForm" onsubmit="salvarCliente(event)">
-                <input type="hidden" id="clienteId">
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>NN (Número de Negócio):</label>
-                        <input type="text" id="nnInput" required placeholder="Ex: 5730465">
-                    </div>
-                    <div class="form-group">
-                        <label>CNPJ:</label>
-                        <input type="text" id="cnpjInput" required placeholder="Ex: 01.795.809/0004-62">
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Nome Fantasia:</label>
-                        <input type="text" id="nomeFantasiaInput" placeholder="Ex: Loja Exemplo">
-                    </div>
-                    <div class="form-group">
-                        <label>Razão Social:</label>
-                        <input type="text" id="razaoSocialInput" required placeholder="Ex: Comércio Ltda">
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Contato / Responsável:</label>
-                        <input type="text" id="contatoInput" placeholder="Ex: João Silva">
-                    </div>
-                    <div class="form-group">
-                        <label>Telefone / WhatsApp:</label>
-                        <input type="text" id="telefoneInput" placeholder="Ex: (45) 99999-9999">
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Endereço (Rua, Número):</label>
-                        <input type="text" id="enderecoInput" placeholder="Ex: R Dr Alexandre Gutierre, 826">
-                    </div>
-                    <div class="form-group">
-                        <label>Bairro:</label>
-                        <input type="text" id="bairroInput" placeholder="Ex: Centro / Vila Yolanda">
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Cidade / UF:</label>
-                        <input type="text" id="cidadeInput" placeholder="Ex: Foz do Iguaçu - PR">
-                    </div>
-                    <div class="form-group">
-                        <label>CEP:</label>
-                        <input type="text" id="cepInput" placeholder="Ex: 85851-000">
-                    </div>
-                </div>
-
-                <div class="modal-buttons">
-                    <button type="button" class="btn btn-secondary" onclick="fecharModal()">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Salvar na Nuvem</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- clientes.js -->
-    <script src="clientes.js"></script>
+    <script src="dashboard.js?v=2"></script>
+    <script src="ui.js?v=2"></script>
 </body>
 </html>
