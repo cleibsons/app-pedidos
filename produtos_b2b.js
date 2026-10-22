@@ -35,8 +35,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 /* CARREGAR PRODUTOS DA NUVEM */
 async function carregarProdutosNuvem() {
-    const tbody = document.getElementById('produtosTableBody');
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--muted); padding: 24px;">🔄 Carregando catálogo da nuvem...</td></tr>`;
+    const tbody = document.getElementById('produtosGrid');
+    tbody.innerHTML = `<p class="pro-status">Carregando catálogo profissional...</p>`;
 
     try {
         const { data, error } = await supabaseClient
@@ -46,7 +46,7 @@ async function carregarProdutosNuvem() {
 
         if (error) {
             console.error('Erro detalhado do Supabase:', error);
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--danger); padding: 24px;">❌ Erro ao carregar dados: ${error.message}</td></tr>`;
+            tbody.innerHTML = `<p class="pro-status">Não foi possível carregar o catálogo. Atualize a página para tentar novamente.</p>`;
             return;
         }
 
@@ -54,86 +54,64 @@ async function carregarProdutosNuvem() {
         renderizarTabela(produtos);
     } catch (err) {
         console.error('Erro de conexão:', err);
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--danger); padding: 24px;">❌ Falha na conexão com a nuvem. Verifique a sua internet.</td></tr>`;
+        tbody.innerHTML = `<p class="pro-status">Não foi possível conectar ao catálogo. Verifique a conexão e atualize a página.</p>`;
     }
 }
 
+function criarElementoPro(tag, classe, texto) {
+    const el=document.createElement(tag);if(classe) el.className=classe;if(texto!=null) el.textContent=texto;return el;
+}
+function criarFotoPro(produto) {
+    const area=criarElementoPro('div','pro-photo');
+    const fallback=criarElementoPro('span','pro-photo-fallback','N');fallback.setAttribute('aria-label','Foto indisponível');area.append(fallback);
+    if(produto.foto) {
+        const img=document.createElement('img');img.alt=produto.nome || 'Cápsula profissional';img.loading='lazy';img.decoding='async';
+        img.addEventListener('error',()=>{img.remove();fallback.hidden=false;});
+        img.addEventListener('load',()=>fallback.hidden=true);
+        img.src=produto.foto;area.append(img);
+    }
+    return area;
+}
+function precoPro(valor) {return Number(valor || 0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});}
 function renderizarTabela(dados = produtos) {
-    const tbody = document.getElementById('produtosTableBody');
-    tbody.innerHTML = '';
-
-    if (dados.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--muted); padding: 24px;">Nenhuma cápsula cadastrada. Clique em <strong>+ Nova Cápsula</strong> ou importe o seu CSV.</td></tr>`;
-        return;
+    const grid=document.getElementById('produtosGrid');grid.replaceChildren();
+    document.getElementById('produtosContagem').textContent=`${dados.length} ${dados.length===1?'café':'cafés'}`;
+    if(!dados.length) {grid.append(criarElementoPro('p','pro-status',produtos.length?'Nenhum café encontrado. Tente outro nome ou SKU.':'Nenhuma cápsula cadastrada. Use “Nova cápsula” para começar.'));return;}
+    for(const p of dados) {
+        const card=criarElementoPro('article','pro-card');
+        card.append(criarFotoPro(p));
+        const corpo=criarElementoPro('div','pro-card-body');
+        corpo.append(criarElementoPro('span','pro-sku',`SKU ${p.sku || '—'}`),criarElementoPro('h3','pro-name',p.nome || 'Cápsula profissional'),criarElementoPro('p','pro-pack',`Caixa com ${p.capsulas_caixa || 50} cápsulas`));
+        if(p.observacoes) corpo.append(criarElementoPro('p','pro-description',p.observacoes));
+        if(p.intensidade) corpo.append(criarElementoPro('span','pro-intensity',`Intensidade ${p.intensidade}`));
+        const rodape=criarElementoPro('div','pro-card-footer');
+        const valor=criarElementoPro('div','pro-price');valor.append(criarElementoPro('strong','',precoPro(p.preco)),criarElementoPro('span','','por cápsula'));rodape.append(valor);
+        const detalhes=criarElementoPro('button','btn pro-details','Ver detalhes');detalhes.type='button';detalhes.setAttribute('aria-label',`Ver detalhes de ${p.nome || p.sku}`);detalhes.addEventListener('click',()=>visualizarProduto(p.id));rodape.append(detalhes);
+        const gestao=criarElementoPro('div','pro-manage');
+        for(const [texto,acao,classe] of [['Editar',()=>editarProduto(p.id),''],['Excluir',()=>excluirProduto(p.id),'pro-delete']]) {
+            const botao=criarElementoPro('button',classe,texto);botao.type='button';botao.setAttribute('aria-label',`${texto} ${p.nome || p.sku}`);botao.addEventListener('click',acao);gestao.append(botao);
+        }
+        rodape.append(gestao);corpo.append(rodape);card.append(corpo);grid.append(card);
     }
-
-    dados.forEach(p => {
-        const tr = document.createElement('tr');
-        const imgTag = p.foto ? `<img src="${p.foto}" style="width: 36px; height: 36px; object-fit: contain; border-radius: 4px; background: var(--field); padding: 2px;">` : `<span style="font-size: 20px;">☕</span>`;
-        const precoFormatado = Number(p.preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
-        tr.innerHTML = `
-            <td style="text-align: center;">${imgTag}</td>
-            <td><strong style="color: var(--brand);">${p.sku || ''}</strong></td>
-            <td style="font-weight: 500;">${p.nome || ''}</td>
-            <td>${p.capsulas_caixa || 50} cápsulas</td>
-            <td style="color: var(--success); font-weight: 600;">${precoFormatado}</td>
-            <td style="text-align: center; white-space: nowrap;">
-                <button class="btn btn-view" title="Ver Detalhes" onclick="visualizarProduto(${p.id})">👁️</button>
-                <button class="btn btn-edit" title="Editar" onclick="editarProduto(${p.id})">✏️</button>
-                <button class="btn btn-danger" title="Excluir" onclick="excluirProduto(${p.id})">🗑️</button>
-            </td>
-        `;
-        tbody.appendChild(tr);
-    });
 }
-
 function filtrarProdutos() {
-    const termo = document.getElementById('searchInput').value.toLowerCase();
-    const filtrados = produtos.filter(p => 
-        (p.nome && p.nome.toLowerCase().includes(termo)) ||
-        (p.sku && p.sku.toLowerCase().includes(termo))
-    );
-    renderizarTabela(filtrados);
+    const normalizar=v=>String(v || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+    const termo=normalizar(document.getElementById('searchInput').value.trim());
+    renderizarTabela(produtos.filter(p=>[p.nome,p.sku,p.observacoes].some(v=>normalizar(v).includes(termo))));
 }
-
-/* VISUALIZAR DETALHES */
 function visualizarProduto(id) {
-    const p = produtos.find(item => item.id === id);
-    if (!p) return;
-
-    const precoFormatado = Number(p.preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-    const imgHtml = p.foto ? `<img src="${p.foto}" style="max-height: 100px; object-fit: contain; margin-bottom: 8px;">` : `<span style="font-size: 32px;">☕</span>`;
-
-    const detalhesHTML = `
-        <div class="detail-item" style="text-align: center; grid-column: span 2; background: var(--field); padding: 16px;">
-            ${imgHtml}
-            <div class="detail-value highlight" style="font-size: 18px; margin-top: 4px;">${p.nome || '-'}</div>
-        </div>
-        <div class="detail-item">
-            <div class="detail-label">SKU</div>
-            <div class="detail-value highlight">${p.sku || '-'}</div>
-        </div>
-        <div class="detail-item">
-            <div class="detail-label">PREÇO (UNIDADE / CAIXA)</div>
-            <div class="detail-value" style="color: var(--success); font-weight: bold;">${precoFormatado}</div>
-        </div>
-        <div class="detail-item">
-            <div class="detail-label">INTENSIDADE</div>
-            <div class="detail-value">${p.intensidade ? p.intensidade : '-'}</div>
-        </div>
-        <div class="detail-item">
-            <div class="detail-label">Cápsulas por caixa</div>
-            <div class="detail-value">${p.capsulas_caixa || 50} unidades</div>
-        </div>
-        <div class="detail-item full-width" style="grid-column: span 2; background: var(--field); border-color: var(--brand);">
-            <div class="detail-label" style="color: var(--brand); font-weight: bold;">Observação</div>
-            <div class="detail-value" style="white-space: pre-wrap; margin-top: 8px; font-size: 14px; line-height: 1.5; color: var(--ink);">${p.observacoes || 'Nenhuma observação cadastrada para este blend.'}</div>
-        </div>
-    `;
-
-    document.getElementById('detalhesConteudo').innerHTML = detalhesHTML;
-    document.getElementById('detalhesModal').style.display = 'flex';
+    const p=produtos.find(item=>item.id===id);if(!p)return;
+    const container=document.getElementById('detalhesConteudo');container.replaceChildren();
+    const destaque=criarElementoPro('div','pro-detail-hero');destaque.append(criarFotoPro(p),criarElementoPro('h3','',p.nome));container.append(destaque);
+    for(const [label,valor] of [['SKU',p.sku],['Preço por cápsula',precoPro(p.preco)],['Intensidade',p.intensidade || 'Não informada'],['Cápsulas por caixa',p.capsulas_caixa || 50],['Valor da caixa',precoPro(Number(p.preco || 0)*(p.capsulas_caixa || 50))],['Observações',p.observacoes || 'Nenhuma observação cadastrada para este café.']]) {
+        const bloco=criarElementoPro('div','detail-item');bloco.append(criarElementoPro('div','detail-label',label),criarElementoPro('div','detail-value',valor));container.append(bloco);
+    }
+    document.getElementById('detalhesModal').style.display='flex';
+}
+function calcularPrecoCaixa() {
+    const texto=document.getElementById('precoInput').value.trim();
+    const preco=Number(texto.replace(',','.')),qtd=Number(document.getElementById('caixaQtdInput').value);
+    document.getElementById('precoCaixaCalculado').value=texto && Number.isFinite(preco) && preco>=0 && Number.isInteger(qtd) && qtd>0 ? precoPro(preco*qtd) : '';
 }
 
 function fecharModalDetalhes() {
@@ -199,6 +177,7 @@ function abrirModal(produto = null) {
         document.getElementById('fotoInput').value = produto.foto || '';
         document.getElementById('observacoesInput').value = produto.observacoes || '';
         imagemBase64Temp = produto.foto || '';
+        calcularPrecoCaixa();
     } else {
         document.getElementById('modalTitle').innerText = 'Cadastrar Nova Cápsula B2B';
     }
