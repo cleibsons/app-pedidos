@@ -8,44 +8,24 @@
     <!-- Biblioteca Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="theme-dark.css?v=8">
+    <link rel="stylesheet" href="produtos-pro.css?v=18">
+    <link rel="stylesheet" href="acessorios-pro.css?v=1">
 </head>
-<body class="app-page">
+<body class="app-page accessories-page">
 
     <div class="container">
         <!-- CABEÇALHO E NAVEGAÇÃO -->
-        <header class="header">
-            <div>
-                <h1>Acessórios</h1>
-                <p>Controle de caixas, kits, pacotes e cálculo unitário automático</p>
-            </div>
-            
-        </header>
+        <header class="header pro-catalog-hero"><h1>ACESSÓRIOS PARA CAFÉ PROFISSIONAL</h1></header>
 
         <!-- BARRA DE AÇÕES -->
         <div class="actions-bar">
-            <input type="text" id="searchInput" placeholder="🔍 Pesquisar por Descrição, SKU ou Tipo de Embalagem..." onkeyup="filtrarAcessorios()">
+            <input type="text" id="searchInput" placeholder="Pesquisar acessórios, SKU ou coleção..." oninput="filtrarAcessorios()" aria-label="Pesquisar acessórios por nome, SKU, embalagem ou categoria">
             <button class="btn btn-primary" onclick="abrirModal()">+ Novo Acessório</button>
         </div>
 
-        <!-- TABELA DE ACESSÓRIOS -->
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 70px; text-align: center;">Foto</th>
-                        <th>SKU</th>
-                        <th>Descrição do Acessório</th>
-                        <th>Apresentação (Qtd)</th>
-                        <th>Preço (Embalagem)</th>
-                        <th>Custo Unitário (Peça)</th>
-                        <th style="text-align: center;">Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="acessoriosTableBody">
-                    <tr><td colspan="7" style="text-align:center; color: var(--muted); padding: 24px;">Carregando acessórios da nuvem...</td></tr>
-                </tbody>
-            </table>
-        </div>
+        <nav id="categoriasNav" class="pro-category-nav" aria-label="Categorias de acessórios"></nav>
+        <div class="pro-catalog-heading"><h2>Complete sua experiência de café</h2><span id="acessoriosContagem" role="status"></span></div>
+        <div id="acessoriosTableBody" class="pro-catalog" aria-label="Catálogo de acessórios"><p class="pro-status">Carregando acessórios...</p></div>
     </div>
 
     <!-- MODAL DE VISUALIZAR / DETALHES + SIMULADOR DE PEDIDO -->
@@ -132,7 +112,7 @@
     </div>
 
     <!-- Script JS -->
-    <script src="acessorios.js?v=8"></script>
+    <script src="acessorios.js?v=9"></script>
     <script src="ui.js?v=4"></script>
 </body>
 </html>

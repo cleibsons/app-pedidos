@@ -132,7 +132,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 /* CARREGAR ACESSÓRIOS DA NUVEM (COM CARGA AUTOMÁTICA SE VAZIO) */
 async function carregarAcessoriosNuvem() {
     const tbody = document.getElementById('acessoriosTableBody');
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: var(--muted); padding: 24px;">🔄 Carregando acessórios da nuvem...</td></tr>`;
+    tbody.innerHTML = `<p class="pro-status">Carregando catálogo de acessórios...</p>`;
 
     if (!supabaseClient) {
         acessorios = [...ACESSORIOS_INICIAIS];
@@ -154,7 +154,7 @@ async function carregarAcessoriosNuvem() {
 
         // Se a tabela existir no Supabase mas estiver vazia, insere todos os itens automaticamente!
         if (!data || data.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: var(--brand); padding: 24px;">⚡ Sincronizando catálogo inicial de acessórios com o Supabase...</td></tr>`;
+            tbody.innerHTML = `<p class="pro-status">Carregando catálogo de acessórios...</p>`;
             const { error: insertError } = await supabaseClient
                 .from('acessorios')
                 .upsert(ACESSORIOS_INICIAIS);
@@ -187,57 +187,70 @@ function formatarMoeda(valorNum) {
     return valorNum.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
+
+const CATEGORIAS_ACESSORIOS = [
+ ['xicaras','Xícaras e copos','Coleções para servir cada café com cuidado.'],
+ ['viagem','Canecas térmicas','Seu café acompanha o ritmo do dia.'],
+ ['leite','Espumadores de leite','Acessórios para preparar receitas com leite.'],
+ ['dispensadores','Porta-cápsulas','Organização e apresentação para seu espaço de café.'],
+ ['degustacao','Biscoitos, chocolates e açúcar','Acompanhamentos para completar a pausa.'],
+ ['servir','Acessórios para servir','Bandejas, colheres e soluções para o serviço.'],
+ ['manutencao','Reciclagem e manutenção','Cuidados para a rotina do café profissional.'],
+ ['outros','Outros acessórios','Mais soluções para sua empresa.']
+];
+function normalizarAcessorio(valor) {
+ return String(valor || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+}
+function categoriaAcessorio(a) {
+ const nome=normalizarAcessorio(a.nome);
+ if (/termic|travel|tumbler/.test(nome)) return 'viagem';
+ if (/porta.?capsul|display|showcase|dispensador|discovery box|capsule box/.test(nome)) return 'dispensadores';
+ if (/recicla|descalc|limpeza|pastilha|filtro|cappucc?in.*(kit|device)/.test(nome)) return 'manutencao';
+ if (/aeroccino|espumador|barista.*receita/.test(nome)) return 'leite';
+ if (/chocolat|biscoit|cantuccini|acucar|adocante/.test(nome)) return 'degustacao';
+ if (/descart|tampa|mexedor|colher|bandeja|guardanapo|porta insumos|tray|carafe/.test(nome)) return 'servir';
+ if (/xicara|pires|caneca|copo|taca|pixie|pure collection|mug|saucer|cups/.test(nome)) return 'xicaras';
+ return 'outros';
+}
+function elementoAcessorio(tag, classe, texto) {
+ const el=document.createElement(tag);el.className=classe || '';if(texto!=null)el.textContent=texto;return el;
+}
 function renderizarTabela() {
-    const tbody = document.getElementById('acessoriosTableBody');
-    tbody.innerHTML = '';
-
-    const termo = document.getElementById('searchInput').value.toLowerCase();
-
-    const filtrados = acessorios.filter(a => {
-        const sku = (a.sku || '').toLowerCase();
-        const nome = (a.nome || '').toLowerCase();
-        const tipo = (a.tipo_embalagem || '').toLowerCase();
-        return sku.includes(termo) || nome.includes(termo) || tipo.includes(termo);
-    });
-
-    if (filtrados.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: var(--muted); padding: 24px;">Nenhum acessório encontrado.</td></tr>`;
-        return;
-    }
-
-    filtrados.forEach(a => {
-        const tr = document.createElement('tr');
-
-        const fotoHTML = criarImagemAcessorio(a);
-
-        const qtd = parseInt(a.qtd_embalagem) || 1;
-        const tipo = a.tipo_embalagem || 'Unidade';
-        
-        const badgeApresentacao = qtd > 1
-            ? `<span style="background: var(--brand-soft); color: var(--brand); padding: 3px 10px; border-radius: 6px; font-size: 12px; font-weight: 500; border: 1px solid var(--brand);">${tipo} c/ ${qtd} unid.</span>`
-            : `<span style="background: var(--field); color: var(--muted); padding: 3px 10px; border-radius: 6px; font-size: 12px; border: 1px solid var(--line);">1 Unidade Avulsa</span>`;
-
-        const precoEmbNum = converterParaNumero(a.preco_embalagem);
-        const precoUnidNum = qtd > 0 ? (precoEmbNum / qtd) : precoEmbNum;
-
-        const precoEmbTexto = precoEmbNum > 0 ? `R$ ${formatarMoeda(precoEmbNum)}` : `<span style="color:#f59e0b; font-size:12px;">Bonificação / S/V</span>`;
-        const precoUnidTexto = precoEmbNum > 0 ? `R$ ${formatarMoeda(precoUnidNum)}` : `-`;
-
-        tr.innerHTML = `
-            <td style="text-align: center;">${fotoHTML}</td>
-            <td><strong style="color: var(--brand);">${a.sku || ''}</strong></td>
-            <td style="font-weight: 600; color: var(--ink);">${a.nome || ''}</td>
-            <td>${badgeApresentacao}</td>
-            <td style="color: var(--success); font-weight: bold;">${precoEmbTexto}</td>
-            <td style="color: var(--muted); font-size: 13px;">${precoUnidTexto} <span style="font-size:11px; color:var(--muted);">/ unid</span></td>
-            <td style="text-align: center; white-space: nowrap;">
-                <button class="btn btn-view" style="padding: 4px 8px; font-size: 12px;" title="Ver Detalhes e Simular Pedido" onclick="visualizarAcessorio(${a.id})">👁️</button>
-                <button class="btn btn-edit" style="padding: 4px 8px; font-size: 12px;" title="Editar" onclick="editarAcessorio(${a.id})">✏️</button>
-                <button class="btn btn-danger" style="padding: 4px 8px; font-size: 12px;" title="Excluir" onclick="excluirAcessorio(${a.id})">🗑️</button>
-            </td>
-        `;
-        tbody.appendChild(tr);
-    });
+ const grid=document.getElementById('acessoriosTableBody');
+ const nav=document.getElementById('categoriasNav');
+ grid.replaceChildren();nav.replaceChildren();
+ const termo=normalizarAcessorio(document.getElementById('searchInput').value.trim());
+ const filtrados=acessorios.filter(a=>[a.nome,a.sku,a.tipo_embalagem,...CATEGORIAS_ACESSORIOS.find(c=>c[0]===categoriaAcessorio(a)).slice(1)].some(v=>normalizarAcessorio(v).includes(termo)));
+ document.getElementById('acessoriosContagem').textContent=filtrados.length+' '+(filtrados.length===1?'acessório':'acessórios');
+ if(!filtrados.length){grid.append(elementoAcessorio('p','pro-status','Nenhum acessório encontrado. Tente outro nome, SKU ou coleção.'));return;}
+ for(const [slug,titulo,descricao] of CATEGORIAS_ACESSORIOS){
+  const itens=filtrados.filter(a=>categoriaAcessorio(a)===slug);if(!itens.length)continue;
+  const link=elementoAcessorio('a','pro-category-link',titulo);link.href='#acessorios-'+slug;nav.append(link);
+  const section=elementoAcessorio('section','pro-category');section.id='acessorios-'+slug;section.setAttribute('aria-labelledby','titulo-'+slug);
+  const banner=elementoAcessorio('header','pro-category-banner');
+  const copy=elementoAcessorio('div','pro-category-copy');
+  const heading=elementoAcessorio('h2','pro-category-title',titulo);heading.id='titulo-'+slug;
+  copy.append(elementoAcessorio('span','pro-category-eyebrow','Nespresso Professional'),heading,elementoAcessorio('p','pro-category-description',descricao),elementoAcessorio('span','pro-category-count',itens.length+' acessórios'));
+  banner.append(copy);const lista=elementoAcessorio('div','pro-grid');section.append(banner,lista);grid.append(section);
+  for(const a of itens){
+   const card=elementoAcessorio('article','pro-card');
+   const foto=elementoAcessorio('div','pro-photo');
+   const fallback=elementoAcessorio('span','pro-photo-fallback','N');fallback.setAttribute('aria-label','Foto indisponível');foto.append(fallback);
+   if(a.foto){const img=document.createElement('img');img.alt=a.nome || 'Acessório';img.loading='lazy';img.addEventListener('load',()=>fallback.hidden=true);img.addEventListener('error',()=>{img.remove();fallback.hidden=false;});img.src=a.foto;foto.append(img);}
+   const corpo=elementoAcessorio('div','pro-card-body');
+   const qtd=parseInt(a.qtd_embalagem)||1;const preco=converterParaNumero(a.preco_embalagem);
+   corpo.append(elementoAcessorio('span','pro-sku','SKU '+(a.sku||'—')),elementoAcessorio('h3','pro-name',a.nome||'Acessório'),elementoAcessorio('p','pro-pack',(a.tipo_embalagem||'Unidade')+' · '+qtd+' unid.'));
+   const footer=elementoAcessorio('div','pro-card-footer');
+   const valor=elementoAcessorio('div','pro-price');valor.append(elementoAcessorio('strong','',preco>0?'R$ '+formatarMoeda(preco):'Bonificação / S/V'),elementoAcessorio('span','','por embalagem'));
+   footer.append(valor,elementoAcessorio('p','pro-pack',preco>0?'R$ '+formatarMoeda(preco/qtd)+' por unidade':'Sem valor de venda'));
+   const detalhes=elementoAcessorio('button','btn pro-details','Ver detalhes e simular');detalhes.type='button';detalhes.setAttribute('aria-label','Ver detalhes e simular '+a.nome);detalhes.addEventListener('click',()=>visualizarAcessorio(a.id));footer.append(detalhes);
+   const gestao=elementoAcessorio('div','pro-manage');
+   for(const [label,acao,classe] of [['Editar',editarAcessorio,''],['Excluir',excluirAcessorio,'pro-delete']]){
+    const botao=elementoAcessorio('button',classe,label);botao.type='button';botao.setAttribute('aria-label',label+' '+a.nome);botao.addEventListener('click',()=>acao(a.id));gestao.append(botao);
+   }
+   footer.append(gestao);corpo.append(footer);card.append(foto,corpo);lista.append(card);
+  }
+ }
 }
 
 function filtrarAcessorios() {
