@@ -3,47 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cápsulas B2C - Nespresso (Vertuo & Original)</title>
+    <title>Cápsulas B2C - Sistema Nespresso</title>
     <link rel="stylesheet" href="styles.css">
     <!-- Biblioteca Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        .filter-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 16px;
-        }
-        .filter-btn {
-            padding: 8px 16px;
-            border-radius: 6px;
-            border: 1px solid #334155;
-            background: #1e293b;
-            color: #94a3b8;
-            cursor: pointer;
-            font-weight: 600;
-        }
-        .filter-btn.active {
-            background: #2563eb;
-            color: #ffffff;
-            border-color: #3b82f6;
-        }
-        .badge-vertuo {
-            background: #7c3aed;
-            color: #fff;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: bold;
-        }
-        .badge-original {
-            background: #dc2626;
-            color: #fff;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: bold;
-        }
-    </style>
 </head>
 <body>
 
@@ -51,28 +14,24 @@
         <!-- CABEÇALHO E NAVEGAÇÃO -->
         <header class="header">
             <div>
-                <h1>☕ Cápsulas B2C (Vertuo & Original)</h1>
-                <p>Catálogo e consulta de preços para linha doméstica</p>
+                <h1>🏠 Catálogo de Cápsulas B2C</h1>
+                <p>Linhas Vertuo e Original (Sleeves com 10 cápsulas)</p>
             </div>
             <div class="nav-menu">
                 <a href="index.html" class="btn btn-secondary">👥 Clientes</a>
                 <a href="produtos_b2b.html" class="btn btn-secondary">☕ Cápsulas B2B</a>
                 <a href="produtos_b2c.html" class="btn btn-primary">🏠 Cápsulas B2C</a>
                 <a href="acessorios.html" class="btn btn-secondary">🥄 Acessórios</a>
+                <a href="pedidos.html" class="btn btn-secondary">📦 Pedidos</a>
             </div>
         </header>
 
-        <!-- FILTROS DE LINHA -->
-        <div class="filter-tabs">
-            <button class="filter-btn active" id="btnFiltroTodos" onclick="filtrarSistema('Todos')">Todas as Cápsulas</button>
-            <button class="filter-btn" id="btnFiltroVertuo" onclick="filtrarSistema('Vertuo')">🌀 Linha Vertuo</button>
-            <button class="filter-btn" id="btnFiltroOriginal" onclick="filtrarSistema('Original')">🔴 Linha Original</button>
-        </div>
-
-        <!-- BARRA DE AÇÕES -->
-        <div class="actions-bar">
-            <input type="text" id="searchInput" placeholder="🔍 Pesquisar por Nome do Blend ou SKU..." onkeyup="filtrarProdutos()">
-            <button class="btn btn-primary" onclick="abrirModal()">+ Nova Cápsula B2C</button>
+        <!-- BARRA DE BUSCA E BOTÃO NOVO -->
+        <div class="toolbar">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Buscar por SKU, Nome, Sistema (Vertuo/Original) ou Categoria..." oninput="filtrarProdutosB2C()">
+            </div>
+            <button class="btn btn-primary" onclick="abrirModalProdutoB2C()">+ Novo Produto B2C</button>
         </div>
 
         <!-- TABELA DE PRODUTOS B2C -->
@@ -80,103 +39,78 @@
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 80px; text-align: center;">Foto</th>
-                        <th>Sistema</th>
                         <th>SKU</th>
-                        <th>Nome do Produto</th>
+                        <th>Nome da Cápsula</th>
+                        <th>Sistema</th>
+                        <th>Categoria</th>
                         <th>Cápsulas / Caixa</th>
-                        <th>Preço (Caixa/Unid)</th>
-                        <th style="text-align: center;">Ações</th>
+                        <th>Preço Unit. (R$)</th>
+                        <th>Ações</th>
                     </tr>
                 </thead>
-                <tbody id="produtosTableBody">
-                    <tr><td colspan="7" style="text-align:center; color: #64748b; padding: 24px;">Carregando catálogo B2C da nuvem...</td></tr>
+                <tbody id="tabelaProdutosB2CBody">
+                    <tr>
+                        <td colspan="7" style="text-align: center;">Carregando produtos B2C...</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
     </div>
 
-    <!-- MODAL DE VISUALIZAR / DETALHES -->
-    <div id="detalhesModal" class="modal">
+    <!-- MODAL DE CADASTRO / EDIÇÃO DE PRODUTO B2C -->
+    <div id="modalProdutoB2C" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>📋 Detalhes do Blend B2C</h2>
-                <button class="close-btn" onclick="fecharModalDetalhes()">&times;</button>
+                <h2 id="modalTitulo">Novo Produto B2C</h2>
+                <span class="close" onclick="fecharModalProdutoB2C()">&times;</span>
             </div>
-            <div class="details-grid" id="detalhesConteudo">
-                <!-- Conteúdo preenchido via JS -->
-            </div>
-            <div class="modal-buttons">
-                <button type="button" class="btn btn-secondary" onclick="fecharModalDetalhes()">Fechar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL DE CADASTRO / EDIÇÃO -->
-    <div id="produtoModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modalTitle">Cadastrar Nova Cápsula B2C</h2>
-                <button class="close-btn" onclick="fecharModal()">&times;</button>
-            </div>
-            <form id="produtoForm" onsubmit="salvarProduto(event)">
+            <form id="formProdutoB2C" onsubmit="salvarProdutoB2C(event)">
                 <input type="hidden" id="produtoId">
                 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Linha / Sistema:</label>
-                        <select id="sistemaInput" required style="background: #0f172a; border: 1px solid #334155; color: #fff; padding: 8px; border-radius: 6px;">
-                            <option value="Vertuo">🌀 Linha Vertuo</option>
-                            <option value="Original">🔴 Linha Original</option>
+                        <label>SKU (Código):</label>
+                        <input type="text" id="skuInput" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Nome da Cápsula:</label>
+                        <input type="text" id="nomeInput" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Sistema:</label>
+                        <select id="sistemaInput" required>
+                            <option value="Vertuo">Vertuo</option>
+                            <option value="Original">Original</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>SKU:</label>
-                        <input type="text" id="skuInput" required placeholder="Ex: 7011.80">
+                        <label>Categoria:</label>
+                        <input type="text" id="categoriaInput" placeholder="Ex: Double Espresso, Barista Creations...">
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Nome do Produto (Blend):</label>
-                        <input type="text" id="nomeInput" required placeholder="Ex: Ristretto Intenso">
+                        <label>Cápsulas por Caixa (Sleeve):</label>
+                        <input type="number" id="capsulasCaixaInput" value="10" required>
                     </div>
                     <div class="form-group">
-                        <label>Intensidade:</label>
-                        <input type="number" id="intensidadeInput" min="1" max="13" placeholder="Ex: 9">
+                        <label>Preço Unitário (R$):</label>
+                        <input type="text" id="precoInput" placeholder="Ex: 4.50">
                     </div>
                 </div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Cápsulas por caixa:</label>
-                        <input type="number" id="caixaQtdInput" required value="10">
-                    </div>
-                    <div class="form-group">
-                        <label>Preço (R$):</label>
-                        <input type="text" id="precoInput" required placeholder="Ex: 3,90">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Foto (Link de imagem PNG):</label>
-                    <input type="text" id="fotoInput" placeholder="https://exemplo.com/foto.png">
-                </div>
-
-                <div class="form-group">
-                    <label>Observação:</label>
-                    <textarea id="observacoesInput" rows="4" placeholder="Tamanho da xícara (ex: 25 ml, 40 ml, 230 ml), perfil aromático..." style="background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 10px; color: #f8fafc; font-size: 14px; width: 100%; resize: vertical;"></textarea>
-                </div>
-
-                <div class="modal-buttons">
-                    <button type="button" class="btn btn-secondary" onclick="fecharModal()">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Salvar na Nuvem</button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="fecharModalProdutoB2C()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar Produto</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Script JS -->
     <script src="produtos_b2c.js"></script>
 </body>
 </html>
