@@ -93,11 +93,13 @@ function selecionarCanal(canal, logistica) {
     canalAtual = canal;
     if (logistica) document.getElementById('tipoLogisticaInput').value = logistica;
     const tipo = document.getElementById('tipoLogisticaInput').value;
-    for (const [id, ativo] of [['cardWhats', canal === 'whatsapp'], ['cardEmail', canal === 'email' && tipo === 'broker'], ['cardEmail3a', canal === 'email' && tipo === 'estoque3a']]) {
+    for (const [id, ativo] of [['cardWhats', canal === 'whatsapp'], ['cardEmail', canal === 'email'], ['opcaoBroker', tipo === 'broker'], ['opcao3a', tipo === 'estoque3a']]) {
         document.getElementById(id).classList.toggle('active', ativo);
         document.getElementById(id).setAttribute('aria-pressed', String(ativo));
     }
-    document.getElementById('secaoEmailOpcoes').style.display = canal === 'email' ? 'block' : 'none';
+    document.getElementById('secaoEmailOpcoes').hidden = canal !== 'email';
+    document.getElementById('cardEmail').setAttribute('aria-expanded', String(canal === 'email'));
+    document.getElementById('canalResumo').textContent = canal === 'whatsapp' ? 'WhatsApp' : `E-mail · ${tipo === 'broker' ? 'Broker' : 'Estoque 3A'}`;
     atualizarPreview();
 }
 

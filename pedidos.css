@@ -10,3 +10,27 @@
 .pedido-sugestao:hover,.pedido-sugestao[aria-selected=true]{background:#463e2e;outline:1px solid #a58a53;outline-offset:-1px}.pedido-busca-vazia{font-size:16px;line-height:1.6;color:var(--muted);padding:18px}
 #buscaClienteInput,.item-product input{font-size:16px;padding:13px 14px;min-height:48px}
 @media(max-width:760px){.pedido-sugestao{padding:14px;min-height:78px}.pedido-sugestao strong{font-size:18px}.pedido-sugestao span{font-size:14px}}
+
+/* Modelo de cartões escolhido para o canal de envio. */
+.pedido-canal-panel{padding:26px!important;border-radius:18px!important;margin-bottom:24px}
+.pedido-etapa{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:#e0d4bb}
+.pedido-etapa>span{display:grid;place-items:center;width:25px;height:25px;border-radius:50%;background:#d1b576;color:#272623;font-size:12px;flex-shrink:0}
+.pedido-canal-panel .canal-selector{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:20px 0}
+.pedido-canal-panel .canal-card{display:flex;align-items:center;gap:16px;text-align:left;padding:22px;min-height:100px;border:1px solid #4a4b4d!important;border-radius:14px;color:var(--ink)!important;background:#242527!important;transition:background .18s,border-color .18s,transform .18s,box-shadow .18s}
+.pedido-canal-panel .canal-card.active{border-color:#c4a76b!important;background:#3b352a!important;box-shadow:0 0 0 1px #c4a76b33}
+.canal-icon{display:grid;place-items:center;width:48px;height:48px;flex-shrink:0;border-radius:14px;color:#d0b782;background:#3b3c3f}
+.canal-icon svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.canal-whatsapp .canal-icon{color:#6dd59c;background:#244638}.canal-texto{min-width:0}.canal-texto strong{display:block;font-size:17px;line-height:1.4}.canal-texto small{display:block;color:#bbb6ab;font-size:12px;line-height:1.6;margin-top:6px}
+.canal-check{display:grid;place-items:center;width:21px;height:21px;flex-shrink:0;margin-left:auto;border:1px solid #6c6a62;border-radius:50%;font-size:12px;color:transparent}
+.active .canal-check{background:#d5ba7c;color:#252525;border-color:#d5ba7c}
+.pedido-email-opcoes{border-top:1px solid #45433d;padding-top:22px;animation:pedido-revelar .2s ease}.pedido-email-opcoes[hidden]{display:none}
+.logistica-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}.logistica-heading h3{font-size:13px}.logistica-heading>span{font-size:11px;color:var(--muted)}
+.logistica-choices{display:grid;grid-template-columns:1fr 1fr;gap:12px}.logistica-card{display:block;padding:15px 18px;text-align:left;border:1px solid #53514a;border-radius:10px;background:#252628;color:#cfcbc4;transition:background .18s,border-color .18s}
+.logistica-card strong{display:block;font-size:14px}.logistica-card small{display:block;font-size:12px;color:#b4b0a6;margin-top:6px;line-height:1.5}.logistica-card.active{background:#45402f;border-color:#c5a767;color:#f1d59b}
+.pedido-oc{display:flex;align-items:center;gap:18px;margin-top:18px}.pedido-oc label{font-size:12px;color:#c7c1b5;white-space:nowrap}.pedido-oc input{flex:1;min-width:0;padding:13px;font-size:14px}
+.canal-resumo{display:flex;justify-content:space-between;gap:16px;margin-top:22px;font-size:12px;color:#b1ab9d}.canal-resumo strong{color:#e3c68a}
+@media(hover:hover){.pedido-canal-panel .canal-card:hover{transform:translateY(-2px);border-color:#c4ab78!important}.logistica-card:hover{border-color:#c4ab78}}
+@keyframes pedido-revelar{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:760px){.pedido-canal-panel{padding:18px!important}.pedido-canal-panel .canal-selector{grid-template-columns:1fr;gap:12px}.pedido-canal-panel .canal-card{padding:17px;gap:13px}.canal-texto strong{font-size:17px}.canal-texto small{font-size:12px}.canal-icon{width:44px;height:44px}.pedido-oc{flex-direction:column;align-items:stretch;gap:9px}.pedido-oc input{width:100%;font-size:16px}.logistica-heading{align-items:flex-start;flex-wrap:wrap}.logistica-choices{gap:9px}.logistica-card{padding:14px 12px}}
+@media(prefers-reduced-motion:reduce){.pedido-canal-panel .canal-card,.logistica-card{transition:none}.pedido-email-opcoes{animation:none}.pedido-canal-panel .canal-card:hover{transform:none}}
+.pedido-canal-panel{border:1px solid #434446}
