@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acessórios - Sistema Nespresso</title>
+    <title>Acessórios - Catálogo Nespresso</title>
     <link rel="stylesheet" href="styles.css">
     <!-- Biblioteca Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -14,24 +14,21 @@
         <!-- CABEÇALHO E NAVEGAÇÃO -->
         <header class="header">
             <div>
-                <h1>🥄 Catálogo de Acessórios</h1>
-                <p>Xícaras, Açúcares, Mexedores e Complementos Nespresso</p>
+                <h1>🥄 Acessórios</h1>
+                <p>Controle de caixas, kits, pacotes e cálculo unitário automático</p>
             </div>
             <div class="nav-menu">
                 <a href="index.html" class="btn btn-secondary">👥 Clientes</a>
                 <a href="produtos_b2b.html" class="btn btn-secondary">☕ Cápsulas B2B</a>
                 <a href="produtos_b2c.html" class="btn btn-secondary">🏠 Cápsulas B2C</a>
                 <a href="acessorios.html" class="btn btn-primary">🥄 Acessórios</a>
-                <a href="pedidos.html" class="btn btn-secondary">📦 Pedidos</a>
             </div>
         </header>
 
-        <!-- BARRA DE BUSCA E BOTÃO NOVO -->
-        <div class="toolbar">
-            <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Buscar por SKU ou Nome do Acessório..." oninput="filtrarAcessorios()">
-            </div>
-            <button class="btn btn-primary" onclick="abrirModalAcessorio()">+ Novo Acessório</button>
+        <!-- BARRA DE AÇÕES -->
+        <div class="actions-bar">
+            <input type="text" id="searchInput" placeholder="🔍 Pesquisar por Descrição, SKU ou Tipo de Embalagem..." onkeyup="filtrarAcessorios()">
+            <button class="btn btn-primary" onclick="abrirModal()">+ Novo Acessório</button>
         </div>
 
         <!-- TABELA DE ACESSÓRIOS -->
@@ -39,75 +36,106 @@
             <table>
                 <thead>
                     <tr>
+                        <th style="width: 70px; text-align: center;">Foto</th>
                         <th>SKU</th>
-                        <th>Nome do Acessório</th>
-                        <th>Tipo de Embalagem</th>
-                        <th>Qtd. na Embalagem</th>
-                        <th>Preço Embalagem (R$)</th>
-                        <th>Preço Unit. (R$)</th>
-                        <th>Ações</th>
+                        <th>Descrição do Acessório</th>
+                        <th>Apresentação (Qtd)</th>
+                        <th>Preço (Embalagem)</th>
+                        <th>Custo Unitário (Peça)</th>
+                        <th style="text-align: center;">Ações</th>
                     </tr>
                 </thead>
-                <tbody id="tabelaAcessoriosBody">
-                    <tr>
-                        <td colspan="7" style="text-align: center;">Carregando acessórios...</td>
-                    </tr>
+                <tbody id="acessoriosTableBody">
+                    <tr><td colspan="7" style="text-align:center; color: #64748b; padding: 24px;">Carregando acessórios da nuvem...</td></tr>
                 </tbody>
             </table>
         </div>
     </div>
 
-    <!-- MODAL DE CADASTRO / EDIÇÃO DE ACESSÓRIO -->
-    <div id="modalAcessorio" class="modal">
+    <!-- MODAL DE VISUALIZAR / DETALHES + SIMULADOR DE PEDIDO -->
+    <div id="detalhesModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="modalTitulo">Novo Acessório</h2>
-                <span class="close" onclick="fecharModalAcessorio()">&times;</span>
+                <h2>📋 Detalhes e Simulador de Quantidade</h2>
+                <button class="close-btn" onclick="fecharModalDetalhes()">&times;</button>
             </div>
-            <form id="formAcessorio" onsubmit="salvarAcessorio(event)">
+            <div class="details-grid" id="detalhesConteudo">
+                <!-- Conteúdo preenchido via JS -->
+            </div>
+            <div class="modal-buttons">
+                <button type="button" class="btn btn-secondary" onclick="fecharModalDetalhes()">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE CADASTRO / EDIÇÃO -->
+    <div id="acessorioModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Cadastrar Novo Acessório</h2>
+                <button class="close-btn" onclick="fecharModal()">&times;</button>
+            </div>
+            <form id="acessorioForm" onsubmit="salvarAcessorio(event)">
                 <input type="hidden" id="acessorioId">
                 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>SKU (Código):</label>
-                        <input type="text" id="skuInput" required>
+                        <label>SKU:</label>
+                        <input type="text" id="skuInput" required placeholder="Ex: 3541 ou 3519/BULK">
                     </div>
                     <div class="form-group">
-                        <label>Nome do Acessório:</label>
-                        <input type="text" id="nomeInput" required>
+                        <label>Descrição do Item:</label>
+                        <input type="text" id="nomeInput" required placeholder="Ex: Pires LUME Cappuccino 12 Unidades">
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Tipo de Embalagem:</label>
-                        <input type="text" id="tipoEmbalagemInput" placeholder="Ex: Caixa / Kit, Caixa Bulk, Pacote, Unidade" required>
+                        <label>Tipo de Embalagem (Venda):</label>
+                        <select id="tipoEmbalagemInput" style="background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 10px; color: #f8fafc; font-size: 14px; width: 100%;">
+                            <option value="Unidade">Unidade (1 peça avulsa)</option>
+                            <option value="Caixa / Kit">Caixa / Kit (Conjunto fechado)</option>
+                            <option value="Caixa Bulk">Caixa Bulk (Atacado)</option>
+                            <option value="Pacote">Pacote (Descartáveis / Insumos)</option>
+                            <option value="Promocional">Promocional / Bonificação</option>
+                        </select>
                     </div>
                     <div class="form-group">
-                        <label>Quantidade na Embalagem:</label>
-                        <input type="number" id="qtdEmbalagemInput" min="1" value="1" required>
+                        <label>Unidades dentro da Embalagem:</label>
+                        <input type="number" id="qtdEmbalagemInput" required min="1" value="1" oninput="calcularPrecoUnid()">
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label>Preço da Embalagem (R$):</label>
-                        <input type="text" id="precoEmbalagemInput" placeholder="Ex: 78,65">
+                        <input type="text" id="precoEmbalagemInput" required placeholder="Ex: 78,65" oninput="calcularPrecoUnid()">
                     </div>
                     <div class="form-group">
-                        <label>Preço Unitário (R$):</label>
-                        <input type="text" id="precoUnidInput" placeholder="Ex: 6,55">
+                        <label>Custo por Peça / Unidade (R$):</label>
+                        <input type="text" id="precoUnidInput" readonly style="background: #1e293b; color: #34d399; font-weight: bold;" placeholder="Calculado automaticamente">
                     </div>
                 </div>
 
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="fecharModalAcessorio()">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Salvar Acessório</button>
+                <div class="form-group">
+                    <label>Foto (Link de imagem PNG/JPG):</label>
+                    <input type="text" id="fotoInput" placeholder="https://exemplo.com/foto.png">
+                </div>
+
+                <div class="form-group">
+                    <label>Observações:</label>
+                    <textarea id="observacoesInput" rows="3" placeholder="Detalhes da embalagem, voltagem, regras de bonificação..." style="background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 10px; color: #f8fafc; font-size: 14px; width: 100%; resize: vertical;"></textarea>
+                </div>
+
+                <div class="modal-buttons">
+                    <button type="button" class="btn btn-secondary" onclick="fecharModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar na Nuvem</button>
                 </div>
             </form>
         </div>
     </div>
 
+    <!-- Script JS -->
     <script src="acessorios.js"></script>
 </body>
 </html>
