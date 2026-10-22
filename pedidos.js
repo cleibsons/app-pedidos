@@ -472,12 +472,12 @@ function gerarEmailPedido() {
     paragrafo('Por gentileza, poderiam inserir o pedido para o cliente abaixo?','Por gentileza, poderiam inserir o pedido para o cliente abaixo?');
     const oc=document.getElementById('ordemCompraInput').value.trim();
     if(document.getElementById('tipoLogisticaInput').value==='broker') {
-        const ordem=oc || '[Número da OC ou autorização]';
-        paragrafo(`<strong>Observação importante:</strong> A entrega e o faturamento devem ser realizados <strong>VIA BROKER</strong>. Favor anexar na Nota Fiscal a observação: <em>"Ordem de Compra: ${e(ordem)}"</em>.`, `Observação importante: A entrega e o faturamento devem ser realizados VIA BROKER. Favor anexar na Nota Fiscal a observação: "Ordem de Compra: ${ordem}".`);
+        paragrafo('<strong>Observação importante:</strong> A entrega e o faturamento devem ser realizados <strong>VIA BROKER</strong>.', 'Observação importante: A entrega e o faturamento devem ser realizados VIA BROKER.');
     } else {
         paragrafo('<strong>Observação importante:</strong> identificamos que o item solicitado não possui estoque no Broker. Portanto, peço que sigam com o faturamento <strong>VIA ESTOQUE 3A</strong> e entrega <strong>VIA TRANSPORTADORA (Total Express)</strong> — <strong>NÃO enviar via Correios</strong>, pois o cliente não recebe mercadorias por esta modalidade.', 'Observação importante: identificamos que o item solicitado não possui estoque no Broker. Portanto, peço que sigam com o faturamento VIA ESTOQUE 3A e entrega VIA TRANSPORTADORA (Total Express) — NÃO enviar via Correios, pois o cliente não recebe mercadorias por esta modalidade.');
-        if(oc) paragrafo(`<strong>Observação de Faturamento:</strong> Pedido faturado sem Ordem de Compra, autorizado por ${e(oc)}.`, `Observação de Faturamento: Pedido faturado sem Ordem de Compra, autorizado por ${oc}.`);
     }
+    const observacao=oc || '[Preencha a observação no campo acima]';
+    paragrafo(`Favor anexar na Nota Fiscal a observação: <em>${e(observacao)}</em>`, `Favor anexar na Nota Fiscal a observação: ${observacao}`);
     paragrafo('<strong>Dados do Cliente:</strong>','Dados do Cliente:');
     const endereco=[c.endereco,c.bairro].filter(Boolean).join(', ');
     const local=[endereco,c.cidade,c.cep ? 'CEP '+c.cep : ''].filter(Boolean).join(' - ');
@@ -485,22 +485,20 @@ function gerarEmailPedido() {
     paragrafo('<strong>Detalhes do Pedido:</strong>','Detalhes do Pedido:');
     lista([{html:'<strong>Condição de Pagamento:</strong> Boleto faturado para 30 dias',texto:'Condição de Pagamento: Boleto faturado para 30 dias'}]);
     const grupos=[['Itens (Linha Profissional):',['b2b']],['Itens (Linha Residencial):',['vertuo','original']],['Itens (Acessórios):',['acessorios']]];
-    let totalCapsulas=0,totalEmbalagens=0,totalValor=0;
+    let totalCapsulas=0,totalEmbalagens=0;
     for(const [titulo,tipos] of grupos) {
         const itens=[];
         for(const item of itensPedido.filter(i=>tipos.includes(i.tipo))) {
             const resumo=resumoItem(item);if(!resumo) continue;
-            const {produto,preco,qtd,unidades,subtotal}=resumo;
+            const {produto,qtd,unidades}=resumo;
             const acessorio=item.tipo==='acessorios';
             const contagem=acessorio?qtd*(Number(produto.qtd_embalagem)||1):qtd*unidades;
             const embalagem=acessorio?nomeEmbalagem(produto,qtd):(qtd===1?'caixa':'caixas');
             const unidade=acessorio?(contagem===1?'unidade':'unidades'):(contagem===1?'cápsula':'cápsulas');
             const codigo=`${produto.sku} - ${produto.nome || produto.descricao || 'Item'}`;
             const inicio=`${String(qtd).padStart(2,'0')} ${embalagem} – CÓD: `, fim=` (${contagem} ${unidade})`;
-            const valores=`Preço por ${acessorio?'embalagem':'cápsula'}: ${moeda(preco)} · Subtotal: ${moeda(subtotal)}`;
-            itens.push({html:`${e(inicio)}<strong>${e(codigo)}</strong>${e(fim)}<br><span style="font-size:13px;">${e(valores)}</span>`,texto:inicio+codigo+fim+'\n  '+valores});
+            itens.push({html:`${e(inicio)}<strong>${e(codigo)}</strong>${e(fim)}`,texto:inicio+codigo+fim});
             if(acessorio) totalEmbalagens+=qtd;else totalCapsulas+=contagem;
-            totalValor+=subtotal;
         }
         if(itens.length) {paragrafo(`<strong>${titulo}</strong>`,titulo);lista(itens);}
     }
@@ -509,7 +507,7 @@ function gerarEmailPedido() {
     if(totalEmbalagens) resumo.push(`${totalEmbalagens} ${totalEmbalagens===1?'EMBALAGEM DE ACESSÓRIOS':'EMBALAGENS DE ACESSÓRIOS'}`);
     const total=resumo.join(' + ') || '0 CÁPSULAS';
     paragrafo(`<strong>Total:</strong> ${e(total)}.`,`Total: ${total}.`);
-    paragrafo(`<strong>Valor total do pedido:</strong> ${e(moeda(totalValor))}`,`Valor total do pedido: ${moeda(totalValor)}`);
+
     paragrafo('Desde já, agradeço pela atenção e colaboração.','Desde já, agradeço pela atenção e colaboração.');
     paragrafo('Atenciosamente,','Atenciosamente,');
     return {html:`<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.5;color:#222222;background-color:#ffffff;text-align:left;">${blocos.join('')}</div>`,texto:textos.join('\n\n')};
