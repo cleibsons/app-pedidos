@@ -5,3 +5,5 @@
 @media(max-width:760px){.header h1{font-size:26px}.pro-grid{gap:14px}.pro-card{padding:22px 15px 0}.pro-photo{width:145px;height:145px}.pro-name{font-size:19px}.pro-catalog-heading{margin-top:26px}.pro-grid .pro-photo{max-width:100%}.actions-bar{padding:15px}.actions-bar .btn{width:100%}}
 @media(max-width:520px){.pro-grid{grid-template-columns:1fr}.pro-card{padding:28px 24px 0}.pro-photo{width:180px;height:180px}.pro-name{font-size:23px}.pro-pack{font-size:14px}.pro-description{font-size:14px}.pro-price strong{font-size:21px}.pro-price span{font-size:12px}.pro-details{max-width:250px;font-size:14px;min-height:46px}.pro-manage{margin-top:22px}.pro-manage button{font-size:12px;min-height:36px}}
 @media(prefers-reduced-motion:reduce){.pro-card{transition:none}.pro-card:hover{transform:none}}
+
+.pro-category{margin-bottom:32px}.pro-category-title{font-size:23px;font-weight:600;color:var(--ink);border-bottom:1px solid var(--line);padding-bottom:14px;margin:0 0 20px}.pro-catalog>.pro-status{display:block}#categoriaInput{width:100%;min-height:44px;background:var(--field);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:10px;font:inherit}

@@ -8,7 +8,7 @@
     <!-- Biblioteca Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="theme-dark.css?v=8">
-    <link rel="stylesheet" href="produtos-pro.css?v=15">
+    <link rel="stylesheet" href="produtos-pro.css?v=16">
 </head>
 <body class="app-page">
 
@@ -30,7 +30,7 @@
         </div>
 
         <div class="pro-catalog-heading"><h2>Explore nossos cafés</h2><span id="produtosContagem" role="status"></span></div>
-        <div class="pro-grid" id="produtosGrid" aria-label="Catálogo de cápsulas profissionais"><p class="pro-status">Carregando catálogo profissional...</p></div>
+        <div class="pro-catalog" id="produtosGrid" aria-label="Catálogo de cápsulas profissionais"><p class="pro-status">Carregando catálogo profissional...</p></div>
     </div>
 
     <!-- MODAL DE VISUALIZAR / DETALHES -->
@@ -70,6 +70,10 @@
                     </div>
                 </div>
 
+                <div class="form-group">
+                    <label for="categoriaInput">Categoria:</label>
+                    <select id="categoriaInput"><option value="">Sem categoria</option><option value="Creations">Creations</option><option value="Ristretto">Ristretto</option><option value="Espresso &amp; Lungo">Espresso &amp; Lungo</option><option value="Origins">Origins</option><option value="Limited">Limited</option></select>
+                </div>
                 <div class="form-row">
                     <div class="form-group">
                         <label>Intensidade:</label>
@@ -111,7 +115,7 @@
     </div>
 
     <!-- Script JS -->
-    <script src="produtos_b2b.js?v=15"></script>
+    <script src="produtos_b2b.js?v=16"></script>
     <script src="ui.js?v=4"></script>
 </body>
 </html>

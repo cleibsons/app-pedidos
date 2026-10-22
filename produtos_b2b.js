@@ -24,6 +24,7 @@ if (typeof supabase !== 'undefined') {
     supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 }
 
+const CATEGORIAS_PRO = ['Creations', 'Ristretto', 'Espresso & Lungo', 'Origins', 'Limited'];
 let produtos = [];
 let imagemBase64Temp = '';
 
@@ -41,7 +42,7 @@ async function carregarProdutosNuvem() {
     try {
         const { data, error } = await supabaseClient
             .from('produtos_b2b')
-            .select('id, sku, nome, intensidade, capsulas_caixa, preco, foto, observacoes')
+            .select('id, sku, nome, intensidade, capsulas_caixa, preco, foto, observacoes, categoria')
             .order('nome', { ascending: true });
 
         if (error) {
@@ -77,13 +78,24 @@ function renderizarTabela(dados = produtos) {
     const grid=document.getElementById('produtosGrid');grid.replaceChildren();
     document.getElementById('produtosContagem').textContent=`${dados.length} ${dados.length===1?'café':'cafés'}`;
     if(!dados.length) {grid.append(criarElementoPro('p','pro-status',produtos.length?'Nenhum café encontrado. Tente outro nome ou SKU.':'Nenhuma cápsula cadastrada. Use “Nova cápsula” para começar.'));return;}
+    const grupos = new Map();
+    for (const categoria of [...CATEGORIAS_PRO, 'Sem categoria']) {
+        const itens = dados.filter(p => (p.categoria || 'Sem categoria') === categoria);
+        if (!itens.length) continue;
+        const secao = criarElementoPro('section', 'pro-category');
+        const titulo = criarElementoPro('h2', 'pro-category-title', categoria);
+        const lista = criarElementoPro('div', 'pro-grid');
+        secao.setAttribute('aria-label', categoria);
+        secao.append(titulo, lista); grid.append(secao);
+        grupos.set(categoria, lista);
+    }
     for(const p of dados) {
         const card=criarElementoPro('article','pro-card');
         card.append(criarFotoPro(p));
         const corpo=criarElementoPro('div','pro-card-body');
         corpo.append(criarElementoPro('span','pro-sku',`SKU ${p.sku || '—'}`),criarElementoPro('h3','pro-name',p.nome || 'Cápsula profissional'),criarElementoPro('p','pro-pack',`Caixa com ${p.capsulas_caixa || 50} cápsulas`));
         if(p.observacoes) corpo.append(criarElementoPro('p','pro-description',p.observacoes));
-        if(p.intensidade) corpo.append(criarElementoPro('span','pro-intensity',`Intensidade ${p.intensidade}`));
+        corpo.append(criarElementoPro('span','pro-intensity',p.intensidade ? `Intensidade ${p.intensidade}` : 'Intensidade não definida'));
         const rodape=criarElementoPro('div','pro-card-footer');
         const valor=criarElementoPro('div','pro-price');valor.append(criarElementoPro('strong','',precoPro(p.preco)),criarElementoPro('span','','por cápsula'));rodape.append(valor);
         const detalhes=criarElementoPro('button','btn pro-details','Ver detalhes');detalhes.type='button';detalhes.setAttribute('aria-label',`Ver detalhes de ${p.nome || p.sku}`);detalhes.addEventListener('click',()=>visualizarProduto(p.id));rodape.append(detalhes);
@@ -91,19 +103,19 @@ function renderizarTabela(dados = produtos) {
         for(const [texto,acao,classe] of [['Editar',()=>editarProduto(p.id),''],['Excluir',()=>excluirProduto(p.id),'pro-delete']]) {
             const botao=criarElementoPro('button',classe,texto);botao.type='button';botao.setAttribute('aria-label',`${texto} ${p.nome || p.sku}`);botao.addEventListener('click',acao);gestao.append(botao);
         }
-        rodape.append(gestao);corpo.append(rodape);card.append(corpo);grid.append(card);
+        rodape.append(gestao);corpo.append(rodape);card.append(corpo);grupos.get(p.categoria || 'Sem categoria').append(card);
     }
 }
 function filtrarProdutos() {
     const normalizar=v=>String(v || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
     const termo=normalizar(document.getElementById('searchInput').value.trim());
-    renderizarTabela(produtos.filter(p=>[p.nome,p.sku,p.observacoes].some(v=>normalizar(v).includes(termo))));
+    renderizarTabela(produtos.filter(p=>[p.nome,p.sku,p.observacoes,p.categoria].some(v=>normalizar(v).includes(termo))));
 }
 function visualizarProduto(id) {
     const p=produtos.find(item=>item.id===id);if(!p)return;
     const container=document.getElementById('detalhesConteudo');container.replaceChildren();
     const destaque=criarElementoPro('div','pro-detail-hero');destaque.append(criarFotoPro(p),criarElementoPro('h3','',p.nome));container.append(destaque);
-    for(const [label,valor] of [['SKU',p.sku],['Preço por cápsula',precoPro(p.preco)],['Intensidade',p.intensidade || 'Não informada'],['Cápsulas por caixa',p.capsulas_caixa || 50],['Valor da caixa',precoPro(Number(p.preco || 0)*(p.capsulas_caixa || 50))],['Observações',p.observacoes || 'Nenhuma observação cadastrada para este café.']]) {
+    for(const [label,valor] of [['Categoria',p.categoria || 'Sem categoria'],['SKU',p.sku],['Preço por cápsula',precoPro(p.preco)],['Intensidade',p.intensidade || 'Não definida'],['Cápsulas por caixa',p.capsulas_caixa || 50],['Valor da caixa',precoPro(Number(p.preco || 0)*(p.capsulas_caixa || 50))],['Observações',p.observacoes || 'Nenhuma observação cadastrada para este café.']]) {
         const bloco=criarElementoPro('div','detail-item');bloco.append(criarElementoPro('div','detail-label',label),criarElementoPro('div','detail-value',valor));container.append(bloco);
     }
     document.getElementById('detalhesModal').style.display='flex';
@@ -171,6 +183,7 @@ function abrirModal(produto = null) {
         document.getElementById('produtoId').value = produto.id;
         document.getElementById('skuInput').value = produto.sku || '';
         document.getElementById('nomeInput').value = produto.nome || '';
+        document.getElementById('categoriaInput').value = produto.categoria || '';
         document.getElementById('intensidadeInput').value = produto.intensidade || '';
         document.getElementById('caixaQtdInput').value = produto.capsulas_caixa || 50;
         document.getElementById('precoInput').value = produto.preco ? produto.preco.toString().replace('.', ',') : '';
@@ -200,6 +213,7 @@ async function salvarProduto(e) {
         id: id ? parseInt(id) : Date.now(),
         sku: document.getElementById('skuInput').value.trim(),
         nome: document.getElementById('nomeInput').value.trim(),
+        categoria: document.getElementById('categoriaInput').value || null,
         intensidade: intVal ? parseInt(intVal) : null,
         capsulas_caixa: parseInt(document.getElementById('caixaQtdInput').value) || 50,
         preco: parseFloat(precoStr) || 0,
