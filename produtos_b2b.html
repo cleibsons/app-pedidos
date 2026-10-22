@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cápsulas B2B - Nespresso Professional</title>
+    <title>Cápsulas B2B - Sistema Nespresso</title>
     <link rel="stylesheet" href="styles.css">
     <!-- Biblioteca Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -14,21 +14,24 @@
         <!-- CABEÇALHO E NAVEGAÇÃO -->
         <header class="header">
             <div>
-                <h1>☕ Cápsulas B2B (Nespresso Professional)</h1>
-                <p>Catálogo e consulta de preços para linha profissional</p>
+                <h1>☕ Catálogo de Cápsulas B2B</h1>
+                <p>Linha Nespresso Professional (Caixas com 50 cápsulas)</p>
             </div>
             <div class="nav-menu">
                 <a href="index.html" class="btn btn-secondary">👥 Clientes</a>
                 <a href="produtos_b2b.html" class="btn btn-primary">☕ Cápsulas B2B</a>
                 <a href="produtos_b2c.html" class="btn btn-secondary">🏠 Cápsulas B2C</a>
                 <a href="acessorios.html" class="btn btn-secondary">🥄 Acessórios</a>
+                <a href="pedidos.html" class="btn btn-secondary">📦 Pedidos</a>
             </div>
         </header>
 
-        <!-- BARRA DE AÇÕES -->
-        <div class="actions-bar">
-            <input type="text" id="searchInput" placeholder="🔍 Pesquisar por Nome do Blend ou SKU..." onkeyup="filtrarProdutos()">
-            <button class="btn btn-primary" onclick="abrirModal()">+ Novo Produto B2B</button>
+        <!-- BARRA DE BUSCA E BOTÃO NOVO -->
+        <div class="toolbar">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Buscar por SKU, Nome ou Categoria..." oninput="filtrarProdutos()">
+            </div>
+            <button class="btn btn-primary" onclick="abrirModalProduto()">+ Novo Produto B2B</button>
         </div>
 
         <!-- TABELA DE PRODUTOS B2B -->
@@ -36,99 +39,75 @@
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 80px; text-align: center;">Foto</th>
                         <th>SKU</th>
-                        <th>Nome do Produto</th>
+                        <th>Nome da Cápsula</th>
+                        <th>Categoria</th>
+                        <th>Intensidade</th>
                         <th>Cápsulas / Caixa</th>
-                        <th>Preço Unitário / Caixa</th>
-                        <th style="text-align: center;">Ações</th>
+                        <th>Preço Unit. (R$)</th>
+                        <th>Ações</th>
                     </tr>
                 </thead>
-                <tbody id="produtosTableBody">
-                    <tr><td colspan="6" style="text-align:center; color: #64748b; padding: 24px;">Carregando catálogo B2B da nuvem...</td></tr>
+                <tbody id="tabelaProdutosBody">
+                    <tr>
+                        <td colspan="7" style="text-align: center;">Carregando produtos B2B...</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
     </div>
 
-    <!-- MODAL DE VISUALIZAR / DETALHES -->
-    <div id="detalhesModal" class="modal">
+    <!-- MODAL DE CADASTRO / EDIÇÃO DE PRODUTO B2B -->
+    <div id="modalProduto" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>📋 Detalhes do Blend B2B</h2>
-                <button class="close-btn" onclick="fecharModalDetalhes()">&times;</button>
+                <h2 id="modalTitulo">Novo Produto B2B</h2>
+                <span class="close" onclick="fecharModalProduto()">&times;</span>
             </div>
-            <div class="details-grid" id="detalhesConteudo">
-                <!-- Conteúdo preenchido via JS -->
-            </div>
-            <div class="modal-buttons">
-                <button type="button" class="btn btn-secondary" onclick="fecharModalDetalhes()">Fechar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL DE CADASTRO / EDIÇÃO -->
-    <div id="produtoModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modalTitle">Cadastrar Novo Produto B2B</h2>
-                <button class="close-btn" onclick="fecharModal()">&times;</button>
-            </div>
-            <form id="produtoForm" onsubmit="salvarProduto(event)">
+            <form id="formProduto" onsubmit="salvarProduto(event)">
                 <input type="hidden" id="produtoId">
                 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>SKU:</label>
-                        <input type="text" id="skuInput" required placeholder="Ex: 7011.80">
+                        <label>SKU (Código):</label>
+                        <input type="text" id="skuInput" required>
                     </div>
                     <div class="form-group">
-                        <label>Nome do Produto (Blend):</label>
-                        <input type="text" id="nomeInput" required placeholder="Ex: Ristretto Intenso">
+                        <label>Nome da Cápsula:</label>
+                        <input type="text" id="nomeInput" required>
                     </div>
                 </div>
 
                 <div class="form-row">
+                    <div class="form-group">
+                        <label>Categoria:</label>
+                        <input type="text" id="categoriaInput" placeholder="Ex: Origins, Creations, Intenso...">
+                    </div>
                     <div class="form-group">
                         <label>Intensidade:</label>
-                        <input type="number" id="intensidadeInput" min="1" max="13" placeholder="Ex: 9">
-                    </div>
-                    <div class="form-group">
-                        <label>Cápsulas por caixa:</label>
-                        <input type="number" id="caixaQtdInput" required value="50">
+                        <input type="number" id="intensidadeInput" min="1" max="13">
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Preço da Caixa (R$):</label>
-                        <input type="text" id="precoCaixaInput" required placeholder="Ex: 215,00" oninput="calcularPrecoUnid()">
+                        <label>Cápsulas por Caixa:</label>
+                        <input type="number" id="capsulasCaixaInput" value="50" required>
                     </div>
                     <div class="form-group">
-                        <label>Preço por Cápsula (R$):</label>
-                        <input type="text" id="precoUnidInput" readonly style="background: #1e293b; color: #34d399;" placeholder="Calculado automaticamente">
+                        <label>Preço da Cápsula (R$):</label>
+                        <input type="text" id="precoInput" placeholder="Ex: 3.10">
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label>Foto (Link de imagem PNG):</label>
-                    <input type="text" id="fotoInput" placeholder="https://exemplo.com/foto.png">
-                </div>
-
-                <div class="form-group">
-                    <label>Observação:</label>
-                    <textarea id="observacoesInput" rows="4" placeholder="Perfil aromático, notas de cata..." style="background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 10px; color: #f8fafc; font-size: 14px; width: 100%; resize: vertical;"></textarea>
-                </div>
-
-                <div class="modal-buttons">
-                    <button type="button" class="btn btn-secondary" onclick="fecharModal()">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Salvar na Nuvem</button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="fecharModalProduto()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar Produto</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Script JS -->
     <script src="produtos_b2b.js"></script>
 </body>
 </html>
