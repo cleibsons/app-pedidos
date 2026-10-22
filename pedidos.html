@@ -111,7 +111,7 @@
                     <button type="button" id="opcao3a" class="logistica-card" aria-pressed="false" onclick="selecionarCanal('email', 'estoque3a')"><strong>Estoque 3A</strong><small>Entrega por transportadora</small></button>
                 </div>
                 <input type="hidden" id="tipoLogisticaInput" value="broker">
-                <div class="pedido-oc"><label for="ordemCompraInput">OC ou autorização</label><input type="text" id="ordemCompraInput" placeholder="Número da OC ou nome de quem autorizou" oninput="atualizarPreview()"></div>
+                <div class="pedido-oc"><label for="ordemCompraInput">Observação para a Nota Fiscal</label><input type="text" id="ordemCompraInput" placeholder="Ex.: Ordem de Compra: 273721 ou Sem OC, autorizado por João" oninput="atualizarPreview()"></div>
             </div>
             <div class="canal-resumo"><span>Formato selecionado</span><strong id="canalResumo" aria-live="polite">WhatsApp</strong></div>
         </section>
@@ -164,7 +164,7 @@
     </div>
 
     <!-- Script JS -->
-    <script src="pedidos.js?v=12"></script>
+    <script src="pedidos.js?v=13"></script>
     <script src="ui.js?v=4"></script>
 </body>
 </html>
