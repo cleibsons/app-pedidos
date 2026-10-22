@@ -36,6 +36,7 @@ let acessoriosLista = [];
 
 let itensPedido = [];
 let proximoItemId = 0;
+let emailGerado = null;
 
 document.addEventListener("DOMContentLoaded", async () => {
     if (await protegerPagina()) {
@@ -219,6 +220,8 @@ function atualizarTotais() {
 function atualizarPreview() {
     const preview = document.getElementById('previewMensagem');
     const totais = atualizarTotais();
+    emailGerado = null;
+    preview.classList.toggle('email-preview', canalAtual === 'email' && Boolean(clienteSelecionado));
     document.getElementById('pedidoStatus').textContent = '';
     
     if (!clienteSelecionado) {
@@ -251,7 +254,7 @@ function atualizarPreview() {
                 let totalCaps = qtd * capsPorCaixa;
                 totalCapsulasB2B += totalCaps;
                 totalCaixasB2B += qtd;
-                b2bItens.push(`- ${String(qtd).padStart(2, '0')} caixa(s) - ${prod.sku} - ${prod.nome || prod.descricao} (${totalCaps} cápsulas)${valores}`);
+                b2bItens.push(`- ${String(qtd).padStart(2, '0')} ${qtd === 1 ? 'caixa' : 'caixas'} - ${prod.sku} - ${prod.nome || prod.descricao} (${totalCaps} cápsulas)${valores}`);
             }
         } else if (i.tipo === 'vertuo') {
             prod = produtosVertuo.find(p => p.id == i.produtoId);
@@ -260,7 +263,7 @@ function atualizarPreview() {
                 let totalCaps = qtd * capsPorCaixa;
                 totalCapsulasB2C += totalCaps;
                 totalCaixasB2C += qtd;
-                vertuoItens.push(`- ${String(qtd).padStart(2, '0')} caixa(s) - ${prod.sku} - ${prod.nome || prod.descricao} (${totalCaps} cápsulas)${valores}`);
+                vertuoItens.push(`- ${String(qtd).padStart(2, '0')} ${qtd === 1 ? 'caixa' : 'caixas'} - ${prod.sku} - ${prod.nome || prod.descricao} (${totalCaps} cápsulas)${valores}`);
             }
         } else if (i.tipo === 'original') {
             prod = produtosOriginal.find(p => p.id == i.produtoId);
@@ -269,7 +272,7 @@ function atualizarPreview() {
                 let totalCaps = qtd * capsPorCaixa;
                 totalCapsulasB2C += totalCaps;
                 totalCaixasB2C += qtd;
-                originalItens.push(`- ${String(qtd).padStart(2, '0')} caixa(s) - ${prod.sku} - ${prod.nome || prod.descricao} (${totalCaps} cápsulas)${valores}`);
+                originalItens.push(`- ${String(qtd).padStart(2, '0')} ${qtd === 1 ? 'caixa' : 'caixas'} - ${prod.sku} - ${prod.nome || prod.descricao} (${totalCaps} cápsulas)${valores}`);
             }
         } else if (i.tipo === 'acessorios') {
             prod = acessoriosLista.find(p => p.id == i.produtoId);
@@ -277,7 +280,7 @@ function atualizarPreview() {
                 let qtdEmb = parseInt(prod.qtd_embalagem) || 1;
                 totalAcessoriosEmbalagens += qtd;
                 let nomeAcessorio = prod.nome || prod.descricao || 'Item';
-                let tipoEmb = prod.tipo_embalagem || 'caixa(s)';
+                let tipoEmb = nomeEmbalagem(prod, qtd);
                 acessoriosItens.push(`- ${String(qtd).padStart(2, '0')} ${tipoEmb} - ${prod.sku} - ${nomeAcessorio} (${qtdEmb * qtd} unidades)${valores}`);
             }
         }
@@ -307,10 +310,10 @@ function atualizarPreview() {
         if (totalCapsulasB2B > 0 || totalCapsulasB2C > 0) {
             let totalGeralCaps = totalCapsulasB2B + totalCapsulasB2C;
             let totalGeralCaixas = totalCaixasB2B + totalCaixasB2C;
-            texto += `- Total Cápsulas: ${totalGeralCaps} cápsulas (${String(totalGeralCaixas).padStart(2, '0')} caixas no total)\n`;
+            texto += `- Total Cápsulas: ${totalGeralCaps} cápsulas (${String(totalGeralCaixas).padStart(2, '0')} ${totalGeralCaixas === 1 ? 'caixa' : 'caixas'} no total)\n`;
         }
         if (totalAcessoriosEmbalagens > 0) {
-            texto += `- Total Acessórios: ${String(totalAcessoriosEmbalagens).padStart(2, '0')} caixas\n`;
+            texto += `- Total Acessórios: ${String(totalAcessoriosEmbalagens).padStart(2, '0')} ${totalAcessoriosEmbalagens === 1 ? 'embalagem' : 'embalagens'}\n`;
         }
 
         texto += `\nValor total do pedido: ${moeda(totais.total)}\n`;
@@ -318,45 +321,9 @@ function atualizarPreview() {
         preview.innerText = texto;
 
     } else {
-        const tipoLogistica = document.getElementById('tipoLogisticaInput').value;
-        const oc = document.getElementById('ordemCompraInput').value.trim() || '[Número da OC ou Autorização]';
+        emailGerado = gerarEmailPedido();
+        preview.innerHTML = emailGerado.html;
 
-        let texto = `Prezado time de Compras,\n\n`;
-        texto += `Por gentileza, poderiam inserir o pedido para o cliente abaixo?\n\n`;
-        
-        if (tipoLogistica === 'broker') {
-            texto += `Observação importante: A entrega e o faturamento devem ser realizados VIA BROKER. Favor anexar na Nota Fiscal a observação: "Ordem de Compra: ${oc}".\n\n`;
-        } else {
-            texto += `Observação importante: Solicito o faturamento VIA ESTOQUE 3A e entrega VIA TRANSPORTADORA (Total Express) — NÃO enviar via Correios, pois o cliente não recebe mercadorias por esta modalidade.\n\n`;
-            texto += `Observação de Faturamento: Pedido faturado sem Ordem de Compra, autorizado por ${oc}.\n\n`;
-        }
-
-        texto += `Dados do Cliente:\n`;
-        texto += `- Razão Social: ${clienteSelecionado.razao || ''}\n`;
-        texto += `- CNPJ: ${clienteSelecionado.cnpj || ''}\n`;
-        texto += `- NN: ${clienteSelecionado.nn || ''}\n`;
-        texto += `- Endereço: ${clienteSelecionado.endereco || ''}, ${clienteSelecionado.bairro || ''} - ${clienteSelecionado.cidade || ''} - CEP ${clienteSelecionado.cep || ''}\n\n`;
-
-        texto += `Detalhes do Pedido:\n`;
-        texto += `- Condição de Pagamento: Boleto faturado para 30 dias.\n\n`;
-        texto += `Itens do Pedido:\n`;
-
-        if (b2bItens.length > 0) {
-            texto += `\nLINHA B2B (Nespresso Professional):\n` + b2bItens.join('\n');
-        }
-        if (vertuoItens.length > 0) {
-            texto += `\nLINHA B2C - VERTUO:\n` + vertuoItens.join('\n');
-        }
-        if (originalItens.length > 0) {
-            texto += `\nLINHA B2C - ORIGINAL:\n` + originalItens.join('\n');
-        }
-        if (acessoriosItens.length > 0) {
-            texto += `\nACESSÓRIOS:\n` + acessoriosItens.join('\n');
-        }
-
-        texto += `\n\nValor total do pedido: ${moeda(totais.total)}`;
-        texto += `\n\nDesde já, agradeço pela atenção e colaboração.`;
-        preview.innerText = texto;
     }
 }
 
@@ -367,8 +334,24 @@ async function copiarMensagem() {
         status.textContent='Selecione um cliente e complete produto, preço e quantidade de todos os itens antes de copiar.';
         return;
     }
+    if (canalAtual === 'email' && emailGerado) {
+        if (navigator.clipboard?.write && typeof ClipboardItem !== 'undefined') {
+            try {
+                await navigator.clipboard.write([new ClipboardItem({
+                    'text/html': new Blob([emailGerado.html], {type:'text/html'}),
+                    'text/plain': new Blob([emailGerado.texto], {type:'text/plain'})
+                })]);
+                status.textContent='E-mail copiado com formatação! Cole com Ctrl + V no corpo do e-mail.';
+                return;
+            } catch { /* Tenta a versão em texto se a cópia formatada não estiver disponível. */ }
+        }
+        try {await navigator.clipboard.writeText(emailGerado.texto);status.textContent='Copiado em texto simples. Para manter os negritos, selecione e copie a pré-visualização ou use um navegador com cópia formatada.';}
+        catch {status.textContent='Não foi possível copiar automaticamente. Selecione e copie a pré-visualização do e-mail.';}
+        return;
+    }
     try {await navigator.clipboard.writeText(document.getElementById('previewMensagem').innerText); status.textContent='Texto copiado! Pronto para enviar.';}
     catch {status.textContent='Não foi possível copiar automaticamente. Selecione e copie o texto da pré-visualização.';}
+
 }
 function limparPedido() {
     fecharBusca();
@@ -462,4 +445,72 @@ function registrarBusca(input,config) {
             const n=buscaAberta.resultados.length;if(n) marcarSugestao((buscaAberta.indice+(e.key==='ArrowDown'?1:-1)+n)%n);
         } else if(e.key==='Enter' && buscaAberta && buscaAberta.input===input && buscaAberta.indice>=0) {e.preventDefault();escolherSugestao(buscaAberta.indice);}
     });
+}
+
+function nomeEmbalagem(produto, quantidade) {
+    const tipo = normalizarBusca(produto.tipo_embalagem || 'caixa');
+    const singular = quantidade === 1;
+    if (tipo.includes('bulk')) return singular ? 'caixa bulk' : 'caixas bulk';
+    if (tipo.includes('kit')) return singular ? 'caixa / kit' : 'caixas / kits';
+    if (tipo.includes('unidade')) return singular ? 'unidade' : 'unidades';
+    if (tipo.includes('pacote')) return singular ? 'pacote' : 'pacotes';
+    if (tipo.includes('promocional')) return singular ? 'embalagem promocional' : 'embalagens promocionais';
+    return singular ? 'caixa' : 'caixas';
+}
+function escaparEmail(valor) {
+    return String(valor ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function gerarEmailPedido() {
+    const e=escaparEmail, c=clienteSelecionado;
+    const blocos=[], textos=[];
+    const paragrafo=(html,texto)=>{blocos.push(`<p style="margin:0 0 16px;line-height:1.5;">${html}</p>`);textos.push(texto);};
+    const lista=itens=>{
+        blocos.push(`<ul style="margin:0 0 16px;padding-left:24px;">${itens.map(i=>`<li style="margin:0 0 8px;line-height:1.5;">${i.html}</li>`).join('')}</ul>`);
+        textos.push(itens.map(i=>'- '+i.texto).join('\n'));
+    };
+    paragrafo('Prezado time de Compras,','Prezado time de Compras,');
+    paragrafo('Por gentileza, poderiam inserir o pedido para o cliente abaixo?','Por gentileza, poderiam inserir o pedido para o cliente abaixo?');
+    const oc=document.getElementById('ordemCompraInput').value.trim();
+    if(document.getElementById('tipoLogisticaInput').value==='broker') {
+        const ordem=oc || '[Número da OC ou autorização]';
+        paragrafo(`<strong>Observação importante:</strong> A entrega e o faturamento devem ser realizados <strong>VIA BROKER</strong>. Favor anexar na Nota Fiscal a observação: <em>"Ordem de Compra: ${e(ordem)}"</em>.`, `Observação importante: A entrega e o faturamento devem ser realizados VIA BROKER. Favor anexar na Nota Fiscal a observação: "Ordem de Compra: ${ordem}".`);
+    } else {
+        paragrafo('<strong>Observação importante:</strong> identificamos que o item solicitado não possui estoque no Broker. Portanto, peço que sigam com o faturamento <strong>VIA ESTOQUE 3A</strong> e entrega <strong>VIA TRANSPORTADORA (Total Express)</strong> — <strong>NÃO enviar via Correios</strong>, pois o cliente não recebe mercadorias por esta modalidade.', 'Observação importante: identificamos que o item solicitado não possui estoque no Broker. Portanto, peço que sigam com o faturamento VIA ESTOQUE 3A e entrega VIA TRANSPORTADORA (Total Express) — NÃO enviar via Correios, pois o cliente não recebe mercadorias por esta modalidade.');
+        if(oc) paragrafo(`<strong>Observação de Faturamento:</strong> Pedido faturado sem Ordem de Compra, autorizado por ${e(oc)}.`, `Observação de Faturamento: Pedido faturado sem Ordem de Compra, autorizado por ${oc}.`);
+    }
+    paragrafo('<strong>Dados do Cliente:</strong>','Dados do Cliente:');
+    const endereco=[c.endereco,c.bairro].filter(Boolean).join(', ');
+    const local=[endereco,c.cidade,c.cep ? 'CEP '+c.cep : ''].filter(Boolean).join(' - ');
+    lista([['Razão Social',c.razao || c.fantasia],['CNPJ',c.cnpj],['NN',c.nn],['Endereço',local]].map(([label,valor])=>({html:`<strong>${label}:</strong> ${e(valor)}`,texto:`${label}: ${valor || ''}`})));
+    paragrafo('<strong>Detalhes do Pedido:</strong>','Detalhes do Pedido:');
+    lista([{html:'<strong>Condição de Pagamento:</strong> Boleto faturado para 30 dias',texto:'Condição de Pagamento: Boleto faturado para 30 dias'}]);
+    const grupos=[['Itens (Linha Profissional):',['b2b']],['Itens (Linha Residencial):',['vertuo','original']],['Itens (Acessórios):',['acessorios']]];
+    let totalCapsulas=0,totalEmbalagens=0,totalValor=0;
+    for(const [titulo,tipos] of grupos) {
+        const itens=[];
+        for(const item of itensPedido.filter(i=>tipos.includes(i.tipo))) {
+            const resumo=resumoItem(item);if(!resumo) continue;
+            const {produto,preco,qtd,unidades,subtotal}=resumo;
+            const acessorio=item.tipo==='acessorios';
+            const contagem=acessorio?qtd*(Number(produto.qtd_embalagem)||1):qtd*unidades;
+            const embalagem=acessorio?nomeEmbalagem(produto,qtd):(qtd===1?'caixa':'caixas');
+            const unidade=acessorio?(contagem===1?'unidade':'unidades'):(contagem===1?'cápsula':'cápsulas');
+            const codigo=`${produto.sku} - ${produto.nome || produto.descricao || 'Item'}`;
+            const inicio=`${String(qtd).padStart(2,'0')} ${embalagem} – CÓD: `, fim=` (${contagem} ${unidade})`;
+            const valores=`Preço por ${acessorio?'embalagem':'cápsula'}: ${moeda(preco)} · Subtotal: ${moeda(subtotal)}`;
+            itens.push({html:`${e(inicio)}<strong>${e(codigo)}</strong>${e(fim)}<br><span style="font-size:13px;">${e(valores)}</span>`,texto:inicio+codigo+fim+'\n  '+valores});
+            if(acessorio) totalEmbalagens+=qtd;else totalCapsulas+=contagem;
+            totalValor+=subtotal;
+        }
+        if(itens.length) {paragrafo(`<strong>${titulo}</strong>`,titulo);lista(itens);}
+    }
+    const resumo=[];
+    if(totalCapsulas) resumo.push(`${totalCapsulas} ${totalCapsulas===1?'CÁPSULA':'CÁPSULAS'}`);
+    if(totalEmbalagens) resumo.push(`${totalEmbalagens} ${totalEmbalagens===1?'EMBALAGEM DE ACESSÓRIOS':'EMBALAGENS DE ACESSÓRIOS'}`);
+    const total=resumo.join(' + ') || '0 CÁPSULAS';
+    paragrafo(`<strong>Total:</strong> ${e(total)}.`,`Total: ${total}.`);
+    paragrafo(`<strong>Valor total do pedido:</strong> ${e(moeda(totalValor))}`,`Valor total do pedido: ${moeda(totalValor)}`);
+    paragrafo('Desde já, agradeço pela atenção e colaboração.','Desde já, agradeço pela atenção e colaboração.');
+    paragrafo('Atenciosamente,','Atenciosamente,');
+    return {html:`<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.5;color:#222222;background-color:#ffffff;text-align:left;">${blocos.join('')}</div>`,texto:textos.join('\n\n')};
 }
