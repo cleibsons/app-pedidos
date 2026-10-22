@@ -8,20 +8,13 @@
     <!-- Biblioteca Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="theme-dark.css?v=8">
-    <link rel="stylesheet" href="produtos-pro.css?v=16">
+    <link rel="stylesheet" href="produtos-pro.css?v=18">
 </head>
 <body class="app-page">
 
     <div class="container">
         <!-- CABEÇALHO E NAVEGAÇÃO -->
-        <header class="header">
-            <div>
-                <span class="pro-eyebrow">Nespresso Professional</span>
-                <h1>Cápsulas profissionais</h1>
-                <p>Encontre o café para cada momento do seu negócio.</p>
-            </div>
-            
-        </header>
+        <header class="header pro-catalog-hero" aria-labelledby="catalogTitle"><h1 id="catalogTitle">CÁPSULAS DE CAFÉ PROFISSIONAIS</h1></header>
 
         <!-- BARRA DE AÇÕES -->
         <div class="actions-bar">
@@ -29,6 +22,7 @@
             <button class="btn btn-primary" onclick="abrirModal()">+ Nova cápsula</button>
         </div>
 
+        <nav id="categoriasNav" class="pro-category-nav" aria-label="Categorias de café"></nav>
         <div class="pro-catalog-heading"><h2>Explore nossos cafés</h2><span id="produtosContagem" role="status"></span></div>
         <div class="pro-catalog" id="produtosGrid" aria-label="Catálogo de cápsulas profissionais"><p class="pro-status">Carregando catálogo profissional...</p></div>
     </div>
@@ -115,7 +109,7 @@
     </div>
 
     <!-- Script JS -->
-    <script src="produtos_b2b.js?v=16"></script>
+    <script src="produtos_b2b.js?v=18"></script>
     <script src="ui.js?v=4"></script>
 </body>
 </html>

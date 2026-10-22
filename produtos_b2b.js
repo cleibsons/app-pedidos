@@ -25,6 +25,33 @@ if (typeof supabase !== 'undefined') {
 }
 
 const CATEGORIAS_PRO = ['Creations', 'Ristretto', 'Espresso & Lungo', 'Origins', 'Limited'];
+const CATEGORIAS_VISUAL = {
+  "Creations": {
+    "slug": "creations",
+    "image": "category-0.png",
+    "description": "Cafés aromatizados para criar receitas com leite e momentos de indulgência."
+  },
+  "Ristretto": {
+    "slug": "ristretto",
+    "image": "category-1.png",
+    "description": "Cafés inspirados na riqueza da tradição de torrefação italiana."
+  },
+  "Espresso & Lungo": {
+    "slug": "espresso-lungo",
+    "image": "category-2.png",
+    "description": "O café para cada ocasião. Explore Espressos e Lungos de intensidades suaves ou vibrantes."
+  },
+  "Origins": {
+    "slug": "origins",
+    "image": "category-3.png",
+    "description": "Sabores que revelam a origem, o terroir e o cuidado de quem cultiva cada café."
+  },
+  "Limited": {
+    "slug": "limited",
+    "image": "8642.84.png",
+    "description": "Edições limitadas e sabores especiais para descobrir novas experiências."
+  }
+};
 let produtos = [];
 let imagemBase64Temp = '';
 
@@ -77,16 +104,40 @@ function precoPro(valor) {return Number(valor || 0).toLocaleString('pt-BR',{styl
 function renderizarTabela(dados = produtos) {
     const grid=document.getElementById('produtosGrid');grid.replaceChildren();
     document.getElementById('produtosContagem').textContent=`${dados.length} ${dados.length===1?'café':'cafés'}`;
-    if(!dados.length) {grid.append(criarElementoPro('p','pro-status',produtos.length?'Nenhum café encontrado. Tente outro nome ou SKU.':'Nenhuma cápsula cadastrada. Use “Nova cápsula” para começar.'));return;}
+    if(!dados.length) {document.getElementById('categoriasNav').replaceChildren();grid.append(criarElementoPro('p','pro-status',produtos.length?'Nenhum café encontrado. Tente outro nome ou SKU.':'Nenhuma cápsula cadastrada. Use “Nova cápsula” para começar.'));return;}
+    const nav = document.getElementById('categoriasNav');
+    nav.replaceChildren();
+    for (const categoria of CATEGORIAS_PRO) {
+        if (!dados.some(p => p.categoria === categoria)) continue;
+        const link = criarElementoPro('a', 'pro-category-link', categoria);
+        link.href = '#categoria-' + CATEGORIAS_VISUAL[categoria].slug;
+        nav.append(link);
+    }
     const grupos = new Map();
     for (const categoria of [...CATEGORIAS_PRO, 'Sem categoria']) {
         const itens = dados.filter(p => (p.categoria || 'Sem categoria') === categoria);
         if (!itens.length) continue;
         const secao = criarElementoPro('section', 'pro-category');
+        const visual = CATEGORIAS_VISUAL[categoria];
+        const cabecalho = criarElementoPro('header', 'pro-category-banner');
+        const texto = criarElementoPro('div', 'pro-category-copy');
         const titulo = criarElementoPro('h2', 'pro-category-title', categoria);
+        titulo.id = 'titulo-' + (visual?.slug || 'sem-categoria');
+        secao.id = 'categoria-' + (visual?.slug || 'sem-categoria');
+        secao.setAttribute('aria-labelledby', titulo.id);
+        texto.append(criarElementoPro('span', 'pro-category-eyebrow', 'Nespresso Professional'), titulo);
+        if (visual) {
+            texto.append(criarElementoPro('p', 'pro-category-description', visual.description));
+            const imagem = criarElementoPro('img', 'pro-category-image');
+            imagem.src = 'assets/b2b-categories/' + visual.image; imagem.alt = ''; imagem.loading = 'lazy';
+            imagem.addEventListener('error', () => imagem.hidden = true);
+            cabecalho.append(imagem);
+        }
+        texto.append(criarElementoPro('span', 'pro-category-count', itens.length + (itens.length === 1 ? ' café' : ' cafés')));
+        cabecalho.append(texto);
         const lista = criarElementoPro('div', 'pro-grid');
         secao.setAttribute('aria-label', categoria);
-        secao.append(titulo, lista); grid.append(secao);
+        secao.append(cabecalho, lista); grid.append(secao);
         grupos.set(categoria, lista);
     }
     for(const p of dados) {
@@ -95,7 +146,9 @@ function renderizarTabela(dados = produtos) {
         const corpo=criarElementoPro('div','pro-card-body');
         corpo.append(criarElementoPro('span','pro-sku',`SKU ${p.sku || '—'}`),criarElementoPro('h3','pro-name',p.nome || 'Cápsula profissional'),criarElementoPro('p','pro-pack',`Caixa com ${p.capsulas_caixa || 50} cápsulas`));
         if(p.observacoes) corpo.append(criarElementoPro('p','pro-description',p.observacoes));
+        if (!['Creations', 'Limited'].includes(p.categoria)) {
         corpo.append(criarElementoPro('span','pro-intensity',p.intensidade ? `Intensidade ${p.intensidade}` : 'Intensidade não definida'));
+        }
         const rodape=criarElementoPro('div','pro-card-footer');
         const valor=criarElementoPro('div','pro-price');valor.append(criarElementoPro('strong','',precoPro(p.preco)),criarElementoPro('span','','por cápsula'));rodape.append(valor);
         const detalhes=criarElementoPro('button','btn pro-details','Ver detalhes');detalhes.type='button';detalhes.setAttribute('aria-label',`Ver detalhes de ${p.nome || p.sku}`);detalhes.addEventListener('click',()=>visualizarProduto(p.id));rodape.append(detalhes);
