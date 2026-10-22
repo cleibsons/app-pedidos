@@ -1,5 +1,5 @@
-// Fotos extraídas do PDF Linha Vertuo fornecido pelo proprietário do catálogo.
-// Associação exata por SKU ou nome; não altera os registros do Supabase.
+// Fotos do PDF fornecido pelo proprietário e do catálogo oficial Nespresso Brasil.
+// A associação mantém os SKUs do cadastro; a foto cadastrada tem prioridade.
 const FOTOS_VERTUO = Object.freeze([
   {
     "sku": "7023.80",
@@ -138,6 +138,150 @@ const FOTOS_VERTUO = Object.freeze([
     "name": "Cinnamon Apple Crisp",
     "src": "assets/vertuo/7087-80.png",
     "sourcePage": 3
+  },
+  {
+    "sku": "7000.80",
+    "name": "Altissio Decaffeinato",
+    "src": "assets/vertuo/7000-80.png",
+    "sourceUrl": "https://www.nespresso.com/ecom/medias/sys_master/public/17190297796638/altissio-decaffeinato-2x.png",
+    "sourceSku": "7000.80",
+    "sourceName": "Altissio Decaffeinato"
+  },
+  {
+    "sku": "7010.80",
+    "name": "Ristretto Clássico",
+    "src": "assets/vertuo/7010-80.png",
+    "sourceUrl": "https://www.nespresso.com/ecom/medias/sys_master/public/27750724108318/C-1131-ResponsivePLPImage.png",
+    "sourceSku": "7010.80",
+    "sourceName": "Ristretto Clássico"
+  },
+  {
+    "sku": "7011.80",
+    "name": "Ristretto Intenso",
+    "src": "assets/vertuo/7011-80.png",
+    "sourceUrl": "https://www.nespresso.com/ecom/medias/sys_master/public/27750715260958.png",
+    "sourceSku": "7084.80",
+    "sourceName": "Ristretto Intenso"
+  },
+  {
+    "sku": "7014.80",
+    "name": "Inizio",
+    "src": "assets/vertuo/7014-80.png",
+    "sourceUrl": "https://www.nespresso.com/ecom/medias/sys_master/public/17299124846622/inizio-2x.png",
+    "sourceSku": "7014.80",
+    "sourceName": "Inizio"
+  },
+  {
+    "sku": "7015.80",
+    "name": "Fortado Decaffeinato",
+    "src": "assets/vertuo/7015-80.png",
+    "sourceUrl": "https://www.nespresso.com/ecom/medias/sys_master/public/17201088626718/fortado-decaffeinato-2x.png",
+    "sourceSku": "7015.80",
+    "sourceName": "Fortado Decaffeinato"
+  },
+  {
+    "sku": "7036.80",
+    "name": "Orafio",
+    "src": "assets/vertuo/7036-80.png",
+    "sourceUrl": "https://www.nespresso.com/ecom/medias/sys_master/public/17299417628702/orafio-2x.png",
+    "sourceSku": "7036.80",
+    "sourceName": "Orafio"
+  },
+  {
+    "sku": "7039.80",
+    "name": "Melozio",
+    "src": "assets/vertuo/7039-80.png",
+    "sourceUrl": "https://www.nespresso.com/ecom/medias/sys_master/public/44214260498462/melozio.png",
+    "sourceSku": "7005.80",
+    "sourceName": "Melozio"
+  },
+  {
+    "sku": "7045.80",
+    "name": "Double Espresso Chiaro",
+    "src": "assets/vertuo/7045-80.png",
+    "sourceUrl": "https://www.nespresso.com/ecom/medias/sys_master/public/17200613589022/chiaro-2x.png",
+    "sourceSku": "7045.80",
+    "sourceName": "Double Espresso Chiaro"
+  },
+  {
+    "sku": "7047.80",
+    "name": "Voltesso",
+    "src": "assets/vertuo/7047-80.png",
+    "sourceUrl": "https://www.nespresso.com/ecom/medias/sys_master/public/17299759890462/voltesso-2x.png",
+    "sourceSku": "7047.80",
+    "sourceName": "Voltesso"
+  },
+  {
+    "sku": "7048.80",
+    "name": "Altissio",
+    "src": "assets/vertuo/7048-80.png",
+    "sourceUrl": "https://www.nespresso.com/ecom/medias/sys_master/public/17190297239582/altissio-2x.png",
+    "sourceSku": "7048.80",
+    "sourceName": "Altissio"
+  },
+  {
+    "sku": "7049.80",
+    "name": "Diavolitto",
+    "src": "assets/vertuo/7049-80.png",
+    "sourceUrl": "https://www.nespresso.com/ecom/medias/sys_master/public/17200619192350/diavolitto-2x.png",
+    "sourceSku": "7049.80",
+    "sourceName": "Diavolitto"
+  },
+  {
+    "sku": "7059.80",
+    "name": "Fortado",
+    "src": "assets/vertuo/7059-80.png",
+    "sourceUrl": "https://www.nespresso.com/ecom/medias/sys_master/public/17201088299038/fortado-2x.png",
+    "sourceSku": "7231.80",
+    "sourceName": "Fortado"
+  },
+  {
+    "sku": "7060.80",
+    "name": "IL Café",
+    "src": "assets/vertuo/7060-80.png",
+    "sourceUrl": "https://www.nespresso.com/ecom/medias/sys_master/public/17299760513054/il-caffe-2x.png",
+    "sourceSku": "7060.80",
+    "sourceName": "Il Caffè"
+  },
+  {
+    "sku": "7085.80",
+    "name": "Double Espresso Dolce",
+    "src": "assets/vertuo/7085-80.png",
+    "sourceUrl": "https://www.nespresso.com/ecom/medias/sys_master/public/17200621944862/dolce-2x.png",
+    "sourceSku": "7085.80",
+    "sourceName": "Double Espresso Dolce"
+  },
+  {
+    "sku": "7089.80",
+    "name": "Solelio",
+    "src": "assets/vertuo/7089-80.png",
+    "sourceUrl": "https://www.nespresso.com/ecom/medias/sys_master/public/17299753697310/solelio-2x.png",
+    "sourceSku": "7089.80",
+    "sourceName": "Solelio"
+  },
+  {
+    "sku": "7093.80",
+    "name": "Arondio",
+    "src": "assets/vertuo/7093-80.png",
+    "sourceUrl": "https://www.nespresso.com/ecom/medias/sys_master/public/17190300778526/arondio-2x.png",
+    "sourceSku": "7093.80",
+    "sourceName": "Arondio"
+  },
+  {
+    "sku": "7279.80",
+    "name": "Double Espresso Chiaro Decaffeinato",
+    "src": "assets/vertuo/7279-80.png",
+    "sourceUrl": "https://www.nespresso.com/ecom/medias/sys_master/public/34710541402142/double-espresso-chiaro-decaffeinato-plp.png",
+    "sourceSku": "7279.80",
+    "sourceName": "Double Espresso Chiaro Decaffeinato"
+  },
+  {
+    "sku": "7298.80",
+    "name": "Double Espresso Scuro",
+    "src": "assets/vertuo/7298-80.png",
+    "sourceUrl": "https://www.nespresso.com/ecom/medias/sys_master/public/17299753631774/scuro-2x.png",
+    "sourceSku": "7298.80",
+    "sourceName": "Double Espresso Scuro"
   }
 ]);
 
