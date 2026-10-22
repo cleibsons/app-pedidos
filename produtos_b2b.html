@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="styles.css?v=4">
     <!-- Biblioteca Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="theme-dark.css?v=8">
 </head>
 <body class="app-page">
 
@@ -40,7 +41,7 @@
                     </tr>
                 </thead>
                 <tbody id="produtosTableBody">
-                    <tr><td colspan="6" style="text-align:center; color: #78717a; padding: 24px;">Carregando catálogo B2B da nuvem...</td></tr>
+                    <tr><td colspan="6" style="text-align:center; color: var(--muted); padding: 24px;">Carregando catálogo B2B da nuvem...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -101,7 +102,7 @@
                     </div>
                     <div class="form-group">
                         <label>Preço por Cápsula (R$):</label>
-                        <input type="text" id="precoUnidInput" readonly style="background: #ffffff; color: #23745d;" placeholder="Calculado automaticamente">
+                        <input type="text" id="precoUnidInput" readonly style="background: var(--surface); color: var(--success);" placeholder="Calculado automaticamente">
                     </div>
                 </div>
 
@@ -112,7 +113,7 @@
 
                 <div class="form-group">
                     <label>Observação:</label>
-                    <textarea id="observacoesInput" rows="4" placeholder="Perfil aromático, notas de cata..." style="background: #f7f5f2; border: 1px solid #e6e1dc; border-radius: 6px; padding: 10px; color: #242326; font-size: 14px; width: 100%; resize: vertical;"></textarea>
+                    <textarea id="observacoesInput" rows="4" placeholder="Perfil aromático, notas de cata..." style="background: var(--field); border: 1px solid var(--line); border-radius: 6px; padding: 10px; color: var(--ink); font-size: 14px; width: 100%; resize: vertical;"></textarea>
                 </div>
 
                 <div class="modal-buttons">
@@ -124,7 +125,7 @@
     </div>
 
     <!-- Script JS -->
-    <script src="produtos_b2b.js?v=2"></script>
+    <script src="produtos_b2b.js?v=8"></script>
     <script src="ui.js?v=4"></script>
 </body>
 </html>

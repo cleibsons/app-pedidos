@@ -1,0 +1,96 @@
+/* Tema grafite e dourado — componentes e telas da Central Nespresso. */
+:root{color-scheme:dark;--bg:#252628;--surface:#303133;--field:#27282a;--ink:#f1eee7;--muted:#b4b3b1;--line:#494a4b;--brand:#d7b66d;--brand-dark:#e6ca8d;--brand-soft:#423c2f;--success:#94cbb0;--danger:#f19b9b}
+html{background:#252628}
+body{color:var(--ink);background:var(--bg)}
+.app-page,.login-page{background:radial-gradient(ellipse at 82% -15%,#4b4c4e33 0,transparent 57%),radial-gradient(ellipse at 5% 35%,#16171855 0,transparent 70%),linear-gradient(145deg,#343537 0%,#292a2c 44%,#222325 100%);background-attachment:fixed}
+.sidebar{background:linear-gradient(180deg,#242527,#202123);border-color:#45423b}
+.brand-lockup small{color:#c4b68f}
+.brand-logo{background:white;border-radius:6px;padding:5px}
+.brand-fallback{color:var(--brand)}
+.brand-symbol{background:var(--brand);color:#252628}
+.nav-label{color:#b5a88a}
+.side-link{color:#c5c3bf}
+.side-link:hover{background:#3a3832;color:#ead5a8}
+.side-link.active{background:linear-gradient(110deg,#dfc184,#c3a15e);color:#252628;box-shadow:0 5px 20px #0002;font-weight:650}
+.nav-dot{background:#66512b}
+.workspace-note{border-color:var(--line);color:#c5c0b7}
+.workspace-note svg{color:var(--brand)}
+.workspace-note small{color:#a5a4a1}
+.logout-btn{color:#b6b1a8}
+.topbar{background:#262729f0;border-color:#49463e}
+.breadcrumb{color:#aaa9a5}.breadcrumb span{color:#8b816d}.breadcrumb strong{color:#e0d8c8}
+.global-search{background:#202123;border-color:#4a4841}
+.global-search input{background:transparent;color:var(--ink)}
+.global-search svg{color:#c1ac7e}.global-search kbd{color:#c0b79e;background:#333334;border-color:#555044}
+.profile strong{color:var(--ink)}.profile small{color:#b6b0a4}.avatar{color:#e0c58d;background:#433c2d;border:1px solid #5d5139}
+.icon-button{background:#303133;color:var(--brand);border-color:#5e5441}
+.header p{color:var(--muted)}.page-date{color:#b7ad99!important}.greeting-dot{color:var(--brand)}
+input,select,textarea,.actions-bar input[type=text]{background:var(--field)!important;color:var(--ink);border-color:#555453}
+input::placeholder,textarea::placeholder{color:#aaa8a4;opacity:1}
+input[readonly]{background:#35352f!important}
+option{background:#27282a;color:var(--ink)}
+button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,[role=button]:focus-visible{outline-color:#e0c182}
+.btn-primary,.btn-entrar{background:linear-gradient(110deg,#dfc184,#c3a15e);color:#242424;border-color:#d4b472}
+.btn-primary:hover,.btn-entrar:hover{background:#e3c991;color:#222}
+.btn-secondary{background:#333436;border-color:#5a5549;color:#e0d5bf}
+.btn-secondary:hover{background:#41403a;border-color:var(--brand)}
+.btn-view{background:#3d3a31;color:#e2ca9a;border-color:#5c503a}
+.btn-edit{background:#443c2c;color:#ecd19c;border-color:#655332}
+.btn-danger{background:#4a3031;color:#f0b2ae;border-color:#6b4241}
+.btn-view:hover,.btn-edit:hover,.btn-danger:hover{filter:brightness(1.15)}
+.actions-bar,.table-container,.panel,.stat-card,.quick-card{background:var(--surface);border-color:var(--line);box-shadow:0 5px 22px #00000012}
+.actions-bar{border-bottom:0}
+th{background:#292a2c;color:#c4b99f;border-color:var(--line)}
+td{color:#ddd9d0;border-color:#454647}
+tbody tr:hover{background:#37383a}
+.filter-btn{background:#303133!important;border-color:#55514a!important;color:#cbc6ba!important}
+.filter-btn:hover{border-color:#b69b65!important}
+.filter-btn.active{background:#443d2e!important;color:#ead2a0!important;border-color:#b79b63!important}
+.badge-original{background:#4c3f2b!important;color:#edc78f!important}.badge-vertuo{background:#3b3d49!important;color:#d1d6f0!important}
+.tag-fantasia{background:var(--brand-soft);color:var(--brand)}
+.modal{background:#111214c7}
+.modal-content{background:#303133;border-color:#665b45;box-shadow:0 25px 90px #0007}
+.modal-header,.modal-buttons{border-color:var(--line)}
+.modal-header h2{color:var(--ink)}
+.close-btn{background:#43413a;color:#e0c88f}
+.form-group label,.detail-label{color:#c2baa9}
+.detail-item{background:#27282a!important;border-color:#53504a!important}
+.detail-value{color:var(--ink)}.detail-value.highlight{color:var(--brand)}
+.card{background:#303133!important;border-color:#4d4a42!important;box-shadow:0 5px 22px #0002}
+.canal-card{background:#292a2c!important;border-color:#5b5750!important;color:var(--ink)!important}
+.canal-card p{color:#b7b5b0!important}
+.canal-card.active{background:#433d30!important;border-color:#c7a45e!important;color:#ebd29c!important}
+.canal-card.active p{color:#dfc99d!important}
+.item-linha{background:#37383a!important;border-color:#535149}
+.preview-box{background:#252628!important;border-color:#5b5343!important;color:#eee5d0!important}
+#clienteInfoCard{background:#3a3a36!important;border:1px solid #64583f;color:#e1d7bd!important}
+.welcome-banner{background:radial-gradient(ellipse at 100% 0%,#65563d22,transparent 65%),linear-gradient(115deg,#3c3d3e,#2a2b2d);border:1px solid #645740;border-left:3px solid #d4b16a;box-shadow:0 10px 28px #0002}
+.banner-eyebrow{color:#dbc28d}.welcome-banner h2{color:#faf5e8}.welcome-banner p{color:#d2c9b8}
+.banner-button{background:#d8b978;color:#242424;border-color:#e4ce9e}.banner-button:hover{background:#e8cfa0;color:#242424}
+.coffee-ring{border-color:#d9b96e1c}
+.coffee-cup{background:linear-gradient(110deg,#e8d8b7,#ae8b4f);color:#4d3b20;box-shadow:15px 23px 25px #0004}
+.coffee-cup:before{border-color:#c4a566}.coffee-cup:after{border-color:#d9c18d}
+.coffee-caption{color:#cab283}
+.eyebrow,.section-note{color:#c2b18d}
+.stat-card:hover{border-color:#aa8e58}.stat-label{color:#cbc6bb}.stat-number{color:#f1e5ca}.stat-note{color:#b3b0a8}
+.stat-arrow{color:#b09b73}
+.rose,.sand,.sage,.lilac{background:#454035;color:#dec68e;border:1px solid #62573e}
+.text-link{color:#e3c68a}.muted-icon{color:#ba9c62}
+.client-avatar{background:#484235;color:#e1c58b}.client-identity strong{color:#e8e0d0}.client-identity small{color:#b8b3a9}
+.empty-state{color:#c6bdab!important}
+.panel-footer-link{color:#d4bb8a;border-color:var(--line)}.panel-footer-link:hover{background:#3b3831}
+.catalog-summary strong{color:#eddfbf}.catalog-summary>span{color:#bdb6a7}
+.catalog-bar{background:#242527}
+#bar-b2b,.dot-b2b{background:#d4af62}#bar-b2c,.dot-b2c{background:#ad915d}#bar-acessorios,.dot-acessorios{background:#797060}
+.catalog-legend a{color:#d2cabc;border-color:#484744}.catalog-legend strong{color:#e2d0a5}.catalog-legend svg{color:#c1a975}
+.catalog-tip{background:#34332f;border-color:#5b5342;color:#ccc0a7}.catalog-tip svg{color:#dfc084}
+.quick-card strong{color:#e2d2b0}.quick-card div>span{color:#bbb5aa}.quick-card:hover{border-color:#b09258}
+.quick-icon{background:#403c32;color:#dfc58d;border-color:#62563e}.quick-arrow{color:#d2b779}
+.dashboard-footer{color:#b9b0a0;border-color:#4b4943}.footer-separator{color:#8c7d61}
+.status-error,#erroMsg{color:#f0a4a0}
+.login-card{background:#303133;border-color:#625641;box-shadow:0 20px 80px #0004}
+.login-card h1{color:#f1e8d7}.login-intro{color:#c2bcb0}.login-footnote{border-color:#555045;color:#c3b495}
+.login-brand{margin-bottom:30px}
+.skip-link{background:#d7b66d;color:#222}
+@media(max-width:760px){.topbar{background:#262729fa}}
+.btn.btn-primary{background:linear-gradient(110deg,#dfc184,#c3a15e);color:#242424}.btn.btn-primary:hover{background:#e3c991;color:#222}

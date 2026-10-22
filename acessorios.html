@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="styles.css?v=4">
     <!-- Biblioteca Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="theme-dark.css?v=8">
 </head>
 <body class="app-page">
 
@@ -41,7 +42,7 @@
                     </tr>
                 </thead>
                 <tbody id="acessoriosTableBody">
-                    <tr><td colspan="7" style="text-align:center; color: #78717a; padding: 24px;">Carregando acessórios da nuvem...</td></tr>
+                    <tr><td colspan="7" style="text-align:center; color: var(--muted); padding: 24px;">Carregando acessórios da nuvem...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -87,7 +88,7 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label>Tipo de Embalagem (Venda):</label>
-                        <select id="tipoEmbalagemInput" style="background: #f7f5f2; border: 1px solid #e6e1dc; border-radius: 6px; padding: 10px; color: #242326; font-size: 14px; width: 100%;">
+                        <select id="tipoEmbalagemInput" style="background: var(--field); border: 1px solid var(--line); border-radius: 6px; padding: 10px; color: var(--ink); font-size: 14px; width: 100%;">
                             <option value="Unidade">Unidade (1 peça avulsa)</option>
                             <option value="Caixa / Kit">Caixa / Kit (Conjunto fechado)</option>
                             <option value="Caixa Bulk">Caixa Bulk (Atacado)</option>
@@ -108,7 +109,7 @@
                     </div>
                     <div class="form-group">
                         <label>Custo por Peça / Unidade (R$):</label>
-                        <input type="text" id="precoUnidInput" readonly style="background: #ffffff; color: #23745d; font-weight: bold;" placeholder="Calculado automaticamente">
+                        <input type="text" id="precoUnidInput" readonly style="background: var(--surface); color: var(--success); font-weight: bold;" placeholder="Calculado automaticamente">
                     </div>
                 </div>
 
@@ -119,7 +120,7 @@
 
                 <div class="form-group">
                     <label>Observações:</label>
-                    <textarea id="observacoesInput" rows="3" placeholder="Detalhes da embalagem, voltagem, regras de bonificação..." style="background: #f7f5f2; border: 1px solid #e6e1dc; border-radius: 6px; padding: 10px; color: #242326; font-size: 14px; width: 100%; resize: vertical;"></textarea>
+                    <textarea id="observacoesInput" rows="3" placeholder="Detalhes da embalagem, voltagem, regras de bonificação..." style="background: var(--field); border: 1px solid var(--line); border-radius: 6px; padding: 10px; color: var(--ink); font-size: 14px; width: 100%; resize: vertical;"></textarea>
                 </div>
 
                 <div class="modal-buttons">
@@ -131,7 +132,7 @@
     </div>
 
     <!-- Script JS -->
-    <script src="acessorios.js?v=7"></script>
+    <script src="acessorios.js?v=8"></script>
     <script src="ui.js?v=4"></script>
 </body>
 </html>

@@ -132,7 +132,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 /* CARREGAR ACESSÓRIOS DA NUVEM (COM CARGA AUTOMÁTICA SE VAZIO) */
 async function carregarAcessoriosNuvem() {
     const tbody = document.getElementById('acessoriosTableBody');
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: #78717a; padding: 24px;">🔄 Carregando acessórios da nuvem...</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: var(--muted); padding: 24px;">🔄 Carregando acessórios da nuvem...</td></tr>`;
 
     if (!supabaseClient) {
         acessorios = [...ACESSORIOS_INICIAIS];
@@ -154,7 +154,7 @@ async function carregarAcessoriosNuvem() {
 
         // Se a tabela existir no Supabase mas estiver vazia, insere todos os itens automaticamente!
         if (!data || data.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: #771d37; padding: 24px;">⚡ Sincronizando catálogo inicial de acessórios com o Supabase...</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: var(--brand); padding: 24px;">⚡ Sincronizando catálogo inicial de acessórios com o Supabase...</td></tr>`;
             const { error: insertError } = await supabaseClient
                 .from('acessorios')
                 .upsert(ACESSORIOS_INICIAIS);
@@ -201,7 +201,7 @@ function renderizarTabela() {
     });
 
     if (filtrados.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: #78717a; padding: 24px;">Nenhum acessório encontrado.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: var(--muted); padding: 24px;">Nenhum acessório encontrado.</td></tr>`;
         return;
     }
 
@@ -214,8 +214,8 @@ function renderizarTabela() {
         const tipo = a.tipo_embalagem || 'Unidade';
         
         const badgeApresentacao = qtd > 1
-            ? `<span style="background: #f4e6eb; color: #771d37; padding: 3px 10px; border-radius: 6px; font-size: 12px; font-weight: 500; border: 1px solid #771d37;">${tipo} c/ ${qtd} unid.</span>`
-            : `<span style="background: #f7f5f2; color: #706b73; padding: 3px 10px; border-radius: 6px; font-size: 12px; border: 1px solid #e6e1dc;">1 Unidade Avulsa</span>`;
+            ? `<span style="background: var(--brand-soft); color: var(--brand); padding: 3px 10px; border-radius: 6px; font-size: 12px; font-weight: 500; border: 1px solid var(--brand);">${tipo} c/ ${qtd} unid.</span>`
+            : `<span style="background: var(--field); color: var(--muted); padding: 3px 10px; border-radius: 6px; font-size: 12px; border: 1px solid var(--line);">1 Unidade Avulsa</span>`;
 
         const precoEmbNum = converterParaNumero(a.preco_embalagem);
         const precoUnidNum = qtd > 0 ? (precoEmbNum / qtd) : precoEmbNum;
@@ -225,11 +225,11 @@ function renderizarTabela() {
 
         tr.innerHTML = `
             <td style="text-align: center;">${fotoHTML}</td>
-            <td><strong style="color: #771d37;">${a.sku || ''}</strong></td>
-            <td style="font-weight: 600; color: #242326;">${a.nome || ''}</td>
+            <td><strong style="color: var(--brand);">${a.sku || ''}</strong></td>
+            <td style="font-weight: 600; color: var(--ink);">${a.nome || ''}</td>
             <td>${badgeApresentacao}</td>
-            <td style="color: #23745d; font-weight: bold;">${precoEmbTexto}</td>
-            <td style="color: #57525a; font-size: 13px;">${precoUnidTexto} <span style="font-size:11px; color:#78717a;">/ unid</span></td>
+            <td style="color: var(--success); font-weight: bold;">${precoEmbTexto}</td>
+            <td style="color: var(--muted); font-size: 13px;">${precoUnidTexto} <span style="font-size:11px; color:var(--muted);">/ unid</span></td>
             <td style="text-align: center; white-space: nowrap;">
                 <button class="btn btn-view" style="padding: 4px 8px; font-size: 12px;" title="Ver Detalhes e Simular Pedido" onclick="visualizarAcessorio(${a.id})">👁️</button>
                 <button class="btn btn-edit" style="padding: 4px 8px; font-size: 12px;" title="Editar" onclick="editarAcessorio(${a.id})">✏️</button>
@@ -285,7 +285,7 @@ function visualizarAcessorio(id) {
         </div>
         <div class="detail-item">
             <div class="detail-label">PREÇO (EMBALAGEM FECHADA)</div>
-            <div class="detail-value" style="color: #23745d; font-weight: bold;">R$ ${formatarMoeda(precoEmbNum)}</div>
+            <div class="detail-value" style="color: var(--success); font-weight: bold;">R$ ${formatarMoeda(precoEmbNum)}</div>
         </div>
         <div class="detail-item">
             <div class="detail-label">CUSTO UNITÁRIO (POR PEÇA)</div>
@@ -293,27 +293,27 @@ function visualizarAcessorio(id) {
         </div>
         
         <!-- SIMULADOR DE CONVERSÃO DE PEDIDO -->
-        <div class="detail-item full-width" style="grid-column: span 2; background: #f7f5f2; border: 1px solid #771d37; border-radius: 8px; padding: 14px; margin-top: 6px;">
-            <div class="detail-label" style="color: #771d37; font-weight: bold; margin-bottom: 10px;">🧮 SIMULADOR RÁPIDO PARA PEDIDO (EVITA ERRO DE CONTAGEM)</div>
+        <div class="detail-item full-width" style="grid-column: span 2; background: var(--field); border: 1px solid var(--brand); border-radius: 8px; padding: 14px; margin-top: 6px;">
+            <div class="detail-label" style="color: var(--brand); font-weight: bold; margin-bottom: 10px;">🧮 SIMULADOR RÁPIDO PARA PEDIDO (EVITA ERRO DE CONTAGEM)</div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: center;">
                 <div>
-                    <label style="font-size: 12px; color: #706b73; display: block; margin-bottom: 4px;">Qtd de Embalagens/Caixas a pedir:</label>
-                    <input type="number" id="simCaixasInput" value="1" min="1" oninput="simularPorCaixas()" style="width: 100%; padding: 8px; background: #ffffff; border: 1px solid #e6e1dc; color: #fff; border-radius: 6px;">
+                    <label style="font-size: 12px; color: var(--muted); display: block; margin-bottom: 4px;">Qtd de Embalagens/Caixas a pedir:</label>
+                    <input type="number" id="simCaixasInput" value="1" min="1" oninput="simularPorCaixas()" style="width: 100%; padding: 8px; background: var(--surface); border: 1px solid var(--line); color: #fff; border-radius: 6px;">
                 </div>
                 <div>
-                    <label style="font-size: 12px; color: #706b73; display: block; margin-bottom: 4px;">Total de Peças/Unidades soltas:</label>
-                    <input type="number" id="simUnidadesInput" value="${qtd}" min="1" step="${qtd}" oninput="simularPorUnidades()" style="width: 100%; padding: 8px; background: #ffffff; border: 1px solid #e6e1dc; color: #fff; border-radius: 6px;">
+                    <label style="font-size: 12px; color: var(--muted); display: block; margin-bottom: 4px;">Total de Peças/Unidades soltas:</label>
+                    <input type="number" id="simUnidadesInput" value="${qtd}" min="1" step="${qtd}" oninput="simularPorUnidades()" style="width: 100%; padding: 8px; background: var(--surface); border: 1px solid var(--line); color: #fff; border-radius: 6px;">
                 </div>
             </div>
-            <div id="resultadoSimulacao" style="margin-top: 12px; padding-top: 10px; border-top: 1px solid #ffffff; display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-size: 13px; color: #57525a;">Lançar no pedido: <strong style="color: #771d37;">1 ${a.tipo_embalagem || 'Embalagem'}</strong> (${qtd} peças no total)</span>
-                <span style="font-size: 16px; font-weight: bold; color: #23745d;">Total: R$ ${formatarMoeda(precoEmbNum)}</span>
+            <div id="resultadoSimulacao" style="margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--surface); display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 13px; color: var(--muted);">Lançar no pedido: <strong style="color: var(--brand);">1 ${a.tipo_embalagem || 'Embalagem'}</strong> (${qtd} peças no total)</span>
+                <span style="font-size: 16px; font-weight: bold; color: var(--success);">Total: R$ ${formatarMoeda(precoEmbNum)}</span>
             </div>
         </div>
 
         <div class="detail-item full-width" style="grid-column: span 2;">
             <div class="detail-label">OBSERVAÇÕES</div>
-            <div class="detail-value" style="font-size: 13px; color: #706b73;">${a.observacoes || 'Nenhuma observação cadastrada.'}</div>
+            <div class="detail-value" style="font-size: 13px; color: var(--muted);">${a.observacoes || 'Nenhuma observação cadastrada.'}</div>
         </div>
     `;
 
@@ -332,8 +332,8 @@ function simularPorCaixas() {
 
     document.getElementById('simUnidadesInput').value = totalUnidades;
     document.getElementById('resultadoSimulacao').innerHTML = `
-        <span style="font-size: 13px; color: #57525a;">Lançar no pedido: <strong style="color: #771d37;">${caixas} ${itemSimulacaoAtual.tipo_embalagem || 'Embalagem(ns)'}</strong> (${totalUnidades} peças no total)</span>
-        <span style="font-size: 16px; font-weight: bold; color: #23745d;">Total: R$ ${formatarMoeda(valorTotal)}</span>
+        <span style="font-size: 13px; color: var(--muted);">Lançar no pedido: <strong style="color: var(--brand);">${caixas} ${itemSimulacaoAtual.tipo_embalagem || 'Embalagem(ns)'}</strong> (${totalUnidades} peças no total)</span>
+        <span style="font-size: 16px; font-weight: bold; color: var(--success);">Total: R$ ${formatarMoeda(valorTotal)}</span>
     `;
 }
 
@@ -349,8 +349,8 @@ function simularPorUnidades() {
 
     document.getElementById('simCaixasInput').value = caixasNecessarias;
     document.getElementById('resultadoSimulacao').innerHTML = `
-        <span style="font-size: 13px; color: #57525a;">Para atender ${unidadesDesejadas} unid., lance: <strong style="color: #771d37;">${caixasNecessarias} ${itemSimulacaoAtual.tipo_embalagem || 'Embalagem(ns)'}</strong> (Total real: ${unidadesReais} peças)</span>
-        <span style="font-size: 16px; font-weight: bold; color: #23745d;">Total: R$ ${formatarMoeda(valorTotal)}</span>
+        <span style="font-size: 13px; color: var(--muted);">Para atender ${unidadesDesejadas} unid., lance: <strong style="color: var(--brand);">${caixasNecessarias} ${itemSimulacaoAtual.tipo_embalagem || 'Embalagem(ns)'}</strong> (Total real: ${unidadesReais} peças)</span>
+        <span style="font-size: 16px; font-weight: bold; color: var(--success);">Total: R$ ${formatarMoeda(valorTotal)}</span>
     `;
 }
 
