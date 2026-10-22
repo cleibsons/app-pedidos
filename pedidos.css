@@ -34,3 +34,7 @@
 @media(max-width:760px){.pedido-canal-panel{padding:18px!important}.pedido-canal-panel .canal-selector{grid-template-columns:1fr;gap:12px}.pedido-canal-panel .canal-card{padding:17px;gap:13px}.canal-texto strong{font-size:17px}.canal-texto small{font-size:12px}.canal-icon{width:44px;height:44px}.pedido-oc{flex-direction:column;align-items:stretch;gap:9px}.pedido-oc input{width:100%;font-size:16px}.logistica-heading{align-items:flex-start;flex-wrap:wrap}.logistica-choices{gap:9px}.logistica-card{padding:14px 12px}}
 @media(prefers-reduced-motion:reduce){.pedido-canal-panel .canal-card,.logistica-card{transition:none}.pedido-email-opcoes{animation:none}.pedido-canal-panel .canal-card:hover{transform:none}}
 .pedido-canal-panel{border:1px solid #434446}
+
+/* Pré-visualização com a mesma formatação usada no corpo do e-mail. */
+.preview-box.email-preview{background:#fff!important;color:#222!important;white-space:normal;font-family:Arial,Helvetica,sans-serif;font-size:14px;padding:24px;max-height:620px;line-height:1.5;overflow-wrap:anywhere;color-scheme:light}
+.preview-box.email-preview strong{font-weight:700}.preview-box.email-preview p{color:#222;font-size:14px}.preview-box.email-preview ul{list-style:disc}.preview-box.email-preview li{color:#222}
