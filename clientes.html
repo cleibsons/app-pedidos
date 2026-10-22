@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="styles.css?v=4">
     <!-- Biblioteca Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="theme-dark.css?v=8">
 </head>
 <body class="app-page">
 
@@ -40,7 +41,7 @@
                     </tr>
                 </thead>
                 <tbody id="clientesTableBody">
-                    <tr><td colspan="6" style="text-align:center; color: #78717a; padding: 24px;">Carregando clientes da nuvem...</td></tr>
+                    <tr><td colspan="6" style="text-align:center; color: var(--muted); padding: 24px;">Carregando clientes da nuvem...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -136,7 +137,7 @@
     </div>
 
     <!-- clientes.js -->
-    <script src="clientes.js?v=2"></script>
+    <script src="clientes.js?v=8"></script>
     <script src="ui.js?v=4"></script>
 </body>
 </html>

@@ -152,7 +152,7 @@ function atualizarQuantidadeItem(idUnico, qtd) {
 function renderizarItensPedido() {
     const container = document.getElementById('listaItensContainer');
     if (itensPedido.length === 0) {
-        container.innerHTML = `<p style="color: #78717a; font-size: 13px; text-align: center; padding: 16px;">Nenhum item adicionado ainda. Clique em "+ Adicionar Item" acima.</p>`;
+        container.innerHTML = `<p style="color: var(--muted); font-size: 13px; text-align: center; padding: 16px;">Nenhum item adicionado ainda. Clique em "+ Adicionar Item" acima.</p>`;
         return;
     }
 
@@ -192,7 +192,7 @@ function renderizarItensPedido() {
                 </datalist>
             </div>
             <input type="number" min="1" value="${item.quantidade}" oninput="atualizarQuantidadeItem(${item.idUnico}, this.value)" placeholder="Qtd">
-            <span style="font-size: 12px; color: #706b73; text-transform: uppercase; text-align: center;">${labelTipo}</span>
+            <span style="font-size: 12px; color: var(--muted); text-transform: uppercase; text-align: center;">${labelTipo}</span>
             <button class="btn btn-danger" onclick="removerLinhaItem(${item.idUnico})" style="padding: 6px 10px;">🗑️</button>
         `;
         container.appendChild(div);
