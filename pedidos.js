@@ -57,12 +57,16 @@ async function carregarDadosNuvem() {
         }
         clientesLista = resClientes.data || [];
         
-        const datalistCliente = document.getElementById('listaClientesOpts');
-        datalistCliente.innerHTML = '';
-        clientesLista.forEach(c => {
-            const opt = document.createElement('option');
-            opt.value = `${c.razao || ''} - NN: ${c.nn || ''} (CNPJ: ${c.cnpj || ''})`;
-            datalistCliente.appendChild(opt);
+        registrarBusca(document.getElementById('buscaClienteInput'), {
+            obter: () => clientesLista,
+            valor: textoCliente,
+            titulo: c => c.fantasia || c.razao || 'Cliente sem nome',
+            detalhe: c => [c.razao, `NN: ${c.nn || '—'}`, `CNPJ: ${c.cnpj || '—'}`].filter(Boolean).join(' · '),
+            busca: c => [c.fantasia, c.razao, c.nn, c.cnpj].join(' '),
+            escolher: c => {
+                document.getElementById('buscaClienteInput').value = textoCliente(c);
+                mostrarClienteSelecionado(c);
+            }
         });
 
         // 2. Carrega Produtos B2B
@@ -97,10 +101,14 @@ function selecionarCanal(canal, logistica) {
     atualizarPreview();
 }
 
+function textoCliente(c) { return `${c.fantasia ? c.fantasia + ' · ' : ''}${c.razao || ''} - NN: ${c.nn || ''} (CNPJ: ${c.cnpj || ''})`; }
 function selecionarClientePorBusca() {
-    const valor = document.getElementById('buscaClienteInput').value.trim();
-    clienteSelecionado = clientesLista.find(c => `${c.razao || ''} - NN: ${c.nn || ''} (CNPJ: ${c.cnpj || ''})` === valor)
-        || clientesLista.find(c => valor && [c.razao, c.fantasia, c.nn, c.cnpj].some(v => v != null && String(v).toLowerCase() === valor.toLowerCase())) || null;
+    const valor = normalizarBusca(document.getElementById('buscaClienteInput').value.trim());
+    const encontrados = clientesLista.filter(c => valor && [textoCliente(c), `${c.razao || ''} - NN: ${c.nn || ''} (CNPJ: ${c.cnpj || ''})`, c.razao, c.fantasia, c.nn, c.cnpj].some(v => v != null && normalizarBusca(v) === valor));
+    mostrarClienteSelecionado(encontrados.length === 1 ? encontrados[0] : null);
+}
+function mostrarClienteSelecionado(cliente) {
+    clienteSelecionado = cliente;
     const infoCard = document.getElementById('clienteInfoCard');
     infoCard.style.display = clienteSelecionado ? 'block' : 'none';
     infoCard.replaceChildren();
@@ -161,20 +169,27 @@ function atualizarQuantidadeItem(id, valor) { const i = itensPedido.find(i => i.
 function atualizarPrecoItem(id, valor) { const i = itensPedido.find(i => i.idUnico === id); if(i) {i.preco = valor; i.precoManual = valor.trim() !== ''; atualizarPreview();} }
 function restaurarPrecoItem(id) { const i = itensPedido.find(i => i.idUnico === id); if(i) {i.precoManual = false; atualizarProdutoItem(id, i.produtoId);} }
 function renderizarItensPedido() {
+    fecharBusca();
     const container = document.getElementById('listaItensContainer'); container.replaceChildren();
     if (!itensPedido.length) {const p = document.createElement('p');p.className='pedido-help';p.textContent='Escolha a linha e clique em “Adicionar item” para começar.';container.append(p);return;}
     for (const item of itensPedido) {
         const div = document.createElement('div'); div.className='item-linha';div.dataset.itemId = item.idUnico;
         const unidade = item.tipo === 'acessorios' ? 'embalagem' : 'cápsula';
         const labelTipo = ({b2b:'B2B',vertuo:'Vertuo',original:'Original',acessorios:'Acessório'})[item.tipo];
-        div.innerHTML = `<div class="item-price"><label for="preco_${item.idUnico}">R$ por ${unidade}</label><input id="preco_${item.idUnico}" type="text" inputmode="decimal" placeholder="Ex.: 4,30" aria-describedby="preco_nota_${item.idUnico}"><span class="item-price-note" id="preco_nota_${item.idUnico}">Somente neste pedido</span><button type="button" class="price-reset">Usar preço do catálogo</button></div><div class="item-product"><label for="produto_${item.idUnico}">Produto · ${labelTipo}</label><input id="produto_${item.idUnico}" type="text" list="produtos_dl_${item.idUnico}" placeholder="Digite o SKU ou nome..."><datalist id="produtos_dl_${item.idUnico}"></datalist></div><div class="item-qty"><label for="qtd_${item.idUnico}">${item.tipo === 'acessorios' ? 'Embalagens' : 'Caixas'}</label><input id="qtd_${item.idUnico}" type="number" min="1" step="1"></div><div class="item-sum"><label>Subtotal</label><strong class="item-subtotal">—</strong></div><button type="button" class="btn btn-danger" aria-label="Remover item">×</button>`;
+        div.innerHTML = `<div class="item-price"><label for="preco_${item.idUnico}">R$ por ${unidade}</label><input id="preco_${item.idUnico}" type="text" inputmode="decimal" placeholder="Ex.: 4,30" aria-describedby="preco_nota_${item.idUnico}"><span class="item-price-note" id="preco_nota_${item.idUnico}">Somente neste pedido</span><button type="button" class="price-reset">Usar preço do catálogo</button></div><div class="item-product"><label for="produto_${item.idUnico}">Produto · ${labelTipo}</label><input id="produto_${item.idUnico}" type="text" placeholder="Digite o SKU ou nome..."></div><div class="item-qty"><label for="qtd_${item.idUnico}">${item.tipo === 'acessorios' ? 'Embalagens' : 'Caixas'}</label><input id="qtd_${item.idUnico}" type="number" min="1" step="1"></div><div class="item-sum"><label>Subtotal</label><strong class="item-subtotal">—</strong></div><button type="button" class="btn btn-danger" aria-label="Remover item">×</button>`;
         const preco = div.querySelector('.item-price input');preco.value=item.preco;preco.addEventListener('input',()=>atualizarPrecoItem(item.idUnico,preco.value));
         div.querySelector('.price-reset').addEventListener('click',()=>restaurarPrecoItem(item.idUnico));
         const produtoInput = div.querySelector('.item-product input'), produto = produtoDoItem(item);
         if(produto) produtoInput.value = `${produto.sku} - ${produto.nome || produto.descricao || ''}`;
         produtoInput.addEventListener('input',()=>tratarSelecaoProduto(item.idUnico,produtoInput.value,item.tipo));
-        const lista = div.querySelector('datalist');
-        for (const p of listaPorTipo(item.tipo)) {const opt=document.createElement('option');opt.value=`${p.sku} - ${p.nome || p.descricao || ''}`;lista.append(opt);}
+        registrarBusca(produtoInput, {
+            obter: () => listaPorTipo(item.tipo),
+            valor: p => `${p.sku} - ${p.nome || p.descricao || ''}`,
+            titulo: p => p.nome || p.descricao || 'Produto sem nome',
+            detalhe: p => `SKU: ${p.sku || '—'} · ${labelTipo}`,
+            busca: p => [p.sku, p.nome, p.descricao].join(' '),
+            escolher: p => { produtoInput.value = `${p.sku} - ${p.nome || p.descricao || ''}`; atualizarProdutoItem(item.idUnico, p.id); }
+        });
         const qtd = div.querySelector('.item-qty input');qtd.value=item.quantidade;qtd.addEventListener('input',()=>atualizarQuantidadeItem(item.idUnico,qtd.value));
         div.querySelector('.btn-danger').addEventListener('click',()=>removerLinhaItem(item.idUnico));container.append(div);
     }
@@ -354,6 +369,7 @@ async function copiarMensagem() {
     catch {status.textContent='Não foi possível copiar automaticamente. Selecione e copie o texto da pré-visualização.';}
 }
 function limparPedido() {
+    fecharBusca();
     if ((itensPedido.length || document.getElementById('buscaClienteInput').value || document.getElementById('ordemCompraInput').value) && !confirm('Limpar o pedido atual e começar outro? Os preços ajustados também serão apagados.')) return;
     itensPedido=[]; clienteSelecionado=null;
     document.getElementById('buscaClienteInput').value='';document.getElementById('ordemCompraInput').value='';
@@ -361,4 +377,87 @@ function limparPedido() {
     renderizarItensPedido();selecionarCanal('whatsapp','broker');
     document.getElementById('pedidoStatus').textContent='Página limpa. Pronta para um novo pedido.';
     document.getElementById('buscaClienteInput').focus();window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* Lista de sugestões compartilhada: visual e navegação iguais em todos os campos. */
+let buscaAberta = null;
+let painelBusca = null;
+function normalizarBusca(valor) {
+    return String(valor ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+}
+function fecharBusca() {
+    if (buscaAberta) {
+        buscaAberta.input.setAttribute('aria-expanded', 'false');
+        buscaAberta.input.removeAttribute('aria-activedescendant');
+    }
+    buscaAberta = null;
+    if (painelBusca) painelBusca.hidden = true;
+}
+function obterPainelBusca() {
+    if (painelBusca) return painelBusca;
+    painelBusca = document.createElement('div'); painelBusca.id='pedidoSugestoes'; painelBusca.className='pedido-sugestoes';
+    painelBusca.setAttribute('role','listbox');painelBusca.hidden=true;document.body.append(painelBusca);
+    document.addEventListener('pointerdown', e => {if (buscaAberta && e.target !== buscaAberta.input && !painelBusca.contains(e.target)) fecharBusca();});
+    document.addEventListener('scroll', e => {if (buscaAberta && !painelBusca.contains(e.target)) posicionarBusca();}, true);
+    window.addEventListener('resize', posicionarBusca);
+    window.visualViewport?.addEventListener('resize', posicionarBusca);
+    window.visualViewport?.addEventListener('scroll', posicionarBusca);
+    return painelBusca;
+}
+function posicionarBusca() {
+    if (!buscaAberta) return;
+    const input=buscaAberta.input;
+    if (!input.isConnected) {fecharBusca();return;}
+    const r=input.getBoundingClientRect(), altura=window.visualViewport ? window.visualViewport.height + window.visualViewport.offsetTop : window.innerHeight, largura=document.documentElement.clientWidth;
+    if(r.bottom<0 || r.top>altura) {fecharBusca();return;}
+    const width=Math.min(Math.max(r.width, 500),largura-24), left=Math.max(12,Math.min(r.left,largura-width-12));
+    const abaixo=altura-r.bottom-12, acima=r.top-12, abreAcima=abaixo<180 && acima>abaixo;
+    const maxHeight=Math.min(360,Math.max(80,abreAcima?acima-8:abaixo-8));
+    Object.assign(painelBusca.style,{width:`${width}px`,left:`${left}px`,maxHeight:`${maxHeight}px`,top:abreAcima?'auto':`${r.bottom+7}px`,bottom:abreAcima?`${altura-r.top+7}px`:'auto'});
+}
+function marcarSugestao(indice) {
+    if (!buscaAberta) return;
+    buscaAberta.indice=indice;
+    [...painelBusca.querySelectorAll('[role=option]')].forEach((el,i)=>el.setAttribute('aria-selected',String(i===indice)));
+    if(indice>=0) {
+        const el=painelBusca.querySelectorAll('[role=option]')[indice];
+        buscaAberta.input.setAttribute('aria-activedescendant',el.id);el.scrollIntoView({block:'nearest'});
+    } else buscaAberta.input.removeAttribute('aria-activedescendant');
+}
+function escolherSugestao(indice) {
+    if (!buscaAberta || !buscaAberta.resultados[indice]) return;
+    const {input,config,resultados}=buscaAberta;
+    fecharBusca();config.escolher(resultados[indice]);input.focus();fecharBusca();
+}
+function abrirBusca(input,config) {
+    obterPainelBusca();
+    if(buscaAberta && buscaAberta.input!==input) fecharBusca();
+    const itens=config.obter();
+    const consulta=itens.some(item=>config.valor(item)===input.value) ? '' : normalizarBusca(input.value), termos=consulta.split(/\s+/).filter(Boolean);
+    const resultados=itens.filter(item=>{
+        const texto=normalizarBusca(config.busca(item));
+        return termos.every(termo=>texto.includes(termo)) || (/^[\d.\/-]+$/.test(consulta) && texto.replace(/\D/g,'').includes(consulta.replace(/\D/g,'')));
+    });
+    buscaAberta={input,config,resultados,indice:-1};painelBusca.replaceChildren();
+    painelBusca.setAttribute('aria-label',input.id==='buscaClienteInput'?'Clientes encontrados':'Produtos encontrados');
+    resultados.forEach((item,indice)=>{
+        const opt=document.createElement('div');opt.className='pedido-sugestao';opt.id=`pedidoSugestao_${indice}`;opt.setAttribute('role','option');opt.setAttribute('aria-selected','false');
+        const titulo=document.createElement('strong'),detalhe=document.createElement('span');titulo.textContent=config.titulo(item);detalhe.textContent=config.detalhe(item);opt.append(titulo,detalhe);
+        opt.addEventListener('pointerdown',e=>e.preventDefault());opt.addEventListener('click',()=>escolherSugestao(indice));painelBusca.append(opt);
+    });
+    if(!resultados.length) {const vazio=document.createElement('p');vazio.className='pedido-busca-vazia';vazio.textContent='Nenhum resultado encontrado. Tente outro nome ou código.';painelBusca.append(vazio);}
+    painelBusca.hidden=false;input.setAttribute('aria-expanded','true');input.removeAttribute('aria-activedescendant');painelBusca.scrollTop=0;posicionarBusca();
+}
+function registrarBusca(input,config) {
+    input.removeAttribute('list');input.autocomplete='off';input.setAttribute('role','combobox');input.setAttribute('aria-autocomplete','list');input.setAttribute('aria-expanded','false');input.setAttribute('aria-controls','pedidoSugestoes');
+    input.addEventListener('focus',()=>abrirBusca(input,config));input.addEventListener('input',()=>abrirBusca(input,config));input.addEventListener('blur',fecharBusca);
+    input.addEventListener('keydown',e=>{
+        if(e.isComposing) return;
+        if(e.key==='Escape') {fecharBusca();return;}
+        if(e.key==='Tab') {fecharBusca();return;}
+        if(e.key==='ArrowDown'||e.key==='ArrowUp') {
+            e.preventDefault();if(!buscaAberta || buscaAberta.input!==input) abrirBusca(input,config);
+            const n=buscaAberta.resultados.length;if(n) marcarSugestao((buscaAberta.indice+(e.key==='ArrowDown'?1:-1)+n)%n);
+        } else if(e.key==='Enter' && buscaAberta && buscaAberta.input===input && buscaAberta.indice>=0) {e.preventDefault();escolherSugestao(buscaAberta.indice);}
+    });
 }
