@@ -208,9 +208,7 @@ function renderizarTabela() {
     filtrados.forEach(a => {
         const tr = document.createElement('tr');
 
-        const fotoHTML = a.foto 
-            ? `<img src="${a.foto}" alt="${a.nome}" style="width: 42px; height: 42px; object-fit: contain; border-radius: 6px; background: #ffffff; padding: 2px;">`
-            : `<div style="width: 42px; height: 42px; border-radius: 6px; background: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 18px; margin: 0 auto;">🥄</div>`;
+        const fotoHTML = criarImagemAcessorio(a);
 
         const qtd = parseInt(a.qtd_embalagem) || 1;
         const tipo = a.tipo_embalagem || 'Unidade';
@@ -270,6 +268,9 @@ function visualizarAcessorio(id) {
     const precoUnidNum = qtd > 0 ? (precoEmbNum / qtd) : precoEmbNum;
 
     const detalhesHTML = `
+        <div class="detail-item full-width" style="grid-column:span 2;text-align:center;background:#fff;">
+            ${criarImagemAcessorio(a, true)}
+        </div>
         <div class="detail-item">
             <div class="detail-label">SKU</div>
             <div class="detail-value highlight">${a.sku || '-'}</div>
@@ -439,4 +440,20 @@ async function excluirAcessorio(id) {
         }
         carregarAcessoriosNuvem();
     }
+}
+
+// Apresentação das fotos sem alterar os dados do acessório.
+function criarImagemAcessorio(acessorio, detalhes = false) {
+    const foto = typeof acessorio.foto === 'string' ? acessorio.foto.trim() : '';
+    if (!foto) return '<span role="img" aria-label="Acessório sem foto" style="font-size:24px">🥄</span>';
+    const imagem = document.createElement('img');
+    imagem.src = foto;
+    imagem.alt = String(acessorio.nome || 'Acessório Nespresso');
+    imagem.width = detalhes ? 160 : 54;
+    imagem.height = detalhes ? 160 : 54;
+    imagem.loading = detalhes ? 'eager' : 'lazy';
+    imagem.decoding = 'async';
+    imagem.style.cssText = 'object-fit:contain;max-width:100%;border-radius:6px;background:#fff;vertical-align:middle;';
+    imagem.setAttribute('onerror', "this.hidden=true;this.nextElementSibling.hidden=false;");
+    return imagem.outerHTML + '<span role="img" aria-label="Imagem indisponível" hidden style="font-size:24px">🥄</span>';
 }

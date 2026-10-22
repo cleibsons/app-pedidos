@@ -1,0 +1,1252 @@
+[
+  {
+    "group": "original",
+    "sku": "7880.90",
+    "name": "Rio Espresso",
+    "sourceSku": "7880.90",
+    "sourceName": "Rio Espresso",
+    "src": "assets/original/7880-90.svg",
+    "sourcePage": 1,
+    "sourceUrl": null
+  },
+  {
+    "group": "original",
+    "sku": "7894.90",
+    "name": "Master Origin - Brazil Organic",
+    "sourceSku": "7894.90",
+    "sourceName": "Master Origin - Brazil Organic",
+    "src": "assets/original/7894-90.svg",
+    "sourcePage": 2,
+    "sourceUrl": null
+  },
+  {
+    "group": "original",
+    "sku": "7923.90",
+    "name": "Lisbon Bica",
+    "sourceSku": "7923.90",
+    "sourceName": "Lisbon Bica",
+    "src": "assets/original/7923-90.svg",
+    "sourcePage": 4,
+    "sourceUrl": null
+  },
+  {
+    "group": "original",
+    "sku": "7926.90",
+    "name": "Stockholm Lungo",
+    "sourceSku": "7926.90",
+    "sourceName": "Stockholm Lungo",
+    "src": "assets/original/7926-90.svg",
+    "sourcePage": 1,
+    "sourceUrl": null
+  },
+  {
+    "group": "original",
+    "sku": "7928.90",
+    "name": "Ispirazione Firenze Arpeggio",
+    "sourceSku": "7928.90",
+    "sourceName": "Ispirazione Firenze Arpeggio",
+    "src": "assets/original/7928-90.svg",
+    "sourcePage": 3,
+    "sourceUrl": null
+  },
+  {
+    "group": "original",
+    "sku": "7929.90",
+    "name": "Master Origin - Colombia",
+    "sourceSku": "7929.90",
+    "sourceName": "Master Origin - Colombia",
+    "src": "assets/original/7929-90.svg",
+    "sourcePage": 2,
+    "sourceUrl": null
+  },
+  {
+    "group": "original",
+    "sku": "7932.90",
+    "name": "Volluto Decaffeinato",
+    "sourceSku": "7932.90",
+    "sourceName": "Volluto Decaffeinato",
+    "src": "assets/original/7932-90.svg",
+    "sourcePage": 2,
+    "sourceUrl": null
+  },
+  {
+    "group": "original",
+    "sku": "7933.90",
+    "name": "Vaniglia",
+    "sourceSku": "7933.90",
+    "sourceName": "Vaniglia",
+    "src": "assets/original/7933-90.svg",
+    "sourcePage": 3,
+    "sourceUrl": null
+  },
+  {
+    "group": "original",
+    "sku": "7936.90",
+    "name": "Tokyo Lungo",
+    "sourceSku": "7936.90",
+    "sourceName": "Tokyo Lungo",
+    "src": "assets/original/7936-90.svg",
+    "sourcePage": 1,
+    "sourceUrl": null
+  },
+  {
+    "group": "original",
+    "sku": "7937.90",
+    "name": "Nocciola",
+    "sourceSku": "7937.90",
+    "sourceName": "Nocciola",
+    "src": "assets/original/7937-90.svg",
+    "sourcePage": 4,
+    "sourceUrl": null
+  },
+  {
+    "group": "original",
+    "sku": "7943.90",
+    "name": "Ispirazione Firenze Arpeggio Decaffeinato",
+    "sourceSku": "7943.90",
+    "sourceName": "Ispirazione Firenze Arpeggio Decaffeinato",
+    "src": "assets/original/7943-90.svg",
+    "sourcePage": 3,
+    "sourceUrl": null
+  },
+  {
+    "group": "original",
+    "sku": "7946.90",
+    "name": "Buenos Aires Lungo",
+    "sourceSku": "7946.90",
+    "sourceName": "Buenos Aires Lungo",
+    "src": "assets/original/7946-90.svg",
+    "sourcePage": 1,
+    "sourceUrl": null
+  },
+  {
+    "group": "original",
+    "sku": "7947.90",
+    "name": "Shanghai Lungo",
+    "sourceSku": "7947.90",
+    "sourceName": "Shanghai Lungo",
+    "src": "assets/original/7947-90.svg",
+    "sourcePage": 1,
+    "sourceUrl": null
+  },
+  {
+    "group": "original",
+    "sku": "7948.90",
+    "name": "Cape Town Lungo",
+    "sourceSku": "7948.90",
+    "sourceName": "Cape Town Lungo",
+    "src": "assets/original/7948-90.svg",
+    "sourcePage": 1,
+    "sourceUrl": null
+  },
+  {
+    "group": "original",
+    "sku": "7959.90",
+    "name": "Vienna Lungo",
+    "sourceSku": "7959.90",
+    "sourceName": "Vienna Lungo",
+    "src": "assets/original/7959-90.svg",
+    "sourcePage": 1,
+    "sourceUrl": null
+  },
+  {
+    "group": "original",
+    "sku": "7961.90",
+    "name": "Capriccio",
+    "sourceSku": "7961.90",
+    "sourceName": "Capriccio",
+    "src": "assets/original/7961-90.svg",
+    "sourcePage": 2,
+    "sourceUrl": null
+  },
+  {
+    "group": "original",
+    "sku": "7962.90",
+    "name": "Vienna Lungo Decaffeinato",
+    "sourceSku": "7962.90",
+    "sourceName": "Vienna Lungo Decaffeinato",
+    "src": "assets/original/7962-90.svg",
+    "sourcePage": 1,
+    "sourceUrl": null
+  },
+  {
+    "group": "original",
+    "sku": "7964.90",
+    "name": "Caramello",
+    "sourceSku": "7964.90",
+    "sourceName": "Caramello",
+    "src": "assets/original/7964-90.svg",
+    "sourcePage": 4,
+    "sourceUrl": null
+  },
+  {
+    "group": "original",
+    "sku": "7965.90",
+    "name": "Paris Espresso",
+    "sourceSku": "7965.90",
+    "sourceName": "Paris Espresso",
+    "src": "assets/original/7965-90.svg",
+    "sourcePage": 1,
+    "sourceUrl": null
+  },
+  {
+    "group": "original",
+    "sku": "7968.90",
+    "name": "Ciocolatto",
+    "sourceSku": "7968.90",
+    "sourceName": "Ciocolatto",
+    "src": "assets/original/7968-90.svg",
+    "sourcePage": 4,
+    "sourceUrl": null
+  },
+  {
+    "group": "original",
+    "sku": "7969.90",
+    "name": "Cosi",
+    "sourceSku": "7969.90",
+    "sourceName": "Cosi",
+    "src": "assets/original/7969-90.svg",
+    "sourcePage": 2,
+    "sourceUrl": null
+  },
+  {
+    "group": "original",
+    "sku": "7972.90",
+    "name": "Ispirazione Palermo Kazaar",
+    "sourceSku": "7972.90",
+    "sourceName": "Ispirazione Palermo Kazaar",
+    "src": "assets/original/7972-90.svg",
+    "sourcePage": 2,
+    "sourceUrl": null
+  },
+  {
+    "group": "original",
+    "sku": "7973.90",
+    "name": "Master Origin - Nicaragua",
+    "sourceSku": "7973.90",
+    "sourceName": "Master Origin - Nicaragua",
+    "src": "assets/original/7973-90.svg",
+    "sourcePage": 2,
+    "sourceUrl": null
+  },
+  {
+    "group": "original",
+    "sku": "7975.90",
+    "name": "Master Origin - Indonesia",
+    "sourceSku": "7975.90",
+    "sourceName": "Master Origin - Indonesia",
+    "src": "assets/original/7975-90.svg",
+    "sourcePage": 2,
+    "sourceUrl": null
+  },
+  {
+    "group": "original",
+    "sku": "7977.90",
+    "name": "Master Origin - India",
+    "sourceSku": "7977.90",
+    "sourceName": "Master Origin - India",
+    "src": "assets/original/7977-90.svg",
+    "sourcePage": 2,
+    "sourceUrl": null
+  },
+  {
+    "group": "original",
+    "sku": "7979.90",
+    "name": "Ispirazione Torino Livanto",
+    "sourceSku": "7979.90",
+    "sourceName": "Ispirazione Torino Livanto",
+    "src": "assets/original/7979-90.svg",
+    "sourcePage": 3,
+    "sourceUrl": null
+  },
+  {
+    "group": "original",
+    "sku": "7980.90",
+    "name": "Ispirazione Ristretto Italiano Decaffeinato",
+    "sourceSku": "7980.90",
+    "sourceName": "Ispirazione Ristretto Italiano Decaffeinato",
+    "src": "assets/original/7980-90.svg",
+    "sourcePage": 3,
+    "sourceUrl": null
+  },
+  {
+    "group": "original",
+    "sku": "7981.90",
+    "name": "Scuro",
+    "sourceSku": "7981.90",
+    "sourceName": "Scuro",
+    "src": "assets/original/7981-90.svg",
+    "sourcePage": 3,
+    "sourceUrl": null
+  },
+  {
+    "group": "original",
+    "sku": "7983.90",
+    "name": "Volluto",
+    "sourceSku": "7983.90",
+    "sourceName": "Volluto",
+    "src": "assets/original/7983-90.svg",
+    "sourcePage": 2,
+    "sourceUrl": null
+  },
+  {
+    "group": "original",
+    "sku": "7984.90",
+    "name": "Ispirazione Napoli",
+    "sourceSku": "7984.90",
+    "sourceName": "Ispirazione Napoli",
+    "src": "assets/original/7984-90.svg",
+    "sourcePage": 3,
+    "sourceUrl": null
+  },
+  {
+    "group": "original",
+    "sku": "7985.90",
+    "name": "Ispirazione Roma",
+    "sourceSku": "7985.90",
+    "sourceName": "Ispirazione Roma",
+    "src": "assets/original/7985-90.svg",
+    "sourcePage": 3,
+    "sourceUrl": null
+  },
+  {
+    "group": "original",
+    "sku": "7986.90",
+    "name": "Ispirazione Venezia",
+    "sourceSku": "7986.90",
+    "sourceName": "Ispirazione Venezia",
+    "src": "assets/original/7986-90.svg",
+    "sourcePage": 3,
+    "sourceUrl": null
+  },
+  {
+    "group": "original",
+    "sku": "7987.90",
+    "name": "Ispirazione Ristretto Italiano",
+    "sourceSku": "7987.90",
+    "sourceName": "Ispirazione Ristretto Italiano",
+    "src": "assets/original/7987-90.svg",
+    "sourcePage": 3,
+    "sourceUrl": null
+  },
+  {
+    "group": "original",
+    "sku": "7988.90",
+    "name": "Vaniglia Decaffeinato",
+    "sourceSku": "7988.90",
+    "sourceName": "Vaniglia Decaffeinato",
+    "src": "assets/original/7988-90.svg",
+    "sourcePage": 3,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "103059",
+    "name": "Porta Cápsulas B2B Moment N",
+    "sourceSku": "103059",
+    "sourceName": "Porta Cápsulas B2B Moment N",
+    "src": "assets/acessorios/103059.svg",
+    "sourcePage": 5,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "122520",
+    "name": "Pixie Espresso Paris",
+    "sourceSku": "122520",
+    "sourceName": "Pixie Espresso Paris",
+    "src": "assets/acessorios/122520.svg",
+    "sourcePage": 3,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "122660",
+    "name": "Pixie Espresso Rio",
+    "sourceSku": "122660",
+    "sourceName": "Pixie Espresso Rio",
+    "src": "assets/acessorios/122660.svg",
+    "sourcePage": 3,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "122661",
+    "name": "Pixie Espresso Istanbul",
+    "sourceSku": "122661",
+    "sourceName": "Pixie Espresso Istanbul",
+    "src": "assets/acessorios/122661.svg",
+    "sourcePage": 3,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "123941",
+    "name": "Caneca Térmica Travel",
+    "sourceSku": "123941",
+    "sourceName": "Caneca Termica Travel",
+    "src": "assets/acessorios/123941.svg",
+    "sourcePage": 4,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "124963",
+    "name": "Taças Reveal para Cafés Intensos",
+    "sourceSku": "124963",
+    "sourceName": "Taças Reveal para Cafés Intensos",
+    "src": "assets/acessorios/124963.svg",
+    "sourcePage": 4,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "125010",
+    "name": "Taças Reveal para Cafés Equilibrados",
+    "sourceSku": "125010",
+    "sourceName": "Taças Reveal para Cafés Equilibrados",
+    "src": "assets/acessorios/125010.svg",
+    "sourcePage": 4,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "125408",
+    "name": "Pixie Lungo Stockholm",
+    "sourceSku": "125408",
+    "sourceName": "Pixie Lungo Stockholm",
+    "src": "assets/acessorios/125408.svg",
+    "sourcePage": 3,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "125409",
+    "name": "Pixie Lungo Tokyo",
+    "sourceSku": "125409",
+    "sourceName": "Pixie Lungo Tokyo",
+    "src": "assets/acessorios/125409.svg",
+    "sourcePage": 3,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "125410",
+    "name": "Pixie Lungo Vienna",
+    "sourceSku": "125410",
+    "sourceName": "Pixie Lungo Vienna",
+    "src": "assets/acessorios/125410.svg",
+    "sourcePage": 3,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "125411",
+    "name": "Pixie Lungo Shangai",
+    "sourceSku": "125411",
+    "sourceName": "Pixie Lungo Shangai",
+    "src": "assets/acessorios/125411.svg",
+    "sourcePage": 3,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "125412",
+    "name": "Pixie Lungo Cape Town",
+    "sourceSku": "125412",
+    "sourceName": "Pixie Lungo Cape Town",
+    "src": "assets/acessorios/125412.svg",
+    "sourcePage": 3,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "125413",
+    "name": "Pixie Lungo Buenos Aires",
+    "sourceSku": "125413",
+    "sourceName": "Pixie Lungo Buenos Aires",
+    "src": "assets/acessorios/125413.svg",
+    "sourcePage": 3,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "128003",
+    "name": "Cantuccini 10 unidades (12g Cada)",
+    "sourceSku": "128003",
+    "sourceName": "Cantuccini 10 unidades (12g Cada)",
+    "src": "assets/acessorios/128003.svg",
+    "sourcePage": 2,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "128557",
+    "name": "Container de Reciclagem",
+    "sourceSku": "128557",
+    "sourceName": "Container de Reciclagem",
+    "src": "assets/acessorios/128557.svg",
+    "sourcePage": 2,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "132077",
+    "name": "Caneca Térmica Terracotta Pequena",
+    "sourceSku": "132077",
+    "sourceName": "Caneca Térmica Terracotta Pequeno",
+    "src": "assets/acessorios/132077.svg",
+    "sourcePage": 1,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "134502",
+    "name": "Xícaras Espresso Vertuo",
+    "sourceSku": "134502",
+    "sourceName": "Xícaras Espresso Vertuo",
+    "src": "assets/acessorios/134502.svg",
+    "sourcePage": 4,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "134504",
+    "name": "Xícaras Gran Lungo Vertuo",
+    "sourceSku": "134504",
+    "sourceName": "Xícaras Gran Lungo Vertuo",
+    "src": "assets/acessorios/134504.svg",
+    "sourcePage": 4,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "134508",
+    "name": "Xícaras Double Espresso Vertuo",
+    "sourceSku": "134508",
+    "sourceName": "Xícaras Double Espresso Vertuo",
+    "src": "assets/acessorios/134508.svg",
+    "sourcePage": 4,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "134509",
+    "name": "Vertuo Alto Mug",
+    "sourceSku": "134509",
+    "sourceName": "Vertuo Alto Mug",
+    "src": "assets/acessorios/134509.svg",
+    "sourcePage": 4,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "136876",
+    "name": "Caneca Térmica Aquarelle Grande",
+    "sourceSku": "136876",
+    "sourceName": "Caneca Térmica Aquarelle Grande",
+    "src": "assets/acessorios/136876.svg",
+    "sourcePage": 1,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "136877",
+    "name": "Caneca Térmica Laranja Média",
+    "sourceSku": "136877",
+    "sourceName": "Caneca Térmica Laranja Média",
+    "src": "assets/acessorios/136877.svg",
+    "sourcePage": 1,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "137101",
+    "name": "Tampa Para Copos Descartáveis 360-600ml",
+    "sourceSku": "137101",
+    "sourceName": "Tampa Para Copos Descartáveis 360-600ml",
+    "src": "assets/acessorios/137101.svg",
+    "sourcePage": 3,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "137102",
+    "name": "Tampa Para Copos Descartáveis 240ml",
+    "sourceSku": "137102",
+    "sourceName": "Tampa Para Copos Descartáveis 240ml",
+    "src": "assets/acessorios/137102.svg",
+    "sourcePage": 3,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "139891",
+    "name": "Display Drawer Pro",
+    "sourceSku": "139891",
+    "sourceName": "Display Drawer Pro",
+    "src": "assets/acessorios/139891.svg",
+    "sourcePage": 5,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "140961",
+    "name": "Porta-Cápsulas Drawer Display",
+    "sourceSku": "140961",
+    "sourceName": "Porta-Cápsulas Drawer Display",
+    "src": "assets/acessorios/140961.svg",
+    "sourcePage": 4,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "142170",
+    "name": "Caneca Térmica Sage Green Pequena",
+    "sourceSku": "142170",
+    "sourceName": "Caneca Térmica Sage Green Pequena",
+    "src": "assets/acessorios/142170.svg",
+    "sourcePage": 1,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "142171",
+    "name": "Caneca Térmica Smokey Blue Grande",
+    "sourceSku": "142171",
+    "sourceName": "Caneca Térmica Smokey Blue Grande",
+    "src": "assets/acessorios/142171.svg",
+    "sourcePage": 2,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "142172",
+    "name": "Caneca Térmica Vanilla Ice Média",
+    "sourceSku": "142172",
+    "sourceName": "Caneca Térmica Vanilla Ice Média",
+    "src": "assets/acessorios/142172.svg",
+    "sourcePage": 1,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "142267",
+    "name": "Chocolate ao Leite 40 Unidades (5g Cada)",
+    "sourceSku": "142267",
+    "sourceName": "Chocolate ao Leite 40 Unidades (5g Cada)",
+    "src": "assets/acessorios/142267.svg",
+    "sourcePage": 3,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "142268",
+    "name": "Chocolate Amargo 40 Unidades (5g Cada)",
+    "sourceSku": "142268",
+    "sourceName": "Chocolate Amargo 40 Unidades (5g Cada)",
+    "src": "assets/acessorios/142268.svg",
+    "sourcePage": 2,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "143063",
+    "name": "Porta Cápsulas Vertical Pro",
+    "sourceSku": "143063",
+    "sourceName": "Porta Capsulas Vertical",
+    "src": "assets/acessorios/143063.svg",
+    "sourcePage": 5,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "143086",
+    "name": "Porta Insumos Vertical",
+    "sourceSku": "143086",
+    "sourceName": "Porta Insumos Vertical",
+    "src": "assets/acessorios/143086.svg",
+    "sourcePage": 5,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "143773",
+    "name": "Colheres VIEW - Pequena (BULK 12 unidades)",
+    "sourceSku": "143773",
+    "sourceName": "Colheres VIEW - Pequena (BULK 12 unidades)",
+    "src": "assets/acessorios/143773.svg",
+    "sourcePage": 5,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "144331",
+    "name": "Colheres VIEW - Média (Bulk 12 unidades)",
+    "sourceSku": "144331",
+    "sourceName": "Colheres VIEW - Média ( Bulk12 unidades)",
+    "src": "assets/acessorios/144331.svg",
+    "sourcePage": 5,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "146227",
+    "name": "Hotel Condiment Tray",
+    "sourceSku": "146227",
+    "sourceName": "Hotel Condiment Tray",
+    "src": "assets/acessorios/146227.svg",
+    "sourcePage": 6,
+    "sourceUrl": "https://www.nespresso.com/pro/pl/en/order/accessories/pro/hotel-condiment-tray"
+  },
+  {
+    "group": "acessorios",
+    "sku": "146928",
+    "name": "B2B Hotel Capsule Box (8 pcs)",
+    "sourceSku": "146928",
+    "sourceName": "B2B Hotel Capsule Box (8 pçs)",
+    "src": "assets/acessorios/146928.svg",
+    "sourcePage": 6,
+    "sourceUrl": "https://www.nespresso.com/pro/pl/en/order/accessories/pro/hotel-box"
+  },
+  {
+    "group": "acessorios",
+    "sku": "157508",
+    "name": "Porta Cápsulas Display Mia LE 2026",
+    "sourceSku": "157508",
+    "sourceName": "Porta Cápsulas Display Mia LE 2026",
+    "src": "assets/acessorios/157508.svg",
+    "sourcePage": 2,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3417",
+    "name": "Porta Cápsulas Bonbonnière",
+    "sourceSku": "3417",
+    "sourceName": "Porta Cápsulas Bonbonnière",
+    "src": "assets/acessorios/3417.svg",
+    "sourcePage": 4,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3419",
+    "name": "VIEW Discovery Box",
+    "sourceSku": "3419",
+    "sourceName": "VIEW Discovery Box",
+    "src": "assets/acessorios/3419.svg",
+    "sourcePage": 5,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3425",
+    "name": "Colheres VIEW - Grande (Bulk 12 unidades)",
+    "sourceSku": "3425",
+    "sourceName": "Colheres VIEW - Grande (Bulk 12 unidades)",
+    "src": "assets/acessorios/3425.svg",
+    "sourcePage": 5,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3430",
+    "name": "Xícaras Loop Mug",
+    "sourceSku": "3430",
+    "sourceName": "Xícaras Loop Mug",
+    "src": "assets/acessorios/3430.svg",
+    "sourcePage": 2,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3432",
+    "name": "Xícaras Loop Gran Lungo",
+    "sourceSku": "3432",
+    "sourceName": "Xícaras Loop Gran Lungo",
+    "src": "assets/acessorios/3432.svg",
+    "sourcePage": 2,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3434",
+    "name": "Xícaras Loop Lungo",
+    "sourceSku": "3434",
+    "sourceName": "Xícaras Loop Lungo",
+    "src": "assets/acessorios/3434.svg",
+    "sourcePage": 2,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3436",
+    "name": "Xícaras Loop Espresso",
+    "sourceSku": "3436",
+    "sourceName": "Xícaras Loop Espresso",
+    "src": "assets/acessorios/3436.svg",
+    "sourcePage": 2,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3516/BULK",
+    "name": "Açúcar Branco B2C (bulk - 500 sticks)",
+    "sourceSku": "3516/BULK",
+    "sourceName": "Açúcar Branco B2C (bulk - 500 sticks)",
+    "src": "assets/acessorios/3516-bulk.svg",
+    "sourcePage": 1,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3517",
+    "name": "Sachê de Açúcar Mascavo (60 Sachês)",
+    "sourceSku": "3517",
+    "sourceName": "Sache de açucar Mascavo (60 Sachês)",
+    "src": "assets/acessorios/3517.svg",
+    "sourcePage": 1,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3519/BULK",
+    "name": "Açúcar (300 unidades)",
+    "sourceSku": "3519/BULK",
+    "sourceName": "Açúcar (300 unidades)",
+    "src": "assets/acessorios/3519-bulk.svg",
+    "sourcePage": 1,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3524",
+    "name": "Xícaras Origens Espresso",
+    "sourceSku": "3524",
+    "sourceName": "Xícaras Origens Espresso",
+    "src": "assets/acessorios/3524.svg",
+    "sourcePage": 3,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3527",
+    "name": "Xícaras Origens Lungo",
+    "sourceSku": "3527",
+    "sourceName": "Xícaras Origens Lungo",
+    "src": "assets/acessorios/3527.svg",
+    "sourcePage": 3,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3529",
+    "name": "Conjunto de Bandeja Origin",
+    "sourceSku": "3529",
+    "sourceName": "Conjunto de Bandeja Origin",
+    "src": "assets/acessorios/3529.svg",
+    "sourcePage": 3,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3532",
+    "name": "Xícaras LUME Cappuccino (180 Ml) 12 Unidades",
+    "sourceSku": "3532",
+    "sourceName": "Xícaras LUME Cappuccino (180 Ml) 12 Unidades",
+    "src": "assets/acessorios/3532.svg",
+    "sourcePage": 1,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3533",
+    "name": "Xícaras LUME Espresso (80 Ml) 12 Unidades",
+    "sourceSku": "3533",
+    "sourceName": "Xícaras LUME Espresso (80 Ml) 12 Unidades",
+    "src": "assets/acessorios/3533.svg",
+    "sourcePage": 1,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3541",
+    "name": "Pires LUME Cappuccino 12 Unidades",
+    "sourceSku": "3541",
+    "sourceName": "Pires LUME Cappuccino 12 Unidades",
+    "src": "assets/acessorios/3541.svg",
+    "sourcePage": 1,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3545",
+    "name": "Pires LUME Espresso 12 Unidades",
+    "sourceSku": "3545",
+    "sourceName": "Pires LUME Espresso 12 Unidades",
+    "src": "assets/acessorios/3545.svg",
+    "sourcePage": 1,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3555",
+    "name": "Porta Cápsulas - Alessi Double",
+    "sourceSku": "3555",
+    "sourceName": "Porta Cápsulas - Alessi Double",
+    "src": "assets/acessorios/3555.svg",
+    "sourcePage": 3,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3561",
+    "name": "Mexedores de Bambu - Médio (100 Unid.)",
+    "sourceSku": "3561",
+    "sourceName": "Mexedores de Bambu - Médio (100 Unid.)",
+    "src": "assets/acessorios/3561.svg",
+    "sourcePage": 1,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3562",
+    "name": "Mexedores de Bambu - Pequeno (100 Unid.)",
+    "sourceSku": "3562",
+    "sourceName": "Mexedores de Bambu - Pequeno (100 Unid.)",
+    "src": "assets/acessorios/3562.svg",
+    "sourcePage": 1,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3581",
+    "name": "Copos Iced Reveal",
+    "sourceSku": "3581",
+    "sourceName": "Copos Iced Reveal",
+    "src": "assets/acessorios/3581.svg",
+    "sourcePage": 2,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3585",
+    "name": "Porta Cápsulas Cubo",
+    "sourceSku": "3585",
+    "sourceName": "Porta Cápsulas Cubo",
+    "src": "assets/acessorios/3585.svg",
+    "sourcePage": 4,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3594-BRA-BK",
+    "name": "Espumador de Leite Aeroccino3 110V - Preto",
+    "sourceSku": "3594-BRA-BK",
+    "sourceName": "Espumador de Leite Aeroccino3 110V - Preto",
+    "src": "assets/acessorios/3594-bra-bk.svg",
+    "sourcePage": 2,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3594-BRA-RE",
+    "name": "Espumador de Leite Aeroccino3 110V - Vermelho",
+    "sourceSku": "3594-BRA-RE",
+    "sourceName": "Espumador de Leite Aeroccino3 110V - Vermelho",
+    "src": "assets/acessorios/3594-bra-re.svg",
+    "sourcePage": 2,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3594-BRB-BK",
+    "name": "Espumador de Leite Aeroccino3 220V - Preto",
+    "sourceSku": "3594-BRB-BK",
+    "sourceName": "Espumador de Leite Aeroccino3 220V - Preto",
+    "src": "assets/acessorios/3594-brb-bk.svg",
+    "sourcePage": 2,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3594-BRBRE-",
+    "name": "Espumador de Leite Aeroccino3 220V - Vermelho",
+    "sourceSku": "3594-BRB-RE",
+    "sourceName": "Espumador de Leite Aeroccino3 220V - Vermelho",
+    "src": "assets/acessorios/3594-brb-re.svg",
+    "sourcePage": 2,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "36645/40",
+    "name": "PURE Collection BULK 20 Esp & 20 Lungo Saucer",
+    "sourceSku": "3664S/40",
+    "sourceName": "PURE Collection BULK 20 Esp & 20 Lungo Saucer",
+    "src": "assets/acessorios/3664s-40.svg",
+    "sourcePage": 4,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3735/BULK",
+    "name": "VIEW Set of 12 Espresso Cups (in bulk)",
+    "sourceSku": "3735/BULK",
+    "sourceName": "VIEW Set of 12 Espresso Cups (in bulk)",
+    "src": "assets/acessorios/3735-bulk.svg",
+    "sourcePage": 5,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3736/BULK",
+    "name": "VIEW Set of 12 Lungo Cups (in bulk)",
+    "sourceSku": "3736/BULK",
+    "sourceName": "VIEW Set of 12 Lungo cups (in bulk)",
+    "src": "assets/acessorios/3736-bulk.svg",
+    "sourcePage": 5,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3738/BULK",
+    "name": "VIEW Set of 12 Mugs (in bulk)",
+    "sourceSku": "3738/BULK",
+    "sourceName": "VIEW Set of 12 Mugs (in bulk)",
+    "src": "assets/acessorios/3738-bulk.svg",
+    "sourcePage": 5,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3739/BULK",
+    "name": "Copos de Receita View (12 Unid. BULK)",
+    "sourceSku": "3739/BULK",
+    "sourceName": "Copos de Receita View (12 Unid. BULK)",
+    "src": "assets/acessorios/3739-bulk.svg",
+    "sourcePage": 5,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3740/BULK",
+    "name": "VIEW Set of 12 Small Saucers (in bulk)",
+    "sourceSku": "3740/BULK",
+    "sourceName": "VIEW Set of 12 Small Saucers (in bulk)",
+    "src": "assets/acessorios/3740-bulk.svg",
+    "sourcePage": 5,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3741/BULK",
+    "name": "VIEW Set of 12 Big Saucers (in bulk)",
+    "sourceSku": "3741/BULK",
+    "sourceName": "VIEW Set of 12 Big Saucers (in bulk)",
+    "src": "assets/acessorios/3741-bulk.svg",
+    "sourcePage": 5,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3783",
+    "name": "Colheres de Café VIEW - Pequeno (6 Unidades)",
+    "sourceSku": "3783",
+    "sourceName": "Colheres de Café VIEW - Pequeno (6 Unidades)",
+    "src": "assets/acessorios/3783.svg",
+    "sourcePage": 5,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3784",
+    "name": "Colheres de Café VIEW - Médio (6 unidades)",
+    "sourceSku": "3784",
+    "sourceName": "Colheres de Café VIEW - Médio (6 unidades)",
+    "src": "assets/acessorios/3784.svg",
+    "sourcePage": 5,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3785",
+    "name": "Colheres de Café VIEW - Grande (6 unidades)",
+    "sourceSku": "3785",
+    "sourceName": "Colheres de Café VIEW- Grande (6 unidades)",
+    "src": "assets/acessorios/3785.svg",
+    "sourcePage": 5,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3787",
+    "name": "Vertuo Sharing Pot Carafe",
+    "sourceSku": "3787",
+    "sourceName": "Vertuo Sharing Pot Carafe",
+    "src": "assets/acessorios/3787.svg",
+    "sourcePage": 4,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3790",
+    "name": "Xícaras Lume Espresso",
+    "sourceSku": "3790",
+    "sourceName": "Xícaras Lume Espresso",
+    "src": "assets/acessorios/3790.svg",
+    "sourcePage": 1,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3791",
+    "name": "Canecas Lume",
+    "sourceSku": "3791",
+    "sourceName": "Canecas Lume",
+    "src": "assets/acessorios/3791.svg",
+    "sourcePage": 1,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3793",
+    "name": "Xícaras Lume Lungo",
+    "sourceSku": "3793",
+    "sourceName": "Xícaras Lume Lungo",
+    "src": "assets/acessorios/3793.svg",
+    "sourcePage": 1,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "3795",
+    "name": "Porta Cápsulas Lume Mia",
+    "sourceSku": "3795",
+    "sourceName": "Porta Cápsulas Lume Mia",
+    "src": "assets/acessorios/3795.svg",
+    "sourcePage": 2,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "4194-BRA-SI-NE",
+    "name": "Espumador de Leite Aeroccino 4 110V",
+    "sourceSku": "4194-BRA-SI-NE",
+    "sourceName": "Espumador de Leite Aeroccino 4 110V",
+    "src": "assets/acessorios/4194-bra-si-ne.svg",
+    "sourcePage": 2,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "4194-BRB-SI-NE",
+    "name": "Espumador de Leite Aeroccino 4 220V",
+    "sourceSku": "4194-BRB-SI-NE",
+    "sourceName": "Espumador de Leite Aeroccino 4 220v",
+    "src": "assets/acessorios/4194-brb-si-ne.svg",
+    "sourcePage": 2,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "5003/1",
+    "name": "Porta-Cápsulas Showcase",
+    "sourceSku": "5003/1",
+    "sourceName": "Porta-Cápsulas Showcase",
+    "src": "assets/acessorios/5003-1.svg",
+    "sourcePage": 4,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "5023/R1",
+    "name": "Cappucinatore Device CS20 (1 unidade)",
+    "sourceSku": "5023/R1",
+    "sourceName": "Cappucinatore Device CS20 (1 unidade)",
+    "src": "assets/acessorios/5023-r1.svg",
+    "sourcePage": 2,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "5105.01",
+    "name": "New Cappuccinattore Kit (100 unidades)",
+    "sourceSku": "5105.01",
+    "sourceName": "New Cappuccinattore Kit (100 unidades)",
+    "src": "assets/acessorios/5105-01.svg",
+    "sourcePage": 3,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "5116",
+    "name": "Copos Descartáveis 360ml (35 Und)",
+    "sourceSku": "5116",
+    "sourceName": "Copos descartáveis 360ml (35 Und)",
+    "src": "assets/acessorios/5116.svg",
+    "sourcePage": 4,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "5119",
+    "name": "Copos Descartáveis 110ml (50 Und)",
+    "sourceSku": "5119",
+    "sourceName": "Copos Descartáveis 110ml (50 Und)",
+    "src": "assets/acessorios/5119.svg",
+    "sourcePage": 4,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "5120",
+    "name": "Copos Descartáveis 240ml (30 Und)",
+    "sourceSku": "5120",
+    "sourceName": "Copos descartáveis 240ml (30 Und)",
+    "src": "assets/acessorios/5120.svg",
+    "sourcePage": 4,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "5313/12",
+    "name": "Pires Espresso (12 unidades)",
+    "sourceSku": "5313/12",
+    "sourceName": "Pires Espresso (12 unidades)",
+    "src": "assets/acessorios/5313-12.svg",
+    "sourcePage": 3,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "5405/1",
+    "name": "Porta-Cápsulas - Hotéis (quartos)",
+    "sourceSku": "5405/1",
+    "sourceName": "Porta-Cápsulas - Hotéis (quartos)",
+    "src": "assets/acessorios/5405-1.svg",
+    "sourcePage": 4,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "5499",
+    "name": "Porta Cápsulas Vertical",
+    "sourceSku": "5499",
+    "sourceName": "Porta Cápsulas Vertical",
+    "src": "assets/acessorios/5499.svg",
+    "sourcePage": 4,
+    "sourceUrl": null
+  },
+  {
+    "group": "acessorios",
+    "sku": "890941/4",
+    "name": "Sacola de Reciclagem",
+    "sourceSku": "89094L/4",
+    "sourceName": "Sacola de Reciclagem",
+    "src": "assets/acessorios/89094l-4.svg",
+    "sourcePage": 5,
+    "sourceUrl": null
+  }
+]
