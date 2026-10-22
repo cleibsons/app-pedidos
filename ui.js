@@ -36,7 +36,7 @@
     document.body.insertAdjacentHTML('afterbegin', `
         <a class="skip-link" href="#mainContent">Ir para o conteúdo</a>
         <aside class="sidebar" id="sidebar" aria-label="Menu principal">
-            <a class="brand" href="index.html" aria-label="Central Nespresso — início"><span class="brand-symbol">N</span><span>NESPRESSO<small>CENTRAL DE PEDIDOS</small></span></a>
+            <a class="brand" href="index.html" aria-label="Central Nespresso — início"><span class="brand-lockup"><img class="brand-logo" src="https://logospng.org/wp-content/uploads/nespresso.png" alt="Nespresso" referrerpolicy="no-referrer" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span class="brand-fallback" hidden>NESPRESSO</span><small>CENTRAL DE PEDIDOS</small></span></a>
             <nav aria-label="Navegação principal">${links}</nav>
             <div class="sidebar-bottom"><div class="workspace-note">${icon('check')}<div>Seu espaço de trabalho<small>Clientes, catálogos e pedidos</small></div></div><button class="side-link logout-btn" id="logoutButton">${icon('logout')}<span>Sair da conta</span></button></div>
         </aside>
