@@ -1,15 +1,21 @@
-// Verificar se o usuário está logado ao abrir a página
+// Verifica a sessão depois de inicializar o cliente Supabase.
 async function protegerPagina() {
-    if (!supabaseClient) return;
-    const { data: { session } } = await supabaseClient.auth.getSession();
-    if (!session) {
-        // Se não estiver logado, expulsa para a tela de login
-        window.location.href = 'login.html';
+    try {
+        if (!supabaseClient) throw new Error('Supabase indisponível');
+        const { data, error } = await supabaseClient.auth.getSession();
+        if (error) throw error;
+        if (!data.session) {
+            window.location.replace('login.html');
+            return false;
+        }
+        return true;
+    } catch (error) {
+        alert('Não foi possível verificar seu acesso. Verifique a conexão e tente novamente.');
+        window.location.replace('login.html');
+        return false;
     }
 }
 
-// Chame essa função logo no carregamento
-protegerPagina();
 // Conexão com o Supabase
 const SUPABASE_URL = 'https://awllwrltulzmjdcchlxs.supabase.co';
 const SUPABASE_KEY = 'sb_publishable__Cj-tdVffbiigN0-YczRkw_eVLEUIMZ';
@@ -30,8 +36,10 @@ let acessoriosLista = [];
 
 let itensPedido = [];
 
-document.addEventListener("DOMContentLoaded", () => {
-    carregarDadosNuvem();
+document.addEventListener("DOMContentLoaded", async () => {
+    if (await protegerPagina()) {
+        await carregarDadosNuvem();
+    }
 });
 
 async function carregarDadosNuvem() {
