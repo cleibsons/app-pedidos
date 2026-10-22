@@ -77,6 +77,7 @@
         }
     </style>
     <link rel="stylesheet" href="theme-dark.css?v=8">
+    <link rel="stylesheet" href="pedidos.css?v=9">
 </head>
 <body class="app-page">
 
@@ -94,14 +95,15 @@
         <div class="card" style="background: var(--field); border: 1px solid var(--surface); border-radius: 12px; padding: 24px; margin-bottom: 24px;">
             <h2 style="font-size: 16px; margin-bottom: 14px; color: var(--ink);">1. Escolha o Canal de Envio do Pedido:</h2>
             <div class="canal-selector">
-                <div class="canal-card active" id="cardWhats" onclick="selecionarCanal('whatsapp')">
+                <button type="button" class="canal-card active" id="cardWhats" aria-pressed="true" onclick="selecionarCanal('whatsapp')">
                     <h3>📱 WhatsApp Nespresso</h3>
-                    <p>Modelo estruturado por categorias e resumo rápido</p>
-                </div>
-                <div class="canal-card" id="cardEmail" onclick="selecionarCanal('email')">
-                    <h3>✉️ E-mail (Time de Compras)</h3>
-                    <p>Modelo formal com opções de Broker, Estoque 3A e Ordem de Compra</p>
-                </div>
+                    <p>Modelo por categorias e resumo do pedido</p>
+                </button>
+                <button type="button" class="canal-card" id="cardEmail" aria-pressed="false" onclick="selecionarCanal('email', 'broker')">
+                    <h3>✉️ E-mail · Broker</h3>
+                    <p>Entrega e faturamento via Broker</p>
+                </button>
+                <button type="button" class="canal-card" id="cardEmail3a" aria-pressed="false" onclick="selecionarCanal('email', 'estoque3a')"><h3>✉️ E-mail · 3A</h3><p>Faturamento via estoque 3A e entrega por transportadora</p></button>
             </div>
 
             <!-- OPÇÕES EXCLUSIVAS PARA E-MAIL -->
@@ -109,13 +111,13 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label>Tipo de Faturamento / Logística:</label>
-                        <select id="tipoLogisticaInput" onchange="atualizarPreview()">
+                        <select id="tipoLogisticaInput" onchange="selecionarCanal('email', this.value)">
                             <option value="broker">VIA BROKER (Padrão)</option>
                             <option value="estoque3a">VIA ESTOQUE 3A (Sem estoque no Broker / Transp. Total Express)</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Ordem de Compra (OC) ou Autorização:</label>
+                        <label for="ordemCompraInput">Ordem de Compra (OC) ou autorização:</label>
                         <input type="text" id="ordemCompraInput" placeholder="Ex: 1350030044 ou Autorizado pelo comprador João" oninput="atualizarPreview()">
                     </div>
                 </div>
@@ -134,8 +136,8 @@
 
         <!-- SELEÇÃO DE ITENS DO PEDIDO -->
         <div class="card" style="background: var(--field); border: 1px solid var(--surface); border-radius: 12px; padding: 24px; margin-bottom: 24px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-                <h2 style="font-size: 16px; color: var(--ink);">3. Adicionar Itens ao Pedido:</h2>
+            <div class="pedido-section-heading">
+                <h2 style="font-size: 16px; color: var(--ink);">3. Produtos e preços deste pedido</h2>
                 <div>
                     <select id="tipoItemAdd" style="padding: 8px; width: auto; display: inline-block;">
                         <option value="b2b">Cápsulas B2B</option>
@@ -147,17 +149,21 @@
                 </div>
             </div>
 
+            <p class="pedido-help">Ajuste o preço de cada item antes ou depois de escolher o produto. Cápsulas: valor por cápsula. Acessórios: valor por embalagem. Esses ajustes valem somente para este pedido.</p>
             <div id="listaItensContainer">
                 <p style="color: var(--muted); font-size: 13px; text-align: center; padding: 16px;">Nenhum item adicionado ainda. Clique em "+ Adicionar Item" acima.</p>
             </div>
         </div>
 
+        <div class="pedido-total" aria-live="polite"><span>Total do pedido <small id="pedidoPendencias"></small></span><strong id="pedidoTotal">R$ 0,00</strong></div>
+
         <!-- PRÉ-VISUALIZAÇÃO DO TEXTO -->
         <div class="card" style="background: var(--field); border: 1px solid var(--surface); border-radius: 12px; padding: 24px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div class="pedido-section-heading">
                 <h2 style="font-size: 16px; color: var(--ink);">📋 Pré-visualização da Mensagem:</h2>
-                <button class="btn btn-primary" onclick="copiarMensagem()">📋 Copiar Texto</button>
+                <div class="pedido-actions"><button type="button" class="btn btn-secondary" onclick="limparPedido()">Limpar / Novo pedido</button><button type="button" class="btn btn-primary" onclick="copiarMensagem()">📋 Copiar Texto</button></div>
             </div>
+            <p id="pedidoStatus" role="status" class="pedido-help"></p>
             <div class="preview-box" id="previewMensagem">
                 Selecione um cliente e adicione itens para gerar o pedido...
             </div>
@@ -166,7 +172,7 @@
     </div>
 
     <!-- Script JS -->
-    <script src="pedidos.js?v=8"></script>
+    <script src="pedidos.js?v=9"></script>
     <script src="ui.js?v=4"></script>
 </body>
 </html>

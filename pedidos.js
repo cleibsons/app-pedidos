@@ -35,6 +35,7 @@ let produtosOriginal = [];
 let acessoriosLista = [];
 
 let itensPedido = [];
+let proximoItemId = 0;
 
 document.addEventListener("DOMContentLoaded", async () => {
     if (await protegerPagina()) {
@@ -84,143 +85,124 @@ async function carregarDadosNuvem() {
     }
 }
 
-function selecionarCanal(canal) {
+function selecionarCanal(canal, logistica) {
     canalAtual = canal;
-    document.getElementById('cardWhats').classList.remove('active');
-    document.getElementById('cardEmail').classList.remove('active');
-
-    if (canal === 'whatsapp') {
-        document.getElementById('cardWhats').classList.add('active');
-        document.getElementById('secaoEmailOpcoes').style.display = 'none';
-    } else {
-        document.getElementById('cardEmail').classList.add('active');
-        document.getElementById('secaoEmailOpcoes').style.display = 'block';
+    if (logistica) document.getElementById('tipoLogisticaInput').value = logistica;
+    const tipo = document.getElementById('tipoLogisticaInput').value;
+    for (const [id, ativo] of [['cardWhats', canal === 'whatsapp'], ['cardEmail', canal === 'email' && tipo === 'broker'], ['cardEmail3a', canal === 'email' && tipo === 'estoque3a']]) {
+        document.getElementById(id).classList.toggle('active', ativo);
+        document.getElementById(id).setAttribute('aria-pressed', String(ativo));
     }
+    document.getElementById('secaoEmailOpcoes').style.display = canal === 'email' ? 'block' : 'none';
     atualizarPreview();
 }
 
 function selecionarClientePorBusca() {
-    const valorDigitado = document.getElementById('buscaClienteInput').value;
-    clienteSelecionado = clientesLista.find(c => {
-        const textoCompleto = `${c.razao || ''} - NN: ${c.nn || ''} (CNPJ: ${c.cnpj || ''})`;
-        return textoCompleto === valorDigitado || (c.razao && valorDigitado.includes(c.razao)) || (c.nn && valorDigitado.includes(c.nn));
-    });
-
+    const valor = document.getElementById('buscaClienteInput').value.trim();
+    clienteSelecionado = clientesLista.find(c => `${c.razao || ''} - NN: ${c.nn || ''} (CNPJ: ${c.cnpj || ''})` === valor)
+        || clientesLista.find(c => valor && [c.razao, c.fantasia, c.nn, c.cnpj].some(v => v != null && String(v).toLowerCase() === valor.toLowerCase())) || null;
     const infoCard = document.getElementById('clienteInfoCard');
+    infoCard.style.display = clienteSelecionado ? 'block' : 'none';
+    infoCard.replaceChildren();
     if (clienteSelecionado) {
-        infoCard.style.display = 'block';
-        infoCard.innerHTML = `
-            <strong>Razão Social:</strong> ${clienteSelecionado.razao || 'N/A'}<br>
-            <strong>Nome Fantasia:</strong> ${clienteSelecionado.fantasia || 'N/A'}<br>
-            <strong>CNPJ:</strong> ${clienteSelecionado.cnpj || 'N/A'} | <strong>NN:</strong> ${clienteSelecionado.nn || 'N/A'}<br>
-            <strong>Endereço:</strong> ${clienteSelecionado.endereco || 'N/A'}, ${clienteSelecionado.bairro || ''} - ${clienteSelecionado.cidade || ''} - CEP ${clienteSelecionado.cep || ''}
-        `;
-    } else {
-        infoCard.style.display = 'none';
+        const c = clienteSelecionado;
+        for (const [label, valor] of [['Razão social', c.razao], ['Nome fantasia', c.fantasia], ['CNPJ', c.cnpj], ['NN', c.nn], ['Endereço', `${c.endereco || ''}, ${c.bairro || ''} - ${c.cidade || ''} - CEP ${c.cep || ''}`]]) {
+            const linha = document.createElement('div'), titulo = document.createElement('strong');
+            titulo.textContent = label + ': '; linha.append(titulo, String(valor || 'Não informado')); infoCard.append(linha);
+        }
     }
     atualizarPreview();
 }
 
+function listaPorTipo(tipo) {
+    return ({b2b: produtosB2B, vertuo: produtosVertuo, original: produtosOriginal, acessorios: acessoriosLista})[tipo] || [];
+}
+function produtoDoItem(item) { return listaPorTipo(item.tipo).find(p => String(p.id) === String(item.produtoId)); }
+function lerCentavos(valor) {
+    if (typeof valor === 'number') return Number.isFinite(valor) && valor >= 0 ? Math.round(valor * 100) : null;
+    let texto = String(valor ?? '').trim();
+    if (texto.includes(',')) texto = texto.replace(/\./g, '').replace(',', '.');
+    if (!/^\d+(?:\.\d{1,2})?$/.test(texto)) return null;
+    const n = Math.round(Number(texto) * 100);
+    return Number.isSafeInteger(n) ? n : null;
+}
+function moeda(centavos) { return (centavos / 100).toLocaleString('pt-BR', {style:'currency', currency:'BRL'}); }
+function textoPreco(centavos) { return centavos == null ? '' : (centavos / 100).toFixed(2).replace('.', ','); }
+function unidadesPorEmbalagem(item, produto) {
+    return item.tipo === 'acessorios' ? 1 : Math.max(1, Number(produto.capsulas_caixa || produto.capsulas_por_caixa) || (item.tipo === 'b2b' ? 50 : 10));
+}
+function resumoItem(item) {
+    const produto = produtoDoItem(item), preco = lerCentavos(item.preco), qtd = Number(item.quantidade);
+    if (!produto || preco == null || !Number.isSafeInteger(qtd) || qtd < 1) return null;
+    const unidades = unidadesPorEmbalagem(item, produto), subtotal = preco * unidades * qtd;
+    return Number.isSafeInteger(subtotal) ? {produto, preco, qtd, unidades, subtotal} : null;
+}
 function adicionarLinhaItem() {
     const tipo = document.getElementById('tipoItemAdd').value;
-    itensPedido.push({ idUnico: Date.now(), tipo, produtoId: '', quantidade: 1 });
-    renderizarItensPedido();
+    itensPedido.push({idUnico: ++proximoItemId, tipo, produtoId:'', quantidade:1, preco:'', precoManual:false});
+    renderizarItensPedido(); atualizarPreview();
+    document.querySelector(`[data-item-id="${proximoItemId}"] .item-price input`).focus();
 }
-
-function removerLinhaItem(idUnico) {
-    itensPedido = itensPedido.filter(i => i.idUnico !== idUnico);
-    renderizarItensPedido();
+function removerLinhaItem(id) {
+    itensPedido = itensPedido.filter(i => i.idUnico !== id); renderizarItensPedido(); atualizarPreview();
+}
+function atualizarProdutoItem(id, produtoId) {
+    const item = itensPedido.find(i => i.idUnico === id);
+    if (!item) return;
+    item.produtoId = produtoId;
+    if (!item.precoManual) {
+        const produto = produtoDoItem(item);
+        item.preco = textoPreco(produto ? lerCentavos(item.tipo === 'acessorios' ? produto.preco_embalagem : produto.preco) : null);
+        document.querySelector(`[data-item-id="${id}"] .item-price input`).value = item.preco;
+    }
     atualizarPreview();
 }
-
-function atualizarProdutoItem(idUnico, produtoId) {
-    const item = itensPedido.find(i => i.idUnico === idUnico);
-    if (item) {
-        item.produtoId = produtoId;
-        atualizarPreview();
-    }
-}
-
-function atualizarQuantidadeItem(idUnico, qtd) {
-    const item = itensPedido.find(i => i.idUnico === idUnico);
-    if (item) {
-        item.quantidade = qtd;
-        atualizarPreview();
-    }
-}
-
+function atualizarQuantidadeItem(id, valor) { const i = itensPedido.find(i => i.idUnico === id); if(i) {i.quantidade = valor; atualizarPreview();} }
+function atualizarPrecoItem(id, valor) { const i = itensPedido.find(i => i.idUnico === id); if(i) {i.preco = valor; i.precoManual = valor.trim() !== ''; atualizarPreview();} }
+function restaurarPrecoItem(id) { const i = itensPedido.find(i => i.idUnico === id); if(i) {i.precoManual = false; atualizarProdutoItem(id, i.produtoId);} }
 function renderizarItensPedido() {
-    const container = document.getElementById('listaItensContainer');
-    if (itensPedido.length === 0) {
-        container.innerHTML = `<p style="color: var(--muted); font-size: 13px; text-align: center; padding: 16px;">Nenhum item adicionado ainda. Clique em "+ Adicionar Item" acima.</p>`;
-        return;
+    const container = document.getElementById('listaItensContainer'); container.replaceChildren();
+    if (!itensPedido.length) {const p = document.createElement('p');p.className='pedido-help';p.textContent='Escolha a linha e clique em “Adicionar item” para começar.';container.append(p);return;}
+    for (const item of itensPedido) {
+        const div = document.createElement('div'); div.className='item-linha';div.dataset.itemId = item.idUnico;
+        const unidade = item.tipo === 'acessorios' ? 'embalagem' : 'cápsula';
+        const labelTipo = ({b2b:'B2B',vertuo:'Vertuo',original:'Original',acessorios:'Acessório'})[item.tipo];
+        div.innerHTML = `<div class="item-price"><label for="preco_${item.idUnico}">R$ por ${unidade}</label><input id="preco_${item.idUnico}" type="text" inputmode="decimal" placeholder="Ex.: 4,30" aria-describedby="preco_nota_${item.idUnico}"><span class="item-price-note" id="preco_nota_${item.idUnico}">Somente neste pedido</span><button type="button" class="price-reset">Usar preço do catálogo</button></div><div class="item-product"><label for="produto_${item.idUnico}">Produto · ${labelTipo}</label><input id="produto_${item.idUnico}" type="text" list="produtos_dl_${item.idUnico}" placeholder="Digite o SKU ou nome..."><datalist id="produtos_dl_${item.idUnico}"></datalist></div><div class="item-qty"><label for="qtd_${item.idUnico}">${item.tipo === 'acessorios' ? 'Embalagens' : 'Caixas'}</label><input id="qtd_${item.idUnico}" type="number" min="1" step="1"></div><div class="item-sum"><label>Subtotal</label><strong class="item-subtotal">—</strong></div><button type="button" class="btn btn-danger" aria-label="Remover item">×</button>`;
+        const preco = div.querySelector('.item-price input');preco.value=item.preco;preco.addEventListener('input',()=>atualizarPrecoItem(item.idUnico,preco.value));
+        div.querySelector('.price-reset').addEventListener('click',()=>restaurarPrecoItem(item.idUnico));
+        const produtoInput = div.querySelector('.item-product input'), produto = produtoDoItem(item);
+        if(produto) produtoInput.value = `${produto.sku} - ${produto.nome || produto.descricao || ''}`;
+        produtoInput.addEventListener('input',()=>tratarSelecaoProduto(item.idUnico,produtoInput.value,item.tipo));
+        const lista = div.querySelector('datalist');
+        for (const p of listaPorTipo(item.tipo)) {const opt=document.createElement('option');opt.value=`${p.sku} - ${p.nome || p.descricao || ''}`;lista.append(opt);}
+        const qtd = div.querySelector('.item-qty input');qtd.value=item.quantidade;qtd.addEventListener('input',()=>atualizarQuantidadeItem(item.idUnico,qtd.value));
+        div.querySelector('.btn-danger').addEventListener('click',()=>removerLinhaItem(item.idUnico));container.append(div);
     }
-
-    container.innerHTML = '';
-    itensPedido.forEach(item => {
-        let listaProdutos = [];
-        let labelTipo = '';
-
-        if (item.tipo === 'b2b') { listaProdutos = produtosB2B; labelTipo = 'B2B'; }
-        else if (item.tipo === 'vertuo') { listaProdutos = produtosVertuo; labelTipo = 'Vertuo'; }
-        else if (item.tipo === 'original') { listaProdutos = produtosOriginal; labelTipo = 'Original'; }
-        else if (item.tipo === 'acessorios') { listaProdutos = acessoriosLista; labelTipo = 'Acessório'; }
-
-        const datalistId = `produtos_dl_${item.idUnico}`;
-        let optionsHTML = '';
-        listaProdutos.forEach(p => {
-            const nomeProd = p.nome || p.descricao || p.tipo_embalagem || '';
-            optionsHTML += `<option value="${p.sku} - ${nomeProd}" data-id="${p.id}"></option>`;
-        });
-
-        let valorInputProd = '';
-        if (item.produtoId) {
-            let prodObj = listaProdutos.find(p => p.id == item.produtoId);
-            if (prodObj) {
-                const nomeProd = prodObj.nome || prodObj.descricao || prodObj.tipo_embalagem || '';
-                valorInputProd = `${prodObj.sku} - ${nomeProd}`;
-            }
-        }
-
-        const div = document.createElement('div');
-        div.className = 'item-linha';
-        div.innerHTML = `
-            <div>
-                <input type="text" list="${datalistId}" value="${valorInputProd}" placeholder="Digite o SKU ou nome..." oninput="tratarSelecaoProduto(${item.idUnico}, this.value, '${item.tipo}')">
-                <datalist id="${datalistId}">
-                    ${optionsHTML}
-                </datalist>
-            </div>
-            <input type="number" min="1" value="${item.quantidade}" oninput="atualizarQuantidadeItem(${item.idUnico}, this.value)" placeholder="Qtd">
-            <span style="font-size: 12px; color: var(--muted); text-transform: uppercase; text-align: center;">${labelTipo}</span>
-            <button class="btn btn-danger" onclick="removerLinhaItem(${item.idUnico})" style="padding: 6px 10px;">🗑️</button>
-        `;
-        container.appendChild(div);
-    });
 }
-
-function tratarSelecaoProduto(idUnico, valorDigitado, tipo) {
-    let listaProdutos = [];
-    if (tipo === 'b2b') listaProdutos = produtosB2B;
-    else if (tipo === 'vertuo') listaProdutos = produtosVertuo;
-    else if (tipo === 'original') listaProdutos = produtosOriginal;
-    else if (tipo === 'acessorios') listaProdutos = acessoriosLista;
-
-    const prodEncontrado = listaProdutos.find(p => {
-        const nomeProd = p.nome || p.descricao || p.tipo_embalagem || '';
-        const str = `${p.sku} - ${nomeProd}`;
-        return str === valorDigitado || valorDigitado.includes(p.sku);
-    });
-
-    if (prodEncontrado) {
-        atualizarProdutoItem(idUnico, prodEncontrado.id);
-    } else {
-        atualizarProdutoItem(idUnico, '');
+function tratarSelecaoProduto(id, valor, tipo) {
+    const produto = listaPorTipo(tipo).find(p => `${p.sku} - ${p.nome || p.descricao || ''}` === valor || String(p.sku) === valor.trim());
+    atualizarProdutoItem(id, produto ? produto.id : '');
+}
+function atualizarTotais() {
+    let total = 0, pendentes = 0;
+    for (const item of itensPedido) {
+        const resumo = resumoItem(item), linha = document.querySelector(`[data-item-id="${item.idUnico}"]`);
+        if (resumo) total += resumo.subtotal; else pendentes++;
+        if(linha) {
+            linha.querySelector('.item-subtotal').textContent = resumo ? moeda(resumo.subtotal) : '—';
+            linha.querySelector('.item-price input').setAttribute('aria-invalid', String(item.preco !== '' && lerCentavos(item.preco) == null));
+            linha.querySelector('.item-qty input').setAttribute('aria-invalid', String(!Number.isSafeInteger(Number(item.quantidade)) || Number(item.quantidade)<1));
+        }
     }
+    document.getElementById('pedidoTotal').textContent=moeda(total);
+    document.getElementById('pedidoPendencias').textContent=pendentes ? `${pendentes} item(ns) incompleto(s), fora do total` : 'Valores ajustados somente neste pedido';
+    return {total, pendentes};
 }
 
 function atualizarPreview() {
     const preview = document.getElementById('previewMensagem');
+    const totais = atualizarTotais();
+    document.getElementById('pedidoStatus').textContent = '';
     
     if (!clienteSelecionado) {
         preview.innerText = "Por favor, selecione um cliente para visualizar o pedido gerado.";
@@ -239,18 +221,20 @@ function atualizarPreview() {
     let totalAcessoriosEmbalagens = 0;
 
     itensPedido.forEach(i => {
-        if (!i.produtoId) return;
+        const calculo = resumoItem(i);
+        if (!calculo) return;
         let prod = null;
-        let qtd = parseInt(i.quantidade) || 1;
+        let qtd = calculo.qtd;
+        const valores = ` — ${moeda(calculo.preco)} / ${i.tipo === 'acessorios' ? 'embalagem' : 'cápsula'} — Subtotal: ${moeda(calculo.subtotal)}`;
 
         if (i.tipo === 'b2b') {
             prod = produtosB2B.find(p => p.id == i.produtoId);
             if (prod) {
-                let capsPorCaixa = prod.capsulas_por_caixa || 50;
+                let capsPorCaixa = prod.capsulas_caixa || prod.capsulas_por_caixa || 50;
                 let totalCaps = qtd * capsPorCaixa;
                 totalCapsulasB2B += totalCaps;
                 totalCaixasB2B += qtd;
-                b2bItens.push(`- ${String(qtd).padStart(2, '0')} caixa(s) - ${prod.sku} - ${prod.nome || prod.descricao} (${totalCaps} cápsulas)`);
+                b2bItens.push(`- ${String(qtd).padStart(2, '0')} caixa(s) - ${prod.sku} - ${prod.nome || prod.descricao} (${totalCaps} cápsulas)${valores}`);
             }
         } else if (i.tipo === 'vertuo') {
             prod = produtosVertuo.find(p => p.id == i.produtoId);
@@ -259,7 +243,7 @@ function atualizarPreview() {
                 let totalCaps = qtd * capsPorCaixa;
                 totalCapsulasB2C += totalCaps;
                 totalCaixasB2C += qtd;
-                vertuoItens.push(`- ${String(qtd).padStart(2, '0')} caixa(s) - ${prod.sku} - ${prod.nome || prod.descricao} (${totalCaps} cápsulas)`);
+                vertuoItens.push(`- ${String(qtd).padStart(2, '0')} caixa(s) - ${prod.sku} - ${prod.nome || prod.descricao} (${totalCaps} cápsulas)${valores}`);
             }
         } else if (i.tipo === 'original') {
             prod = produtosOriginal.find(p => p.id == i.produtoId);
@@ -268,7 +252,7 @@ function atualizarPreview() {
                 let totalCaps = qtd * capsPorCaixa;
                 totalCapsulasB2C += totalCaps;
                 totalCaixasB2C += qtd;
-                originalItens.push(`- ${String(qtd).padStart(2, '0')} caixa(s) - ${prod.sku} - ${prod.nome || prod.descricao} (${totalCaps} cápsulas)`);
+                originalItens.push(`- ${String(qtd).padStart(2, '0')} caixa(s) - ${prod.sku} - ${prod.nome || prod.descricao} (${totalCaps} cápsulas)${valores}`);
             }
         } else if (i.tipo === 'acessorios') {
             prod = acessoriosLista.find(p => p.id == i.produtoId);
@@ -277,7 +261,7 @@ function atualizarPreview() {
                 totalAcessoriosEmbalagens += qtd;
                 let nomeAcessorio = prod.nome || prod.descricao || 'Item';
                 let tipoEmb = prod.tipo_embalagem || 'caixa(s)';
-                acessoriosItens.push(`- ${String(qtd).padStart(2, '0')} ${tipoEmb} - ${prod.sku} - ${nomeAcessorio} (${qtdEmb * qtd} unidades)`);
+                acessoriosItens.push(`- ${String(qtd).padStart(2, '0')} ${tipoEmb} - ${prod.sku} - ${nomeAcessorio} (${qtdEmb * qtd} unidades)${valores}`);
             }
         }
     });
@@ -312,6 +296,7 @@ function atualizarPreview() {
             texto += `- Total Acessórios: ${String(totalAcessoriosEmbalagens).padStart(2, '0')} caixas\n`;
         }
 
+        texto += `\nValor total do pedido: ${moeda(totais.total)}\n`;
         texto += `\nFico no aguardo da confirmação. Obrigado!`;
         preview.innerText = texto;
 
@@ -325,7 +310,7 @@ function atualizarPreview() {
         if (tipoLogistica === 'broker') {
             texto += `Observação importante: A entrega e o faturamento devem ser realizados VIA BROKER. Favor anexar na Nota Fiscal a observação: "Ordem de Compra: ${oc}".\n\n`;
         } else {
-            texto += `Observação importante: Identificamos que o item solicitado não possui estoque no Broker. Portanto, peço que sigam com o faturamento VIA ESTOQUE 3A e entrega VIA TRANSPORTADORA (Total Express) — NÃO enviar via Correios, pois o cliente não recebe mercadorias por esta modalidade.\n\n`;
+            texto += `Observação importante: Solicito o faturamento VIA ESTOQUE 3A e entrega VIA TRANSPORTADORA (Total Express) — NÃO enviar via Correios, pois o cliente não recebe mercadorias por esta modalidade.\n\n`;
             texto += `Observação de Faturamento: Pedido faturado sem Ordem de Compra, autorizado por ${oc}.\n\n`;
         }
 
@@ -352,14 +337,28 @@ function atualizarPreview() {
             texto += `\nACESSÓRIOS:\n` + acessoriosItens.join('\n');
         }
 
+        texto += `\n\nValor total do pedido: ${moeda(totais.total)}`;
         texto += `\n\nDesde já, agradeço pela atenção e colaboração.`;
         preview.innerText = texto;
     }
 }
 
-function copiarMensagem() {
-    const texto = document.getElementById('previewMensagem').innerText;
-    navigator.clipboard.writeText(texto).then(() => {
-        alert('Texto copiado para a área de transferência!');
-    });
+async function copiarMensagem() {
+    atualizarPreview();
+    const status = document.getElementById('pedidoStatus');
+    if (!clienteSelecionado || !itensPedido.length || atualizarTotais().pendentes) {
+        status.textContent='Selecione um cliente e complete produto, preço e quantidade de todos os itens antes de copiar.';
+        return;
+    }
+    try {await navigator.clipboard.writeText(document.getElementById('previewMensagem').innerText); status.textContent='Texto copiado! Pronto para enviar.';}
+    catch {status.textContent='Não foi possível copiar automaticamente. Selecione e copie o texto da pré-visualização.';}
+}
+function limparPedido() {
+    if ((itensPedido.length || document.getElementById('buscaClienteInput').value || document.getElementById('ordemCompraInput').value) && !confirm('Limpar o pedido atual e começar outro? Os preços ajustados também serão apagados.')) return;
+    itensPedido=[]; clienteSelecionado=null;
+    document.getElementById('buscaClienteInput').value='';document.getElementById('ordemCompraInput').value='';
+    document.getElementById('tipoItemAdd').value='b2b';document.getElementById('clienteInfoCard').replaceChildren();document.getElementById('clienteInfoCard').style.display='none';
+    renderizarItensPedido();selecionarCanal('whatsapp','broker');
+    document.getElementById('pedidoStatus').textContent='Página limpa. Pronta para um novo pedido.';
+    document.getElementById('buscaClienteInput').focus();window.scrollTo({top:0,behavior:'smooth'});
 }
