@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Novo Pedido - Sistema Nespresso</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=2">
     <!-- Biblioteca Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -15,8 +15,8 @@
             margin-bottom: 24px;
         }
         .canal-card {
-            background: #1e293b;
-            border: 2px solid #334155;
+            background: #ffffff;
+            border: 2px solid #e6e1dc;
             border-radius: 8px;
             padding: 20px;
             text-align: center;
@@ -24,11 +24,11 @@
             transition: all 0.2s;
         }
         .canal-card:hover {
-            border-color: #3b82f6;
+            border-color: #771d37;
         }
         .canal-card.active {
-            background: #1d4ed8;
-            border-color: #60a5fa;
+            background: #5b142a;
+            border-color: #771d37;
             color: #fff;
         }
         .canal-card h3 {
@@ -37,22 +37,22 @@
         }
         .canal-card p {
             font-size: 13px;
-            color: #94a3b8;
+            color: #706b73;
         }
         .canal-card.active p {
-            color: #bfdbfe;
+            color: #f4e6eb;
         }
         .hidden-section {
             display: none;
         }
         .preview-box {
-            background: #0f172a;
-            border: 1px solid #334155;
+            background: #f7f5f2;
+            border: 1px solid #e6e1dc;
             border-radius: 8px;
             padding: 16px;
             font-family: monospace;
             white-space: pre-wrap;
-            color: #e2e8f0;
+            color: #343238;
             margin-top: 16px;
             max-height: 400px;
             overflow-y: auto;
@@ -63,41 +63,35 @@
             gap: 10px;
             align-items: center;
             margin-bottom: 10px;
-            background: #1e293b;
+            background: #ffffff;
             padding: 10px;
             border-radius: 6px;
         }
         input[type="text"], input[type="number"], select {
-            background: #0f172a;
-            border: 1px solid #334155;
-            color: #fff;
+            background: #f7f5f2;
+            border: 1px solid #e6e1dc;
+            color: #292529;
             padding: 10px;
             border-radius: 6px;
             width: 100%;
         }
     </style>
 </head>
-<body>
+<body class="app-page">
 
     <div class="container">
         <!-- CABEÇALHO E NAVEGAÇÃO -->
         <header class="header">
             <div>
-                <h1>📦 Central de Pedidos</h1>
+                <h1>Novo pedido</h1>
                 <p>Monte pedidos automatizados para WhatsApp ou E-mail</p>
             </div>
-            <div class="nav-menu">
-                <a href="index.html" class="btn btn-secondary">👥 Clientes</a>
-                <a href="produtos_b2b.html" class="btn btn-secondary">☕ Cápsulas B2B</a>
-                <a href="produtos_b2c.html" class="btn btn-secondary">🏠 Cápsulas B2C</a>
-                <a href="acessorios.html" class="btn btn-secondary">🥄 Acessórios</a>
-                <a href="pedidos.html" class="btn btn-primary">📦 Pedidos</a>
-            </div>
+            
         </header>
 
         <!-- ESCOLHA DO CANAL DE PEDIDO -->
-        <div class="card" style="background: #0f172a; border: 1px solid #1e293b; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
-            <h2 style="font-size: 16px; margin-bottom: 14px; color: #f8fafc;">1. Escolha o Canal de Envio do Pedido:</h2>
+        <div class="card" style="background: #f7f5f2; border: 1px solid #ffffff; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+            <h2 style="font-size: 16px; margin-bottom: 14px; color: #242326;">1. Escolha o Canal de Envio do Pedido:</h2>
             <div class="canal-selector">
                 <div class="canal-card active" id="cardWhats" onclick="selecionarCanal('whatsapp')">
                     <h3>📱 WhatsApp Nespresso</h3>
@@ -110,7 +104,7 @@
             </div>
 
             <!-- OPÇÕES EXCLUSIVAS PARA E-MAIL -->
-            <div id="secaoEmailOpcoes" class="hidden-section" style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #334155;">
+            <div id="secaoEmailOpcoes" class="hidden-section" style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #e6e1dc;">
                 <div class="form-row">
                     <div class="form-group">
                         <label>Tipo de Faturamento / Logística:</label>
@@ -128,19 +122,19 @@
         </div>
 
         <!-- SELEÇÃO DE CLIENTE COM BUSCA LIVRE -->
-        <div class="card" style="background: #0f172a; border: 1px solid #1e293b; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
-            <h2 style="font-size: 16px; margin-bottom: 14px; color: #f8fafc;">2. Selecione o Cliente (Digite para buscar):</h2>
+        <div class="card" style="background: #f7f5f2; border: 1px solid #ffffff; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+            <h2 style="font-size: 16px; margin-bottom: 14px; color: #242326;">2. Selecione o Cliente (Digite para buscar):</h2>
             <div class="form-group">
                 <input type="text" id="buscaClienteInput" list="listaClientesOpts" placeholder="Digite o nome, razão social ou NN do cliente..." oninput="selecionarClientePorBusca()">
                 <datalist id="listaClientesOpts"></datalist>
             </div>
-            <div id="clienteInfoCard" style="margin-top: 12px; font-size: 13px; color: #94a3b8; background: #1e293b; padding: 12px; border-radius: 6px; display: none;"></div>
+            <div id="clienteInfoCard" style="margin-top: 12px; font-size: 13px; color: #706b73; background: #ffffff; padding: 12px; border-radius: 6px; display: none;"></div>
         </div>
 
         <!-- SELEÇÃO DE ITENS DO PEDIDO -->
-        <div class="card" style="background: #0f172a; border: 1px solid #1e293b; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+        <div class="card" style="background: #f7f5f2; border: 1px solid #ffffff; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-                <h2 style="font-size: 16px; color: #f8fafc;">3. Adicionar Itens ao Pedido:</h2>
+                <h2 style="font-size: 16px; color: #242326;">3. Adicionar Itens ao Pedido:</h2>
                 <div>
                     <select id="tipoItemAdd" style="padding: 8px; width: auto; display: inline-block;">
                         <option value="b2b">Cápsulas B2B</option>
@@ -153,14 +147,14 @@
             </div>
 
             <div id="listaItensContainer">
-                <p style="color: #64748b; font-size: 13px; text-align: center; padding: 16px;">Nenhum item adicionado ainda. Clique em "+ Adicionar Item" acima.</p>
+                <p style="color: #78717a; font-size: 13px; text-align: center; padding: 16px;">Nenhum item adicionado ainda. Clique em "+ Adicionar Item" acima.</p>
             </div>
         </div>
 
         <!-- PRÉ-VISUALIZAÇÃO DO TEXTO -->
-        <div class="card" style="background: #0f172a; border: 1px solid #1e293b; border-radius: 12px; padding: 24px;">
+        <div class="card" style="background: #f7f5f2; border: 1px solid #ffffff; border-radius: 12px; padding: 24px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <h2 style="font-size: 16px; color: #f8fafc;">📋 Pré-visualização da Mensagem:</h2>
+                <h2 style="font-size: 16px; color: #242326;">📋 Pré-visualização da Mensagem:</h2>
                 <button class="btn btn-primary" onclick="copiarMensagem()">📋 Copiar Texto</button>
             </div>
             <div class="preview-box" id="previewMensagem">
@@ -171,6 +165,7 @@
     </div>
 
     <!-- Script JS -->
-    <script src="pedidos.js"></script>
+    <script src="pedidos.js?v=2"></script>
+    <script src="ui.js?v=2"></script>
 </body>
 </html>

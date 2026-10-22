@@ -4,26 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Acessórios - Catálogo Nespresso</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=2">
     <!-- Biblioteca Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body>
+<body class="app-page">
 
     <div class="container">
         <!-- CABEÇALHO E NAVEGAÇÃO -->
         <header class="header">
             <div>
-                <h1>🥄 Acessórios</h1>
+                <h1>Acessórios</h1>
                 <p>Controle de caixas, kits, pacotes e cálculo unitário automático</p>
             </div>
-            <div class="nav-menu">
-                <a href="index.html" class="btn btn-secondary">👥 Clientes</a>
-                <a href="produtos_b2b.html" class="btn btn-secondary">☕ Cápsulas B2B</a>
-                <a href="produtos_b2c.html" class="btn btn-secondary">🏠 Cápsulas B2C</a>
-                <a href="acessorios.html" class="btn btn-primary">🥄 Acessórios</a>
-                <a href="pedidos.html" class="btn btn-secondary">📦 Pedidos</a>
-            </div>
+            
         </header>
 
         <!-- BARRA DE AÇÕES -->
@@ -47,7 +41,7 @@
                     </tr>
                 </thead>
                 <tbody id="acessoriosTableBody">
-                    <tr><td colspan="7" style="text-align:center; color: #64748b; padding: 24px;">Carregando acessórios da nuvem...</td></tr>
+                    <tr><td colspan="7" style="text-align:center; color: #78717a; padding: 24px;">Carregando acessórios da nuvem...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -93,7 +87,7 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label>Tipo de Embalagem (Venda):</label>
-                        <select id="tipoEmbalagemInput" style="background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 10px; color: #f8fafc; font-size: 14px; width: 100%;">
+                        <select id="tipoEmbalagemInput" style="background: #f7f5f2; border: 1px solid #e6e1dc; border-radius: 6px; padding: 10px; color: #242326; font-size: 14px; width: 100%;">
                             <option value="Unidade">Unidade (1 peça avulsa)</option>
                             <option value="Caixa / Kit">Caixa / Kit (Conjunto fechado)</option>
                             <option value="Caixa Bulk">Caixa Bulk (Atacado)</option>
@@ -114,7 +108,7 @@
                     </div>
                     <div class="form-group">
                         <label>Custo por Peça / Unidade (R$):</label>
-                        <input type="text" id="precoUnidInput" readonly style="background: #1e293b; color: #34d399; font-weight: bold;" placeholder="Calculado automaticamente">
+                        <input type="text" id="precoUnidInput" readonly style="background: #ffffff; color: #23745d; font-weight: bold;" placeholder="Calculado automaticamente">
                     </div>
                 </div>
 
@@ -125,7 +119,7 @@
 
                 <div class="form-group">
                     <label>Observações:</label>
-                    <textarea id="observacoesInput" rows="3" placeholder="Detalhes da embalagem, voltagem, regras de bonificação..." style="background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 10px; color: #f8fafc; font-size: 14px; width: 100%; resize: vertical;"></textarea>
+                    <textarea id="observacoesInput" rows="3" placeholder="Detalhes da embalagem, voltagem, regras de bonificação..." style="background: #f7f5f2; border: 1px solid #e6e1dc; border-radius: 6px; padding: 10px; color: #242326; font-size: 14px; width: 100%; resize: vertical;"></textarea>
                 </div>
 
                 <div class="modal-buttons">
@@ -137,6 +131,7 @@
     </div>
 
     <!-- Script JS -->
-    <script src="acessorios.js"></script>
+    <script src="acessorios.js?v=2"></script>
+    <script src="ui.js?v=2"></script>
 </body>
 </html>

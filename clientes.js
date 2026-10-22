@@ -36,10 +36,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 /* CARREGAR CLIENTES DA NUVEM */
 async function carregarClientesNuvem() {
     const tbody = document.getElementById('clientesTableBody');
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: #64748b; padding: 24px;">🔄 Carregando clientes da nuvem...</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: #78717a; padding: 24px;">🔄 Carregando clientes da nuvem...</td></tr>`;
 
     if (!supabaseClient) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: #ef4444; padding: 24px;">❌ Erro ao conectar com o Supabase.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: #b33243; padding: 24px;">❌ Erro ao conectar com o Supabase.</td></tr>`;
         return;
     }
 
@@ -50,7 +50,7 @@ async function carregarClientesNuvem() {
 
         if (error) {
             console.error('Erro ao buscar clientes:', error);
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: #ef4444; padding: 24px;">❌ Erro ao carregar dados: ${error.message}</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: #b33243; padding: 24px;">❌ Erro ao carregar dados: ${error.message}</td></tr>`;
             return;
         }
 
@@ -58,7 +58,7 @@ async function carregarClientesNuvem() {
         renderizarTabela();
     } catch (err) {
         console.error('Erro de conexão:', err);
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: #ef4444; padding: 24px;">❌ Falha na conexão com a nuvem.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: #b33243; padding: 24px;">❌ Falha na conexão com a nuvem.</td></tr>`;
     }
 }
 
@@ -81,7 +81,7 @@ function renderizarTabela() {
     });
 
     if (filtrados.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: #64748b; padding: 24px;">Nenhum cliente encontrado.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: #78717a; padding: 24px;">Nenhum cliente encontrado.</td></tr>`;
         return;
     }
 
@@ -92,7 +92,7 @@ function renderizarTabela() {
         const fantasiaExibir = (c.fantasia && c.fantasia !== 'EMPTY') ? c.fantasia : '';
         
         const badgeNome = fantasiaExibir 
-            ? `<span style="background: #1e3a8a; color: #93c5fd; padding: 3px 10px; border-radius: 6px; font-size: 12px; font-weight: 500; border: 1px solid #3b82f6;">${fantasiaExibir}</span>` 
+            ? `<span style="background: #f4e6eb; color: #771d37; padding: 3px 10px; border-radius: 6px; font-size: 12px; font-weight: 500; border: 1px solid #771d37;">${fantasiaExibir}</span>` 
             : '-';
 
         // Monta o endereço completo unindo rua, bairro, cidade e cep
@@ -103,11 +103,11 @@ function renderizarTabela() {
         if (!enderecoCompleto) enderecoCompleto = '-';
 
         tr.innerHTML = `
-            <td><strong style="color: #60a5fa;">${c.nn || ''}</strong></td>
+            <td><strong style="color: #771d37;">${c.nn || ''}</strong></td>
             <td>${badgeNome}</td>
-            <td style="font-weight: 600; color: #f8fafc;">${razaoExibir}</td>
-            <td style="color: #94a3b8;">${c.cnpj || ''}</td>
-            <td style="font-size: 13px; color: #cbd5e1;">${enderecoCompleto}</td>
+            <td style="font-weight: 600; color: #242326;">${razaoExibir}</td>
+            <td style="color: #706b73;">${c.cnpj || ''}</td>
+            <td style="font-size: 13px; color: #57525a;">${enderecoCompleto}</td>
             <td style="text-align: center; white-space: nowrap;">
                 <button class="btn btn-view" style="padding: 4px 8px; font-size: 12px;" title="Ver Detalhes" onclick="visualizarCliente(${c.id})">👁️</button>
                 <button class="btn btn-edit" style="padding: 4px 8px; font-size: 12px;" title="Editar" onclick="editarCliente(${c.id})">✏️</button>
@@ -153,9 +153,9 @@ function visualizarCliente(id) {
             <div class="detail-label">RAZÃO SOCIAL</div>
             <div class="detail-value highlight">${razaoExibir}</div>
         </div>
-        <div class="detail-item full-width" style="grid-column: span 2; background: #111827; border-color: #3b82f6;">
-            <div class="detail-label" style="color: #60a5fa; font-weight: bold;">ENDEREÇO COMPLETO</div>
-            <div class="detail-value" style="margin-top: 6px; font-size: 14px; color: #e2e8f0;">${enderecoExibir}</div>
+        <div class="detail-item full-width" style="grid-column: span 2; background: #faf8f6; border-color: #771d37;">
+            <div class="detail-label" style="color: #771d37; font-weight: bold;">ENDEREÇO COMPLETO</div>
+            <div class="detail-value" style="margin-top: 6px; font-size: 14px; color: #343238;">${enderecoExibir}</div>
         </div>
     `;
 

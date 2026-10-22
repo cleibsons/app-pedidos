@@ -37,10 +37,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 /* CARREGAR PRODUTOS DA NUVEM */
 async function carregarProdutosNuvem() {
     const tbody = document.getElementById('produtosTableBody');
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: #64748b; padding: 24px;">🔄 Carregando catálogo B2C da nuvem...</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: #78717a; padding: 24px;">🔄 Carregando catálogo B2C da nuvem...</td></tr>`;
 
     if (!supabaseClient) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: #ef4444; padding: 24px;">❌ Erro ao conectar com o Supabase. Verifique a chave de API.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: #b33243; padding: 24px;">❌ Erro ao conectar com o Supabase. Verifique a chave de API.</td></tr>`;
         return;
     }
 
@@ -52,7 +52,7 @@ async function carregarProdutosNuvem() {
 
         if (error) {
             console.error('Erro ao buscar produtos B2C:', error);
-            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: #ef4444; padding: 24px;">❌ Erro ao carregar dados: ${error.message}</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: #b33243; padding: 24px;">❌ Erro ao carregar dados: ${error.message}</td></tr>`;
             return;
         }
 
@@ -60,7 +60,7 @@ async function carregarProdutosNuvem() {
         renderizarTabela();
     } catch (err) {
         console.error('Erro de conexão:', err);
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: #ef4444; padding: 24px;">❌ Falha na conexão com a nuvem.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: #b33243; padding: 24px;">❌ Falha na conexão com a nuvem.</td></tr>`;
     }
 }
 
@@ -77,23 +77,23 @@ function renderizarTabela() {
     });
 
     if (filtrados.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: #64748b; padding: 24px;">Nenhuma cápsula B2C encontrada.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: #78717a; padding: 24px;">Nenhuma cápsula B2C encontrada.</td></tr>`;
         return;
     }
 
     filtrados.forEach(p => {
         const tr = document.createElement('tr');
-        const imgTag = p.foto ? `<img src="${p.foto}" style="width: 36px; height: 36px; object-fit: contain; border-radius: 4px; background: #0f172a; padding: 2px;">` : `<span style="font-size: 20px;">☕</span>`;
+        const imgTag = p.foto ? `<img src="${p.foto}" style="width: 36px; height: 36px; object-fit: contain; border-radius: 4px; background: #f7f5f2; padding: 2px;">` : `<span style="font-size: 20px;">☕</span>`;
         const precoFormatado = Number(p.preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         const badgeSistema = p.sistema === 'Vertuo' ? `<span class="badge-vertuo">Vertuo</span>` : `<span class="badge-original">Original</span>`;
 
         tr.innerHTML = `
             <td style="text-align: center;">${imgTag}</td>
             <td>${badgeSistema}</td>
-            <td><strong style="color: #60a5fa;">${p.sku || ''}</strong></td>
+            <td><strong style="color: #771d37;">${p.sku || ''}</strong></td>
             <td style="font-weight: 500;">${p.nome || ''}</td>
             <td>${p.capsulas_caixa || 10} cápsulas</td>
-            <td style="color: #34d399; font-weight: 600;">${precoFormatado}</td>
+            <td style="color: #23745d; font-weight: 600;">${precoFormatado}</td>
             <td style="text-align: center; white-space: nowrap;">
                 <button class="btn btn-view" style="padding: 4px 8px; font-size: 12px;" title="Ver Detalhes" onclick="visualizarProduto(${p.id})">👁️</button>
                 <button class="btn btn-edit" style="padding: 4px 8px; font-size: 12px;" title="Editar" onclick="editarProduto(${p.id})">✏️</button>
@@ -129,7 +129,7 @@ function visualizarProduto(id) {
     const badgeSistema = p.sistema === 'Vertuo' ? `<span class="badge-vertuo">Vertuo</span>` : `<span class="badge-original">Original</span>`;
 
     const detalhesHTML = `
-        <div class="detail-item" style="text-align: center; grid-column: span 2; background: #0f172a; padding: 16px;">
+        <div class="detail-item" style="text-align: center; grid-column: span 2; background: #f7f5f2; padding: 16px;">
             ${imgHtml}
             <div style="margin-bottom: 6px;">${badgeSistema}</div>
             <div class="detail-value highlight" style="font-size: 18px;">${p.nome || '-'}</div>
@@ -140,7 +140,7 @@ function visualizarProduto(id) {
         </div>
         <div class="detail-item">
             <div class="detail-label">PREÇO (UNIDADE / CAIXA)</div>
-            <div class="detail-value" style="color: #34d399; font-weight: bold;">${precoFormatado}</div>
+            <div class="detail-value" style="color: #23745d; font-weight: bold;">${precoFormatado}</div>
         </div>
         <div class="detail-item">
             <div class="detail-label">INTENSIDADE</div>
@@ -150,9 +150,9 @@ function visualizarProduto(id) {
             <div class="detail-label">Cápsulas por caixa</div>
             <div class="detail-value">${p.capsulas_caixa || 10} unidades</div>
         </div>
-        <div class="detail-item full-width" style="grid-column: span 2; background: #111827; border-color: #3b82f6;">
-            <div class="detail-label" style="color: #60a5fa; font-weight: bold;">Observação</div>
-            <div class="detail-value" style="white-space: pre-wrap; margin-top: 8px; font-size: 14px; line-height: 1.5; color: #e2e8f0;">${p.observacoes || 'Nenhuma observação cadastrada para este blend.'}</div>
+        <div class="detail-item full-width" style="grid-column: span 2; background: #faf8f6; border-color: #771d37;">
+            <div class="detail-label" style="color: #771d37; font-weight: bold;">Observação</div>
+            <div class="detail-value" style="white-space: pre-wrap; margin-top: 8px; font-size: 14px; line-height: 1.5; color: #343238;">${p.observacoes || 'Nenhuma observação cadastrada para este blend.'}</div>
         </div>
     `;
 
