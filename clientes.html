@@ -41,7 +41,7 @@
         <div id="clientNotice" role="status" hidden></div>
 <!-- BARRA DE AÇÕES -->
         <div class="actions-bar">
-            <input type="text" id="searchInput" placeholder="Buscar nome, CNPJ, NN ou telefone..." onkeyup="filtrarClientes()">
+            <input type="text" id="searchInput" placeholder="Buscar nome, CNPJ, NN ou telefone..." oninput="filtrarClientes()">
             <button class="btn btn-primary" onclick="abrirModal()">+ Novo Cliente</button>
         </div>
 
@@ -62,7 +62,7 @@
                 </tbody>
             </table>
         </div>
-        <div class="client-pagination"><span id="pageSummary" role="status"></span><div><button id="prevPage" class="btn btn-secondary" onclick="mudarPagina(-1)">Anterior</button> <button id="nextPage" class="btn btn-secondary" onclick="mudarPagina(1)">Próxima</button></div></div>
+        <div class="client-pagination"><span id="pageSummary" role="status"></span></div>
     </div>
 
     <!-- MODAL DE VISUALIZAR / DETALHES -->
@@ -155,7 +155,7 @@
     </div>
 
     <!-- clientes.js -->
-    <script src="vendas-core.js?v=1"></script><script src="clientes.js?v=8"></script>
+    <script src="vendas-core.js?v=1"></script><script src="clientes.js?v=9"></script>
     <script src="ui.js?v=7"></script>
 </body>
 </html>

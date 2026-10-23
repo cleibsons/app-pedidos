@@ -47,15 +47,7 @@ async function carregarClientesNuvem() {
     }
 
     try {
-        const { data, error } = await supabaseClient
-            .from('clientes')
-            .select('*');
-
-        if (error) {
-            console.error('Erro ao buscar clientes:', error);
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--danger); padding: 24px;">❌ Erro ao carregar dados: ${error.message}</td></tr>`;
-            return;
-        }
+        const data = await CentralSales.all('clientes','*',q=>q.order('id'));
 
         clientes = data || [];
         renderizarTabela();
@@ -66,8 +58,7 @@ async function carregarClientesNuvem() {
 }
 
 
-let paginaAtual=1;
-const tamanhoPagina=20;
+
 const texto = value => (!value || value === 'EMPTY') ? '' : String(value);
 const normalizar = value => texto(value).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
 const escapar = value => texto(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
@@ -89,11 +80,8 @@ function renderizarTabela() {
      (!!digitos && /^[\d\s()./+\-]+$/.test(termo) && [c.cnpj,c.telefone].some(v=>texto(v).replace(/\D/g,'').includes(digitos)));
    return encontrou && (!selecionada||texto(c.cidade)===selecionada) && (!semTelefone||!texto(c.telefone).trim());
  }).sort((a,b)=>ordem==='recente' ? (Date.parse(b.created_at)||0)-(Date.parse(a.created_at)||0) : (texto(a.fantasia)||texto(a.razao)).localeCompare(texto(b.fantasia)||texto(b.razao),'pt-BR'));
- const paginas=Math.max(1,Math.ceil(filtrados.length/tamanhoPagina));
- paginaAtual=Math.min(paginaAtual,paginas);
- const inicio=(paginaAtual-1)*tamanhoPagina;
  tbody.innerHTML='';
- filtrados.slice(inicio,inicio+tamanhoPagina).forEach(c=>{
+ filtrados.forEach(c=>{
    const tr=document.createElement('tr');
    tr.innerHTML='<td><button class="client-open" data-action="ver"><span class="client-name">'+escapar(texto(c.fantasia)||c.razao||'Sem nome')+'</span><span class="client-sub">'+escapar(c.razao)+'</span></button></td>'+
    '<td data-label="NN">'+escapar(c.nn)+'</td><td data-label="CNPJ">'+escapar(c.cnpj)+'</td>'+
@@ -109,12 +97,9 @@ function renderizarTabela() {
  });
  if(!filtrados.length)tbody.innerHTML='<tr><td colspan="6">Nenhum cliente encontrado. Tente outro termo ou limpe os filtros.</td></tr>';
  document.getElementById('clientCount').textContent=filtrados.length+' de '+clientes.length+' clientes';
- document.getElementById('pageSummary').textContent=filtrados.length ? 'Mostrando '+(inicio+1)+'–'+Math.min(inicio+tamanhoPagina,filtrados.length)+' de '+filtrados.length : '0 resultados';
- document.getElementById('prevPage').disabled=paginaAtual<=1;
- document.getElementById('nextPage').disabled=paginaAtual>=paginas;
+ document.getElementById('pageSummary').textContent=filtrados.length+' cliente(s) exibido(s) · Lista completa do filtro';
 }
-function filtrarClientes(){paginaAtual=1;renderizarTabela();}
-function mudarPagina(delta){paginaAtual+=delta;renderizarTabela();}
+function filtrarClientes(){renderizarTabela();}
 function limparFiltros(){['searchInput','cidadeFiltro','contatoFiltro'].forEach(id=>document.getElementById(id).value='');document.getElementById('ordemFiltro').value='nome';filtrarClientes();}
 
 /* VISUALIZAR DETALHES */

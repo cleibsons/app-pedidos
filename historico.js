@@ -3,8 +3,7 @@
 const S=CentralSales,W=SalesWidgets,$=id=>document.getElementById(id);
 let state={data:null,orders:[],returns:[],month:S.today().slice(0,7)},serial=0,dialogState=null,busy=false,dirty=false;
 const view=document.body.dataset.historyView||'overview';
-const pages={clients:1,orders:1,returns:1};
-function pagination(items,key){const total=Math.max(1,Math.ceil(items.length/20));pages[key]=Math.min(pages[key],total);const start=(pages[key]-1)*20;const target=document.querySelector('[data-pagination="'+key+'"]');if(target)target.innerHTML='<span>'+items.length+' registro(s) · Página '+pages[key]+' de '+total+'</span><div><button type="button" class="btn btn-secondary" data-page="'+key+'" data-step="-1" '+(pages[key]===1?'disabled':'')+'>Anterior</button> <button type="button" class="btn btn-secondary" data-page="'+key+'" data-step="1" '+(pages[key]===total?'disabled':'')+'>Próxima</button></div>';return items.slice(start,start+20);}
+function completeList(items,key){const target=document.querySelector('[data-pagination="'+key+'"]');if(target)target.textContent=items.length+' registro(s) exibido(s) · Lista completa do filtro';return items;}
 function message(text,error=false){$('historyStatus').textContent=text;$('historyStatus').hidden=!text;$('historyStatus').classList.toggle('error',error);}
 function clientName(id){return S.name(state.data?.clients.find(c=>String(c.id)===String(id)));}
 function selectedClient(){return $('historyClient').value;}
@@ -23,7 +22,7 @@ async function reload(){
    S.all('vendas_saldos_mensais','*',q=>q.gte('mes',shiftMonth(month,-2)+'-01').lt('mes',range.end).order('mes').order('cliente_id'))
   ]);
   if(request!==serial)return;
-  state={data,orders,returns,comparison,month};pages.clients=pages.orders=pages.returns=1;
+  state={data,orders,returns,comparison,month};
   const chosen=client;
   $('historyClient').innerHTML='<option value="">Todos os clientes</option>'+data.clients.slice().sort((a,b)=>S.name(a).localeCompare(S.name(b),'pt-BR')).map(c=>'<option value="'+S.esc(c.id)+'">'+S.esc(S.name(c))+' · NN '+S.esc(c.nn)+'</option>').join('');
   if(data.clients.some(c=>String(c.id)===String(chosen)))$('historyClient').value=chosen;
@@ -41,13 +40,21 @@ function render(){
  W.list($('historyTargets'),s.targets,'Todos os clientes do filtro estão positivados.','targets',state.month);
  const trend=S.trend(state.data,state.month.slice(0,4),cid);$('historyChart').innerHTML=S.chart(trend);
  $('annualRows').innerHTML=trend.map(t=>{const rows=state.data.balances.filter(r=>r.mes===t.month+'-01'&&(!cid||String(r.cliente_id)===String(cid)));const sum=k=>rows.reduce((n,r)=>n+S.n(r[k]),0);const show=v=>rows.length?S.num(v):'—';return '<tr><td>'+S.esc(S.monthTitle(t.month))+'</td><td>'+show(sum('importado'))+'</td><td>'+show(sum('vendas'))+'</td><td>'+show(sum('devolucoes'))+'</td><td>'+show(t.net)+'</td><td>'+show(t.positive)+'</td></tr>';}).join('');
- const clients=pagination($('onlyTargets').checked?s.targets:s.ranked,'clients');
- const visibleOrders=pagination(state.orders,'orders'),visibleReturns=pagination(state.returns,'returns');
+ const status=$('positivityFilter').value;
+ const clients=completeList(status==='positive'?s.ranked.filter(c=>c.balance>0):status==='targets'?s.targets:s.ranked,'clients');
+ const visibleOrders=completeList(state.orders,'orders'),visibleReturns=completeList(state.returns,'returns');
  const months=[shiftMonth(state.month,-2),shiftMonth(state.month,-1),state.month];
  $('comparisonHeaders').innerHTML='<th>Cliente</th><th>NN</th>'+months.map(m=>'<th>'+S.esc(S.monthTitle(m))+'</th>').join('')+'<th>Variação vs. mês anterior</th><th>Acumulado no ano</th><th>Positivação</th>';
  function volume(client,month){const row=state.comparison.find(r=>String(r.cliente_id)===String(client)&&r.mes===month+'-01');if(row)return S.n(row.saldo);const covered=state.comparison.some(r=>r.mes===month+'-01')||state.data.imports.some(i=>String(i.ano)===month.slice(0,4)&&i.data_corte>=month+'-01');return covered?0:null;}
  $('historyClientRows').innerHTML=clients.length?clients.map(c=>{const values=months.map(m=>volume(c.id,m)),delta=values[2]===null||values[1]===null?null:values[2]-values[1];return '<tr><td><a class="history-client-link" href="historico-clientes.html?cliente='+encodeURIComponent(c.id)+'&mes='+state.month+'">'+S.esc(S.name(c))+'</a></td><td>'+S.esc(c.nn)+'</td>'+values.map(v=>'<td>'+(v===null?'<span class="sales-note">Sem dados</span>':S.num(v))+'</td>').join('')+'<td>'+(delta===null?'—':(delta>0?'+':'')+S.num(delta)+' cáps.')+'</td><td>'+S.num(c.annual)+'</td><td><span class="sales-badge">'+(c.balance>0?'Positivado':'A positivar')+'</span></td></tr>';}).join(''):'<tr><td colspan="8">Nenhum cliente neste filtro.</td></tr>';
  $('comparisonCaption').textContent='Comparação do mês selecionado com os dois meses anteriores, em cápsulas líquidas. Devoluções são descontadas. “Sem dados” indica um mês sem cobertura no histórico.';
+ const totals=months.map(m=>{const values=clients.map(c=>volume(c.id,m));return !clients.length?0:values.some(v=>v===null)?null:values.reduce((sum,v)=>sum+v,0);});
+ const delta=totals[2]===null||totals[1]===null?null:totals[2]-totals[1],positive=clients.filter(c=>c.balance>0).length,targets=clients.length-positive;
+ $('historyClientTotals').innerHTML='<tr><th scope="row">Total do filtro · '+clients.length+' cliente(s)</th><td>—</td>'+totals.map(v=>'<td>'+(v===null?'Sem dados':S.num(v))+'</td>').join('')+'<td>'+(delta===null?'—':(delta>0?'+':'')+S.num(delta)+' cáps.')+'</td><td>'+S.num(clients.reduce((n,c)=>n+c.annual,0))+'</td><td>'+positive+' positivado(s)<br>'+targets+' a positivar</td></tr>';
+ const comparable=clients.map(c=>({previous:volume(c.id,months[1]),current:volume(c.id,months[2])})).filter(v=>v.previous!==null&&v.current!==null);
+ const gap=comparable.reduce((sum,v)=>sum+Math.max(0,v.previous-v.current),0),opportunities=comparable.filter(v=>v.previous>v.current).length;
+ $('historyOpportunity').innerHTML='<strong>Volume para igualar o mês anterior: '+(comparable.length||!clients.length?S.num(gap)+' cápsulas':'Sem dados comparáveis')+'</strong><p>'+opportunities+' cliente(s) exibido(s) abaixo do mês anterior. Soma das diferenças positivas de cada cliente; quem já superou o mês anterior não reduz esse volume.'+(comparable.length<clients.length?' Clientes sem dados comparáveis ficam fora deste cálculo.':'')+'</p>';
+
 
  $('orderRows').innerHTML=state.orders.length?visibleOrders.map(p=>{
  const pending=!p.numero_externo;const days=Math.max(0,Math.floor((Date.parse(S.today()+'T12:00Z')-Date.parse(p.data_venda+'T12:00Z'))/86400000));
@@ -161,10 +168,10 @@ document.addEventListener('DOMContentLoaded',async()=>{
  $('pendingOnly').checked=view==='pending'||params.get('pendentes')==='1';if(view==='pending')$('pendingOnly').disabled=true;
  try{const {data,error}=await S.api().auth.getSession();if(error)throw error;if(!data.session){location.replace('login.html');return;}}catch{message('Não foi possível verificar seu acesso. Recarregue a página.',true);return;}
  ['historyMonth','historyClient','pendingOnly'].forEach(id=>$(id).addEventListener('change',reload));
- $('onlyTargets').addEventListener('change',render);$('historyReload').addEventListener('click',reload);
+ $('positivityFilter').addEventListener('change',render);$('historyReload').addEventListener('click',reload);
  $('manualSale').addEventListener('click',()=>openDialog('sale'));$('manualReturn').addEventListener('click',()=>openDialog('return'));$('editGoal').addEventListener('click',()=>openDialog('goal'));
  $('dialogClose').addEventListener('click',closeDialog);$('historyDialog').addEventListener('cancel',event=>{event.preventDefault();closeDialog();});
- document.querySelector('main').addEventListener('click',event=>{const pager=event.target.closest('[data-page]');if(pager){pages[pager.dataset.page]+=Number(pager.dataset.step);render();return;}const b=event.target.closest('[data-action]');if(b)openDialog(b.dataset.action,b.dataset.id);});
+ document.querySelector('main').addEventListener('click',event=>{const b=event.target.closest('[data-action]');if(b)openDialog(b.dataset.action,b.dataset.id);});
  window.addEventListener('storage',event=>{if(event.key==='central-sales-updated'&&!busy)reload();});
  window.addEventListener('focus',()=>{if(!$('historyDialog').open)reload();});
  await reload();

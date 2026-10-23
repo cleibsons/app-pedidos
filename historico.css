@@ -14,3 +14,8 @@ body[data-history-view=adjustments] #manualReturn,body[data-history-view=orders]
 .edit-quantity-toggle{display:flex!important;align-items:center;gap:9px;font-size:12px!important;color:#bcb4a1}.edit-quantity-toggle input{width:17px!important;height:17px;accent-color:#d5b375}.order-edit-row input:disabled{opacity:.6;background:#2b2b2a}.order-edit-row [data-edit-price]{border-color:#b2945c!important}
 
 .sales-table-wrap tr.history-order-cancelled td{background:rgba(168,54,48,.15);color:#f2b4ab}.sales-table-wrap tr.history-order-cancelled td:first-child{border-left:3px solid #dd786d}.sales-table-wrap tr.history-order-cancelled td small{color:#f2b4ab}.sales-table-wrap tr.history-order-cancelled .sales-badge{border-color:#bb6d65;color:#ffd0c9}.sales-table-wrap tr.history-order-cancelled .btn-secondary{border-color:#9d6259;color:#f3c4ba}
+
+.history-status-filter{display:flex;align-items:center;gap:10px;color:#cec5b0;font-size:12px}.history-status-filter select{width:auto;min-width:155px;margin:0;padding:10px 14px;background:#252627;color:#f0e8d6;border:1px solid #786344;border-radius:8px}
+#historyClientTotals th,#historyClientTotals td{background:#3b3529;color:#f0d394;font-weight:650;border-top:2px solid #b29458;padding:16px 18px}
+.history-opportunity{background:#34312a;border:1px solid #7e6841;border-radius:10px;padding:18px 20px;margin-top:20px}.history-opportunity strong{color:#edce8b;font-size:16px}.history-opportunity p{color:#c5bcaa;font-size:12px;line-height:1.6;margin:9px 0 0}
+@media(max-width:760px){.history-status-filter{width:100%;justify-content:space-between}.history-status-filter select{min-width:160px}.history-opportunity{padding:15px}.history-opportunity strong{font-size:14px}}
