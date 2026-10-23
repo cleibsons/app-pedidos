@@ -87,8 +87,8 @@
 .header.workspace-hero p{color:#f2eee7;font-size:15px;line-height:1.65;margin:12px auto 0;max-width:620px;text-wrap:pretty}
 @media(max-width:760px){.header.workspace-hero{min-height:180px;padding:28px 20px;background-image:url('assets/heroes/pedidos-v1.webp')}.header.workspace-hero h1{font-size:27px;line-height:1.35}.header.workspace-hero p{font-size:13px;margin-top:10px;max-width:330px}}
 </style>
-</head>
-<body class="app-page">
+<link rel="stylesheet" href="pedidos-compacto.css?v=1"></head>
+<body class="app-page compact-pedido-page">
 
     <div class="container">
         <!-- CABEÇALHO E NAVEGAÇÃO -->
@@ -129,32 +129,20 @@
             <div id="clienteInfoCard" style="margin-top: 12px; font-size: 13px; color: var(--muted); background: var(--surface); padding: 12px; border-radius: 6px; display: none;"></div>
         </div>
 
-        <!-- SELEÇÃO DE ITENS DO PEDIDO -->
-        <div class="card" style="background: var(--field); border: 1px solid var(--surface); border-radius: 12px; padding: 24px; margin-bottom: 24px;">
-            <div class="pedido-section-heading">
-                <h2 style="font-size: 16px; color: var(--ink);">3. Produtos e preços deste pedido</h2>
-                <div>
-                    <select id="tipoItemAdd" style="padding: 8px; width: auto; display: inline-block;">
-                        <option value="b2b">Cápsulas B2B</option>
-                        <option value="vertuo">Cápsulas Vertuo</option>
-                        <option value="original">Cápsulas Original</option>
-                        <option value="acessorios">Acessórios</option>
-                    </select>
-                    <button class="btn btn-primary" onclick="adicionarLinhaItem()" style="padding: 8px 14px; margin-left: 8px;">+ Adicionar Item</button>
-                </div>
-            </div>
-
-            <p class="pedido-help">Ajuste o preço de cada item antes ou depois de escolher o produto. Cápsulas: valor por cápsula. Acessórios: valor por embalagem. Esses ajustes valem somente para este pedido.</p>
-            <div id="listaItensContainer">
-                <p style="color: var(--muted); font-size: 13px; text-align: center; padding: 16px;">Nenhum item adicionado ainda. Clique em "+ Adicionar Item" acima.</p>
-            </div>
-        </div>
-
-        <div class="pedido-total" aria-live="polite"><span>Total do pedido <small id="pedidoPendencias"></small></span><strong id="pedidoTotal">R$ 0,00</strong></div>
-
+<section class="compact-products card">
+<div class="pedido-section-heading"><h2>3. Produtos e preços</h2><button class="btn btn-secondary" type="button" onclick="limparPedido()">Limpar / Novo pedido</button></div>
+<p class="pedido-help">Selecione vários produtos de uma vez. Preços editáveis somente neste pedido.</p>
+<select id="tipoItemAdd" hidden><option value="b2b">B2B</option><option value="original">Original</option><option value="vertuo">Vertuo</option><option value="acessorios">Acessórios</option></select>
+<div class="compact-categories" aria-label="Adicionar produtos"><button data-category="b2b">+ Cápsulas B2B</button><button data-category="original">+ Original</button><button data-category="vertuo">+ Vertuo</button><button data-category="acessorios">+ Acessórios</button></div>
+<div id="cartHome"><div id="cartPanel"><div class="compact-columns"><span>Produto</span><span>Preço unitário</span><span>Quantidade</span><span>Subtotal</span><span></span></div><div id="listaItensContainer"><p class="compact-empty">Escolha uma categoria acima para adicionar produtos.</p></div></div></div>
+<p class="pedido-help">Cápsulas: preço por cápsula. Acessórios: preço por embalagem. Use ↺ para restaurar o preço do catálogo.</p>
+</section>
+<aside class="compact-dock" aria-label="Resumo do pedido"><div><strong id="compactCount">0 itens · 0 cápsulas</strong><small id="pedidoPendencias"></small></div><strong id="pedidoTotal">R$ 0,00</strong><button class="btn btn-secondary" id="seeCart">Ver pedido</button><button class="btn btn-secondary desktop-message" id="seeMessage">Mensagem</button><button class="btn btn-primary" id="reviewSale">Revisar venda</button></aside>
+<dialog id="productPicker" class="compact-dialog" aria-labelledby="pickerTitle"><header><div><h2 id="pickerTitle">Selecionar produtos</h2><p>Marque os produtos e adicione todos de uma vez.</p></div><button type="button" class="dialog-close" data-close-picker aria-label="Fechar seleção">×</button></header><div class="picker-tabs" role="group" aria-label="Categoria"><button data-picker-category="b2b">B2B</button><button data-picker-category="original">Original</button><button data-picker-category="vertuo">Vertuo</button><button data-picker-category="acessorios">Acessórios</button></div><input type="search" id="pickerSearch" placeholder="Buscar por nome ou SKU" aria-label="Buscar produto"><div id="pickerResults"></div><footer><span id="pickerCount" role="status">0 selecionados</span><button class="btn btn-primary" id="addSelected">Adicionar selecionados</button></footer><p id="pickerError" role="alert"></p></dialog>
+<dialog id="cartDrawer" class="compact-dialog" aria-labelledby="cartTitle"><header><h2 id="cartTitle">Itens do pedido</h2><button type="button" class="dialog-close" id="closeCart" aria-label="Fechar pedido">×</button></header><div id="drawerBody"></div><footer><button class="btn btn-secondary" id="drawerMessage">Ver mensagem</button><button class="btn btn-primary" id="drawerReview">Revisar venda</button></footer></dialog>
         <!-- PRÉ-VISUALIZAÇÃO DO TEXTO -->
-        <div class="card" style="background: var(--field); border: 1px solid var(--surface); border-radius: 12px; padding: 24px;">
-            <div class="pedido-section-heading">
+        <details id="pedidoPreview" class="card" style="background: var(--field); border: 1px solid var(--surface); border-radius: 12px; padding: 24px;">
+<summary>Pré-visualização da mensagem <span>Expandir / recolher</span></summary>            <div class="pedido-section-heading">
                 <h2 style="font-size: 16px; color: var(--ink);">📋 Pré-visualização da Mensagem:</h2>
                 <div class="pedido-actions"><button type="button" class="btn btn-secondary" onclick="limparPedido()">Limpar / Novo pedido</button><button type="button" class="btn btn-primary" onclick="copiarMensagem()">📋 Copiar Texto</button></div>
             </div>
@@ -162,7 +150,7 @@
             <div class="preview-box" id="previewMensagem">
                 Selecione um cliente e adicione itens para gerar o pedido...
             </div>
-        </div>
+        </details>
 
 
 <section class="sales-save" aria-labelledby="saleSaveTitle"><h2 id="saleSaveTitle">4. Confirmar venda no histórico</h2><p class="sales-note">Copiar a mensagem não registra uma venda. Confirme abaixo quando o pedido estiver concluído. Acessórios não contam como cápsulas nem positivam o cliente.</p>
@@ -172,8 +160,8 @@
     </div>
 
     <!-- Script JS -->
-    <script src="pedidos.js?v=14"></script>
-    <script src="vendas-core.js?v=1"></script><script src="pedidos-vendas.js?v=1"></script><script src="ui.js?v=6"></script>
+    <script src="pedidos.js?v=15"></script>
+    <script src="vendas-core.js?v=1"></script><script src="pedidos-vendas.js?v=2"></script><script src="pedidos-compacto.js?v=1"></script><script src="ui.js?v=6"></script>
 </body>
 </html>
 

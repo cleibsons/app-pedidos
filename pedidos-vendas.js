@@ -14,6 +14,7 @@ function lock(locked){
  ['buscaClienteInput','tipoItemAdd','cardWhats','cardEmail','opcaoBroker','opcao3a','ordemCompraInput','saleDate','saleNumber','saleNote','saleCheck'].forEach(id=>{const el=$(id);if(el)el.disabled=locked;});
  document.querySelectorAll('.item-linha input,.item-linha button,[onclick*="adicionarLinhaItem"]').forEach(el=>el.disabled=locked);
  $('saveSale').disabled=locked||busy;
+ window.dispatchEvent(new CustomEvent('pedido-lock-change',{detail:{locked}}));
 }
 function overlap(){const needs=!!cutoff&&$('saleDate').value<=cutoff;$('saleOverlap').hidden=!needs;$('saleCheck').required=needs;if(!needs)$('saleCheck').checked=false;}
 function receipt(order){

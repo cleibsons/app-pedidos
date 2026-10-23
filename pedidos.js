@@ -172,30 +172,22 @@ function atualizarQuantidadeItem(id, valor) { const i = itensPedido.find(i => i.
 function atualizarPrecoItem(id, valor) { const i = itensPedido.find(i => i.idUnico === id); if(i) {i.preco = valor; i.precoManual = valor.trim() !== ''; atualizarPreview();} }
 function restaurarPrecoItem(id) { const i = itensPedido.find(i => i.idUnico === id); if(i) {i.precoManual = false; atualizarProdutoItem(id, i.produtoId);} }
 function renderizarItensPedido() {
-    fecharBusca();
-    const container = document.getElementById('listaItensContainer'); container.replaceChildren();
-    if (!itensPedido.length) {const p = document.createElement('p');p.className='pedido-help';p.textContent='Escolha a linha e clique em “Adicionar item” para começar.';container.append(p);return;}
-    for (const item of itensPedido) {
-        const div = document.createElement('div'); div.className='item-linha';div.dataset.itemId = item.idUnico;
-        const unidade = item.tipo === 'acessorios' ? 'embalagem' : 'cápsula';
-        const labelTipo = ({b2b:'B2B',vertuo:'Vertuo',original:'Original',acessorios:'Acessório'})[item.tipo];
-        div.innerHTML = `<div class="item-price"><label for="preco_${item.idUnico}">R$ por ${unidade}</label><input id="preco_${item.idUnico}" type="text" inputmode="decimal" placeholder="Ex.: 4,30" aria-describedby="preco_nota_${item.idUnico}"><span class="item-price-note" id="preco_nota_${item.idUnico}">Somente neste pedido</span><button type="button" class="price-reset">Usar preço do catálogo</button></div><div class="item-product"><label for="produto_${item.idUnico}">Produto · ${labelTipo}</label><input id="produto_${item.idUnico}" type="text" placeholder="Digite o SKU ou nome..."></div><div class="item-qty"><label for="qtd_${item.idUnico}">${item.tipo === 'acessorios' ? 'Embalagens' : 'Caixas'}</label><input id="qtd_${item.idUnico}" type="number" min="1" step="1"></div><div class="item-sum"><label>Subtotal</label><strong class="item-subtotal">—</strong></div><button type="button" class="btn btn-danger" aria-label="Remover item">×</button>`;
-        const preco = div.querySelector('.item-price input');preco.value=item.preco;preco.addEventListener('input',()=>atualizarPrecoItem(item.idUnico,preco.value));
-        div.querySelector('.price-reset').addEventListener('click',()=>restaurarPrecoItem(item.idUnico));
-        const produtoInput = div.querySelector('.item-product input'), produto = produtoDoItem(item);
-        if(produto) produtoInput.value = `${produto.sku} - ${produto.nome || produto.descricao || ''}`;
-        produtoInput.addEventListener('input',()=>tratarSelecaoProduto(item.idUnico,produtoInput.value,item.tipo));
-        registrarBusca(produtoInput, {
-            obter: () => listaPorTipo(item.tipo),
-            valor: p => `${p.sku} - ${p.nome || p.descricao || ''}`,
-            titulo: p => p.nome || p.descricao || 'Produto sem nome',
-            detalhe: p => `SKU: ${p.sku || '—'} · ${labelTipo}`,
-            busca: p => [p.sku, p.nome, p.descricao].join(' '),
-            escolher: p => { produtoInput.value = `${p.sku} - ${p.nome || p.descricao || ''}`; atualizarProdutoItem(item.idUnico, p.id); }
-        });
-        const qtd = div.querySelector('.item-qty input');qtd.value=item.quantidade;qtd.addEventListener('input',()=>atualizarQuantidadeItem(item.idUnico,qtd.value));
-        div.querySelector('.btn-danger').addEventListener('click',()=>removerLinhaItem(item.idUnico));container.append(div);
-    }
+ fecharBusca();
+ const container=document.getElementById('listaItensContainer');container.replaceChildren();
+ if(!itensPedido.length){const p=document.createElement('p');p.className='compact-empty';p.textContent='Escolha uma categoria acima para adicionar produtos.';container.append(p);}
+ for(const item of itensPedido){
+  const div=document.createElement('div');div.className='item-linha';div.dataset.itemId=item.idUnico;
+  const unit=item.tipo==='acessorios'?'embalagem':'cápsula';
+  div.innerHTML='<div class="item-product"><button type="button" class="product-name"></button><small class="product-meta"></small></div><div class="item-price"><label>R$ / '+unit+'</label><div><input type="text" inputmode="decimal"><button type="button" class="price-reset" title="Restaurar preço do catálogo" aria-label="Restaurar preço do catálogo">↺</button></div></div><div class="item-qty"><label>'+(item.tipo==='acessorios'?'Embalagens':'Caixas')+'</label><div><button type="button" class="qty-minus" aria-label="Diminuir quantidade">−</button><input type="number" min="1" step="1"><button type="button" class="qty-plus" aria-label="Aumentar quantidade">+</button></div></div><div class="item-sum"><label>Subtotal</label><strong class="item-subtotal">—</strong></div><button type="button" class="btn btn-danger" aria-label="Remover item">×</button>';
+  const p=produtoDoItem(item),name=div.querySelector('.product-name');name.textContent=p?(p.nome||p.descricao||p.sku):'Escolher produto';name.addEventListener('click',()=>window.abrirSeletorProdutos(item.tipo,item.idUnico));
+  div.querySelector('.product-meta').textContent=({b2b:'B2B',original:'Original',vertuo:'Vertuo',acessorios:'Acessório'})[item.tipo]+(p?' · SKU '+(p.sku||'—')+(item.tipo==='acessorios'?'':' · '+unidadesPorEmbalagem(item,p)+' cáps./caixa'):'');
+  const price=div.querySelector('.item-price input');price.value=item.preco;price.setAttribute('aria-label','Preço por '+unit+' de '+name.textContent);price.addEventListener('input',()=>atualizarPrecoItem(item.idUnico,price.value));
+  div.querySelector('.price-reset').addEventListener('click',()=>restaurarPrecoItem(item.idUnico));
+  const qty=div.querySelector('.item-qty input');qty.value=item.quantidade;qty.setAttribute('aria-label','Quantidade de '+name.textContent);qty.addEventListener('input',()=>atualizarQuantidadeItem(item.idUnico,qty.value));
+  for(const [selector,delta] of [['.qty-minus',-1],['.qty-plus',1]])div.querySelector(selector).addEventListener('click',()=>{qty.value=Math.max(1,(Number(qty.value)||1)+delta);atualizarQuantidadeItem(item.idUnico,qty.value);});
+  div.querySelector('.btn-danger').addEventListener('click',()=>removerLinhaItem(item.idUnico));container.append(div);
+ }
+ window.dispatchEvent(new Event('pedido-items-rendered'));
 }
 function tratarSelecaoProduto(id, valor, tipo) {
     const produto = listaPorTipo(tipo).find(p => `${p.sku} - ${p.nome || p.descricao || ''}` === valor || String(p.sku) === valor.trim());
