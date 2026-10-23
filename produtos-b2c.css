@@ -1,0 +1,22 @@
+
+.b2c-page .b2c-hero{min-height:310px;background-color:#342c20;background-image:url('https://www.nespresso.com/shared_res/agility/global/coffees/ol/collection-plp/original-collection_d_2x.jpg'),url('https://www.nespresso.com/ecom/medias/sys_master/public/50747262730270/Card-PLP-Vertuo-World-1.jpg');background-size:50% auto,50% auto;background-position:left 25%,right 30%;background-repeat:no-repeat}
+.b2c-page .b2c-hero::before{background:linear-gradient(90deg,#0006,#17100cc9 45%,#0008)}
+.b2c-hero-copy{max-width:900px;margin:auto;position:relative}.b2c-eyebrow{display:block;font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:#efdab0;margin-bottom:16px}
+.b2c-page .b2c-hero h1{font-size:clamp(28px,3vw,44px);line-height:1.2;letter-spacing:.04em}
+.b2c-page .b2c-hero p{color:#fff;max-width:650px;line-height:1.7;font-size:14px;margin:20px auto 0;text-wrap:balance}
+.b2c-page .filter-tabs{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 20px}
+.b2c-page .filter-btn{background:transparent;border:1px solid #685e4e;border-radius:28px;padding:12px 24px;color:#e6decd;font-weight:600;font-size:13px}
+.b2c-page .filter-btn.active{background:#d3b576;color:#252423;border-color:#d3b576}
+.b2c-category-nav{margin-top:24px;display:grid;gap:16px}.b2c-nav-line{display:flex;gap:18px;align-items:flex-start}.b2c-nav-label{width:62px;flex:none;margin-top:13px;font-size:11px;color:#d3b576;font-weight:650}.b2c-nav-line .pro-category-nav{margin:0;gap:8px}.b2c-nav-line .pro-category-link{font-size:11px;padding:10px 14px}
+.b2c-system-heading{display:flex;align-items:baseline;justify-content:space-between;gap:18px;margin:32px 0 22px;border-top:1px solid var(--line);padding-top:26px}.b2c-system-heading h2{font-size:28px;color:#f1eadc}.b2c-system-heading p{color:var(--muted);font-size:12px}
+.b2c-page .pro-category-banner{background-image:none;min-height:155px;padding:28px 34px}.b2c-page .pro-category-title{font-size:27px}.b2c-page .pro-category{margin-bottom:34px}.b2c-page .pro-category-eyebrow{padding-right:0}
+.b2c-page .pro-photo{width:164px;height:164px;max-width:100%;background:#f4f0e7;border-radius:50%}
+.b2c-page .pro-photo img{position:absolute;inset:0;width:100%;height:100%;max-width:100%;max-height:100%;object-fit:contain;padding:14px}
+.b2c-page .pro-card{min-width:0}.b2c-page .pro-name{font-size:19px}
+.b2c-system-badge{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#d5c8b2;margin-bottom:10px}
+.b2c-attributes{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;align-items:baseline;margin-bottom:8px}
+.b2c-decaf{color:#d8aeaa;font-size:10px;border:1px solid #815f5a;padding:5px 9px;border-radius:20px}
+.b2c-source{grid-column:1/-1;font-size:12px;color:var(--brand);text-decoration:underline;margin-top:10px}
+.b2c-page .pro-detail-hero .pro-photo{width:200px;height:200px}
+@media(max-width:760px){.b2c-page .b2c-hero{min-height:300px;background-size:auto 100%,auto 100%;background-position:left top,right top}.b2c-page .b2c-hero h1{font-size:29px}.b2c-page .b2c-hero p{font-size:13px}.b2c-nav-line{display:block}.b2c-nav-label{display:block;margin:0 0 10px}.b2c-system-heading{display:block}.b2c-system-heading p{margin-top:8px}.b2c-page .pro-category-banner{min-height:155px;padding:25px}.b2c-page .pro-category-title{padding-right:0}.b2c-page .filter-btn{padding:11px 16px;font-size:12px}}
+@media(max-width:520px){.b2c-page .pro-photo{width:180px;height:180px}.b2c-page .pro-name{font-size:22px}.b2c-page .pro-category-title{font-size:25px}.b2c-page .pro-catalog-heading{gap:10px}.b2c-page .pro-catalog-heading h2{font-size:16px}.b2c-page .pro-catalog-heading>span{white-space:nowrap}}
