@@ -8,13 +8,13 @@
     <title>Visão geral · Central Nespresso</title>
     <link rel="stylesheet" href="styles.css?v=4">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="theme-dark.css?v=8">
+    <link rel="stylesheet" href="theme-dark.css?v=8"><link rel="stylesheet" href="inicio.css?v=1">
 </head>
 <body class="app-page dashboard-page">
     <div class="container dashboard">
-        <header class="header dashboard-heading"><div><p id="dashboardDate" class="page-date"></p><h1><span id="greetingTime">Olá</span>, <span id="greetingName">bem-vindo</span><span class="greeting-dot">.</span></h1><p>Uma visão do seu negócio. Tudo pronto para o próximo pedido.</p></div><button class="btn btn-secondary" id="refreshDashboard"><span data-icon="refresh"></span>Atualizar</button></header>
-        <section class="welcome-banner" aria-labelledby="welcomeTitle"><div><span class="banner-eyebrow">SUA ROTINA, MAIS SIMPLES</span><h2 id="welcomeTitle">Grandes relações começam<br>com um bom café.</h2><p>Do cadastro ao pedido, cuide de cada detalhe em um só lugar.</p><a href="pedidos.html" class="btn banner-button"><span data-icon="plus"></span>Criar novo pedido<span data-icon="arrow"></span></a></div><div class="coffee-art" aria-hidden="true"><span class="coffee-ring ring-one"></span><span class="coffee-ring ring-two"></span><div class="coffee-cup"><span>N</span></div><span class="coffee-caption">NESPRESSO · CADA DETALHE IMPORTA</span></div></section>
-        <section class="overview-section" aria-labelledby="overviewTitle"><div class="section-heading"><div><p class="eyebrow">SEU NEGÓCIO EM NÚMEROS</p><h2 id="overviewTitle">Visão geral dos cadastros</h2></div><span class="section-note">Dados dos seus catálogos</span></div><div class="stats-grid">
+        <header class="header dashboard-heading"><div><p class="eyebrow">CENTRAL NESPRESSO</p><h1 class="dashboard-page-title">Visão geral</h1></div><button class="btn btn-secondary" id="refreshDashboard"><span data-icon="refresh"></span>Atualizar dados</button></header>
+<section class="home-hero" aria-labelledby="welcomeTitle"><div class="home-hero-copy"><p id="dashboardDate" class="home-date"></p><h2 id="welcomeTitle"><span id="greetingTime">Olá</span>, <span id="greetingName">bem-vindo</span>.</h2><p class="home-hero-lead">Tudo pronto para o próximo pedido.</p><p class="home-hero-description">Clientes, cafés e novas oportunidades.<br>Organize sua rotina em um só lugar.</p><div class="home-hero-actions"><a href="pedidos.html" class="btn btn-primary"><span data-icon="plus"></span>Criar novo pedido<span data-icon="arrow"></span></a><a href="clientes.html" class="btn home-secondary">Ver clientes</a></div></div></section>
+        <section class="overview-section" aria-labelledby="overviewTitle"><div class="section-heading"><div><p class="eyebrow">SEU NEGÓCIO EM NÚMEROS</p><h2 id="overviewTitle">Visão geral dos cadastros</h2></div><span class="section-note">Sua central atualizada</span></div><div class="stats-grid">
             <a href="clientes.html" class="stat-card"><span class="stat-top"><span class="stat-icon rose" data-icon="users"></span><span class="stat-arrow" data-icon="arrow"></span></span><span class="stat-label">Clientes</span><strong class="stat-number" id="count-clientes">…</strong><span class="stat-note" id="note-clientes">Consultando cadastros</span></a>
             <a href="produtos_b2b.html" class="stat-card"><span class="stat-top"><span class="stat-icon sand" data-icon="cup"></span><span class="stat-arrow" data-icon="arrow"></span></span><span class="stat-label">Cápsulas B2B</span><strong class="stat-number" id="count-b2b">…</strong><span class="stat-note" id="note-b2b">Consultando catálogo</span></a>
             <a href="produtos_b2c.html" class="stat-card"><span class="stat-top"><span class="stat-icon sage" data-icon="home"></span><span class="stat-arrow" data-icon="arrow"></span></span><span class="stat-label">Cápsulas B2C</span><strong class="stat-number" id="count-b2c">…</strong><span class="stat-note" id="note-b2c">Consultando catálogo</span></a>
@@ -26,6 +26,7 @@
         <footer class="dashboard-footer"><span>Central Nespresso <span class="footer-separator">/</span> Seu negócio, bem cuidado.</span><span id="dashboardStatus" role="status" aria-live="polite">Conectando...</span></footer>
     </div>
     <script src="dashboard.js?v=2"></script>
-    <script src="ui.js?v=4"></script>
+    <script src="ui.js?v=5"></script>
 </body>
 </html>
+

@@ -8,80 +8,27 @@
     <!-- Biblioteca Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <link rel="stylesheet" href="theme-dark.css?v=8">
+    <link rel="stylesheet" href="theme-dark.css?v=8"><link rel="stylesheet" href="conta.css?v=1">
 </head>
 <body class="login-page">
 
     <div class="login-card">
-        <a class="login-brand" href="index.html" aria-label="Central Nespresso — início"><span class="brand-lockup"><img class="brand-logo" src="https://upload.wikimedia.org/wikipedia/commons/4/48/Nespresso.png" alt="Nespresso" referrerpolicy="no-referrer" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span class="brand-fallback" hidden>NESPRESSO</span><small>CENTRAL DE PEDIDOS</small></span></a><p class="eyebrow">SEU ESPAÇO DE GESTÃO</p><h1>Bem-vindo de volta.</h1><p class="login-intro">Entre para acessar seus clientes, catálogos e pedidos.</p>
-        <form onsubmit="realizarLogin(event)">
+        <a class="login-brand" href="index.html" aria-label="Central Nespresso — início"><span class="brand-lockup"><img class="brand-logo" src="https://upload.wikimedia.org/wikipedia/commons/4/48/Nespresso.png" alt="Nespresso" referrerpolicy="no-referrer" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span class="brand-fallback" hidden>NESPRESSO</span><small>CENTRAL DE PEDIDOS</small></span></a><p class="eyebrow">SEU ESPAÇO DE GESTÃO</p><h1 id="loginHeading">Bem-vindo de volta.</h1><p class="login-intro" id="loginIntro">Entre para acessar seus clientes, catálogos e pedidos.</p>
+        <form id="loginForm" onsubmit="realizarLogin(event)">
             <div class="form-group">
                 <label for="emailInput">E-mail</label>
                 <input type="email" id="emailInput" autocomplete="username" required placeholder="Seu e-mail de acesso">
             </div>
             <div class="form-group">
                 <label for="senhaInput">Senha</label>
-                <input type="password" id="senhaInput" autocomplete="current-password" required placeholder="Sua senha">
+                <div class="password-field"><input type="password" id="senhaInput" autocomplete="current-password" required placeholder="Sua senha"><button type="button" class="password-toggle" data-password="senhaInput" aria-controls="senhaInput" aria-pressed="false">Mostrar</button></div>
             </div>
             <button type="submit" class="btn-entrar">Entrar na central →</button>
-            <p id="erroMsg" role="status" aria-live="polite"></p>
-        </form><p class="login-footnote">Seus negócios, organizados em um só lugar.</p>
+            <button type="button" id="forgotPassword" class="text-button login-recovery-link">Esqueci minha senha</button><p id="erroMsg" role="status" aria-live="polite"></p>
+        </form><form id="recoveryForm" class="reset-form" hidden><div class="form-group"><label for="recoveryEmail">E-mail de acesso</label><input type="email" id="recoveryEmail" autocomplete="email" required placeholder="Seu e-mail cadastrado"></div><button class="btn-entrar" type="submit">Enviar link de recuperação</button><button class="text-button login-recovery-link" type="button" id="backToLogin">Voltar para entrar</button><p id="recoveryMessage" class="account-message" role="status" aria-live="polite"></p></form><p class="login-footnote">Seus negócios, organizados em um só lugar.</p>
     </div>
 
-    <script>
-        const SUPABASE_URL = 'https://awllwrltulzmjdcchlxs.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable__Cj-tdVffbiigN0-YczRkw_eVLEUIMZ';
-        let supabaseClient;
-        try {
-            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        } catch (error) {
-            document.getElementById('erroMsg').textContent =
-                'Não foi possível iniciar a conexão. Recarregue a página e verifique sua internet.';
-        }
-
-        function mensagemErroLogin(error) {
-            if (error.code === 'invalid_credentials') return 'E-mail ou senha incorretos.';
-            if (error.code === 'email_not_confirmed') return 'Confirme seu e-mail antes de entrar.';
-            if (error.status === 429) return 'Muitas tentativas. Aguarde um pouco e tente novamente.';
-            if (error.code === 'email_provider_disabled') return 'O acesso por e-mail está desativado no Supabase.';
-            if (error.status === 401 || error.status === 403) return 'Acesso recusado pelo Supabase. Verifique a configuração do projeto e da chave pública.';
-            return 'Não foi possível entrar. Verifique sua conexão e tente novamente.';
-        }
-
-        async function realizarLogin(event) {
-            event.preventDefault();
-            const botao = document.querySelector('.btn-entrar');
-            if (botao.disabled) return;
-            const erroMsg = document.getElementById('erroMsg');
-            const email = document.getElementById('emailInput').value.trim();
-            const senha = document.getElementById('senhaInput').value;
-            botao.disabled = true;
-            erroMsg.textContent = 'Autenticando...';
-
-            try {
-                if (!supabaseClient) {
-                    erroMsg.textContent = 'Não foi possível iniciar a conexão. Recarregue a página e verifique sua internet.';
-                    return;
-                }
-                const { data, error } = await supabaseClient.auth.signInWithPassword({
-                    email,
-                    password: senha
-                });
-                if (error) {
-                    erroMsg.textContent = mensagemErroLogin(error);
-                    return;
-                }
-                if (!data?.session) {
-                    erroMsg.textContent = 'O Supabase não retornou uma sessão. Tente entrar novamente.';
-                    return;
-                }
-                window.location.replace('index.html');
-            } catch (error) {
-                erroMsg.textContent = 'Não foi possível conectar ao Supabase. Verifique sua internet e tente novamente.';
-            } finally {
-                botao.disabled = false;
-            }
-        }
-    </script>
+    <script src="auth-client.js?v=1"></script><script src="login.js?v=1"></script>
 </body>
 </html>
+

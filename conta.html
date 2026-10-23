@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="referrer" content="same-origin"><title>Minha conta · Central Nespresso</title><link rel="stylesheet" href="styles.css?v=4"><link rel="stylesheet" href="theme-dark.css?v=8"><link rel="stylesheet" href="conta.css?v=1"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script></head>
+<body class="app-page account-page"><div class="container">
+<header class="account-banner"><h1>Minha conta</h1><p>Seus dados de contato e sua senha, em um só lugar.</p></header>
+<p id="accountLoading" class="account-loading" role="status">Carregando sua conta…</p><button id="accountRetry" class="btn btn-secondary account-retry" hidden>Tentar novamente</button>
+<div class="account-grid">
+<section class="account-card" aria-labelledby="profileTitle">
+<div class="account-identity"><span class="avatar account-avatar" id="accountAvatar" aria-hidden="true">N</span><div><strong id="accountName">Sua conta</strong><small>Central Nespresso</small></div></div>
+<h2 id="profileTitle">Dados pessoais</h2><p class="account-description">Mantenha seu nome e telefone de contato atualizados.</p>
+<form id="profileForm"><fieldset id="profileFields" disabled style="border:0;padding:0;margin:0;min-width:0">
+<div class="form-group"><label for="fullName">Nome</label><input id="fullName" type="text" autocomplete="name" required maxlength="100" placeholder="Como você quer ser chamado"></div>
+<div class="form-group"><label for="contactPhone">Telefone de contato</label><input id="contactPhone" type="tel" autocomplete="tel" maxlength="25" placeholder="(45) 99999-9999" aria-describedby="phoneNote"><small id="phoneNote" class="field-note">Inclua o DDD. Este número é usado apenas como contato.</small></div>
+<div class="form-group"><label for="accountEmail">E-mail de acesso</label><input id="accountEmail" type="email" readonly autocomplete="username"><small class="field-note">Este é o e-mail que você usa para entrar.</small></div>
+<div class="account-actions"><button class="btn btn-primary" type="submit">Salvar meus dados</button><a class="text-link" href="index.html">Voltar ao início</a></div></fieldset>
+<p id="profileMessage" class="account-message" role="status" aria-live="polite"></p></form>
+<p class="account-contact-note">A atualização destes dados não altera os cadastros dos seus clientes.</p>
+</section>
+<section class="account-card" aria-labelledby="passwordTitle"><h2 id="passwordTitle">Alterar senha</h2><p class="account-description">Confirme sua senha atual e escolha uma nova senha.</p>
+<form id="passwordForm"><fieldset id="passwordFields" disabled style="border:0;padding:0;margin:0;min-width:0">
+<input id="passwordEmail" type="email" autocomplete="username" hidden readonly>
+<div class="form-group"><label for="currentPassword">Senha atual</label><div class="password-field"><input id="currentPassword" type="password" required autocomplete="current-password"><button class="password-toggle" type="button" data-password="currentPassword" aria-pressed="false" aria-controls="currentPassword">Mostrar</button></div></div>
+<div class="form-group"><label for="newPassword">Nova senha</label><div class="password-field"><input id="newPassword" type="password" required minlength="8" maxlength="128" autocomplete="new-password" aria-describedby="passwordHint"><button class="password-toggle" type="button" data-password="newPassword" aria-pressed="false" aria-controls="newPassword">Mostrar</button></div><small class="field-note" id="passwordHint">Use pelo menos 8 caracteres. Prefira letras, números e símbolos.</small></div>
+<div class="form-group"><label for="confirmPassword">Confirmar nova senha</label><div class="password-field"><input id="confirmPassword" type="password" required minlength="8" maxlength="128" autocomplete="new-password"><button class="password-toggle" type="button" data-password="confirmPassword" aria-pressed="false" aria-controls="confirmPassword">Mostrar</button></div></div>
+<div class="form-group" id="nonceGroup" hidden><label for="securityCode">Código recebido por e-mail</label><input id="securityCode" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="20"><button id="requestCode" class="text-button" type="button">Enviar código de confirmação</button></div>
+<button class="btn btn-primary" type="submit">Atualizar senha</button></fieldset><p id="passwordMessage" class="account-message" role="status" aria-live="polite"></p></form>
+<a class="text-button" href="login.html?recuperar=1">Esqueci minha senha</a>
+</section></div></div>
+<script src="auth-client.js?v=1"></script><script src="conta.js?v=1"></script><script src="ui.js?v=5"></script></body></html>

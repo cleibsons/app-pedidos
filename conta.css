@@ -1,0 +1,19 @@
+
+.profile.profile-link{text-decoration:none;color:inherit;border:1px solid transparent;border-radius:10px;padding:5px 8px;transition:background .2s,border-color .2s}.profile.profile-link:hover{background:var(--surface);border-color:var(--line)}.profile.profile-link small{color:var(--brand)}
+.account-heading{margin-bottom:24px}.account-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:24px;align-items:start}
+.account-card{padding:28px;background:var(--surface);border:1px solid var(--line);border-radius:16px}
+.account-card h2{font-size:20px;margin:0 0 9px;color:var(--ink)}.account-description{font-size:13px;line-height:1.65;color:var(--muted);margin:0 0 24px}.account-identity{display:flex;align-items:center;gap:14px;padding-bottom:22px;margin-bottom:24px;border-bottom:1px solid var(--line)}.account-avatar{width:58px;height:58px;font-size:19px;flex:none}.account-identity strong{display:block;font-size:16px;overflow-wrap:anywhere}.account-identity small{display:block;color:var(--muted);font-size:12px;margin-top:6px}
+.account-card .form-group{margin-bottom:20px}.account-card label,.reset-form label{display:block;font-size:13px;color:var(--muted);margin-bottom:8px}
+.account-card input,.reset-form input{width:100%;min-height:46px;padding:12px;border:1px solid var(--line);border-radius:8px;color:var(--ink);background:var(--field);font:inherit;font-size:14px}
+.field-note{display:block;font-size:12px;color:var(--muted);line-height:1.6;margin-top:7px}.password-field{position:relative}.password-field input{padding-right:78px}.password-toggle{position:absolute;right:5px;top:5px;bottom:5px;padding:0 9px;background:transparent;color:var(--brand);font:inherit;font-size:12px;border:0;border-radius:6px;cursor:pointer}.account-message{font-size:13px;line-height:1.6;color:var(--danger);margin-top:14px;overflow-wrap:anywhere}.account-message:empty{display:none}.message-success{color:var(--success)!important}
+.account-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.account-actions .btn{min-height:43px}
+.account-contact-note{font-size:12px;color:var(--muted);line-height:1.7;margin-top:22px;padding-top:18px;border-top:1px solid var(--line)}
+.account-retry{margin-bottom:18px}.text-button{background:none;border:0;color:var(--brand);font:inherit;font-size:13px;text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:8px 0}.login-recovery-link{display:block;margin:14px auto 0}.reset-form .form-group{margin-bottom:20px}.login-card [hidden],.account-card [hidden]{display:none!important}.reset-form .btn-entrar{width:100%}.account-banner{padding:27px 30px;border:1px solid #66583e;border-radius:15px;background:linear-gradient(110deg,#413b2f,#2c2d2f);margin-bottom:24px}.account-banner h1{font-size:28px;margin:0 0 9px}.account-banner p{color:var(--muted);font-size:14px;line-height:1.6;margin:0}
+.account-loading{color:var(--muted);font-size:13px;margin:0 0 18px}
+button:disabled{opacity:.55;cursor:wait}
+@media(max-width:900px){.account-grid{grid-template-columns:1fr}}
+@media(max-width:760px){.account-card{padding:22px 18px}.account-banner{padding:24px 20px}.account-banner h1{font-size:25px}.profile.profile-link{padding:3px}.account-card h2{font-size:18px}.account-actions>.btn{width:100%;justify-content:center}}
+@media(prefers-reduced-motion:reduce){.profile.profile-link{transition:none}}
+
+.account-page [hidden]{display:none!important}
+

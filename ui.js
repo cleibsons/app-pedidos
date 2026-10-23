@@ -18,13 +18,15 @@
     };
     const icon = name => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icons[name] || icons.grid}</svg>`;
     window.centralIcon = icon;
+    if(!document.querySelector('link[href^="conta.css"]')){const css=document.createElement('link');css.rel='stylesheet';css.href='conta.css?v=1';document.head.appendChild(css);}
     const routes = [
         ['index.html', 'Visão geral', 'grid', 'PRINCIPAL'],
         ['pedidos.html', 'Novo pedido', 'bag', 'OPERAÇÃO'],
         ['clientes.html', 'Clientes', 'users', ''],
         ['produtos_b2b.html', 'Cápsulas B2B', 'cup', 'CATÁLOGOS'],
         ['produtos_b2c.html', 'Cápsulas B2C', 'home', ''],
-        ['acessorios.html', 'Acessórios', 'box', '']
+        ['acessorios.html', 'Acessórios', 'box', ''],
+        ['conta.html', 'Minha conta', 'users', 'CONTA']
     ];
     const current = location.pathname.split('/').pop() || 'index.html';
     const page = routes.find(r => r[0] === current) || routes[0];
@@ -43,7 +45,7 @@
         <button class="sidebar-overlay" id="sidebarOverlay" aria-label="Fechar menu" hidden></button>
         <header class="topbar"><div class="topbar-left"><button class="icon-button menu-toggle" id="menuToggle" aria-controls="sidebar" aria-expanded="false" aria-label="Abrir menu">${icon('menu')}</button><span class="breadcrumb">Workspace <span>/</span> <strong>${page[1]}</strong></span></div>
             <form class="global-search" action="clientes.html" method="get" role="search">${icon('search')}<input name="q" type="search" aria-label="Buscar clientes" placeholder="Buscar cliente por nome, CNPJ ou NN..."><kbd>↵</kbd></form>
-            <div class="profile"><span class="avatar" id="profileAvatar">N</span><div><strong id="profileName">Minha conta</strong><small>Central Nespresso</small></div></div>
+            <a class="profile profile-link" href="conta.html" aria-label="Abrir Minha conta"><span class="avatar" id="profileAvatar">N</span><div><strong id="profileName">Minha conta</strong><small>Minha conta ↗</small></div></a>
         </header>`);
     const main = document.querySelector('.container');
     if (main) { main.id = 'mainContent'; main.setAttribute('role','main'); main.setAttribute('tabindex','-1'); }
@@ -66,15 +68,29 @@
         try { if(typeof supabaseClient==='undefined'||!supabaseClient)throw Error('Sem conexão'); const {error}=await supabaseClient.auth.signOut();if(error)throw error;location.replace('login.html'); }
         catch { alert('Não foi possível sair. Verifique sua conexão e tente novamente.');button.disabled=false; }
     });
-    document.addEventListener('DOMContentLoaded', async () => {
-        try {
-            if(typeof supabaseClient==='undefined'||!supabaseClient)return;
-            const {data,error}=await supabaseClient.auth.getSession(); if(error||!data.session)return;
-            const user=data.session.user;
-            const name=user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0] || 'Minha conta';
-            document.getElementById('profileName').textContent=name;
-            document.getElementById('profileAvatar').textContent=name.slice(0,2).toUpperCase();
-            const greeting=document.getElementById('greetingName');if(greeting)greeting.textContent=name;
-        } catch { /* A proteção de sessão da página trata falhas de acesso. */ }
+
+    window.centralRenderProfile=user=>{
+      const name=user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0] || 'Minha conta';
+      document.getElementById('profileName').textContent=name;
+      document.getElementById('profileAvatar').textContent=name.slice(0,2).toUpperCase();
+      const greeting=document.getElementById('greetingName');if(greeting)greeting.textContent=name;
+    };
+    if(typeof supabaseClient!=='undefined' && supabaseClient){
+      supabaseClient.auth.onAuthStateChange((event,session)=>{
+        if(event==='SIGNED_OUT')sessionStorage.removeItem('central-password-recovery');
+        if(event==='PASSWORD_RECOVERY'){
+          sessionStorage.setItem('central-password-recovery','1');
+          location.replace('redefinir-senha.html');return;
+        }
+        if(session?.user)window.centralRenderProfile(session.user);
+      });
+    }
+    document.addEventListener('DOMContentLoaded',async()=>{
+      try{
+        if(typeof supabaseClient==='undefined'||!supabaseClient)return;
+        const {data,error}=await supabaseClient.auth.getSession();
+        if(!error && data.session)window.centralRenderProfile(data.session.user);
+      }catch{ /* Each page handles access and connection failures. */ }
     });
 })();
+
