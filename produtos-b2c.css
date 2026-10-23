@@ -20,3 +20,10 @@
 .b2c-page .pro-detail-hero .pro-photo{width:200px;height:200px}
 @media(max-width:760px){.b2c-page .b2c-hero{min-height:300px;background-size:auto 100%,auto 100%;background-position:left top,right top}.b2c-page .b2c-hero h1{font-size:29px}.b2c-page .b2c-hero p{font-size:13px}.b2c-nav-line{display:block}.b2c-nav-label{display:block;margin:0 0 10px}.b2c-system-heading{display:block}.b2c-system-heading p{margin-top:8px}.b2c-page .pro-category-banner{min-height:155px;padding:25px}.b2c-page .pro-category-title{padding-right:0}.b2c-page .filter-btn{padding:11px 16px;font-size:12px}}
 @media(max-width:520px){.b2c-page .pro-photo{width:180px;height:180px}.b2c-page .pro-name{font-size:22px}.b2c-page .pro-category-title{font-size:25px}.b2c-page .pro-catalog-heading{gap:10px}.b2c-page .pro-catalog-heading h2{font-size:16px}.b2c-page .pro-catalog-heading>span{white-space:nowrap}}
+
+/* Match the operational and B2B banner dimensions. */
+.b2c-page .b2c-hero{height:220px;min-height:220px;padding:24px 28px}
+.b2c-page .b2c-hero h1{font-size:clamp(25px,2.6vw,42px);line-height:1.3}
+.b2c-eyebrow{margin-bottom:8px}
+.b2c-page .b2c-hero p{margin-top:12px;font-size:15px;line-height:1.65}
+@media(max-width:760px){.b2c-page .b2c-hero{height:190px;min-height:190px;padding:16px 18px}.b2c-page .b2c-hero h1{font-size:clamp(20px,6vw,24px);line-height:1.25}.b2c-eyebrow{font-size:9px;line-height:1.3;margin-bottom:6px}.b2c-page .b2c-hero p{font-size:12px;line-height:1.4;margin-top:8px}}
