@@ -23,6 +23,7 @@
         ['index.html', 'Visão geral', 'grid', 'PRINCIPAL'],
         ['pedidos.html', 'Novo pedido', 'bag', 'OPERAÇÃO'],
         ['clientes.html', 'Clientes', 'users', ''],
+        ['historico.html', 'Histórico de vendas', 'clock', ''],
         ['produtos_b2b.html', 'Cápsulas B2B', 'cup', 'CATÁLOGOS'],
         ['produtos_b2c.html', 'Cápsulas B2C', 'home', ''],
         ['acessorios.html', 'Acessórios', 'box', ''],
@@ -93,4 +94,5 @@
       }catch{ /* Each page handles access and connection failures. */ }
     });
 })();
+
 

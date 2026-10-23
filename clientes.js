@@ -135,7 +135,20 @@ function visualizarCliente(id){
  a.href='https://wa.me/'+((numero.length===10||numero.length===11)?'55':'')+numero;actions.appendChild(a);
  }
  const edit=document.createElement('button');edit.className='btn btn-edit';edit.textContent='Editar cliente';edit.onclick=()=>{fecharModalDetalhes();editarCliente(c.id);};actions.appendChild(edit);
- el.appendChild(actions);document.getElementById('detalhesModal').style.display='flex';
+ 
+ const historyLink=document.createElement('a');historyLink.className='btn btn-primary';historyLink.href='historico.html?cliente='+encodeURIComponent(c.id);historyLink.textContent='Histórico de vendas';actions.appendChild(historyLink);
+ el.appendChild(actions);
+ const historyBox=document.createElement('section');historyBox.className='detail-item';historyBox.style.gridColumn='1 / -1';historyBox.textContent='Carregando histórico de cápsulas…';el.appendChild(historyBox);
+ const currentMonth=CentralSales.today().slice(0,7),year=currentMonth.slice(0,4);
+ CentralSales.all('vendas_saldos_mensais','mes,saldo',q=>q.eq('cliente_id',c.id).gte('mes',year+'-01-01').lt('mes',(Number(year)+1)+'-01-01').order('mes')).then(rows=>{
+  if(!historyBox.isConnected)return;
+  const monthBalance=Number(rows.find(r=>r.mes===currentMonth+'-01')?.saldo||0),annual=rows.filter(r=>r.mes<=currentMonth+'-01').reduce((n,r)=>n+Number(r.saldo),0);
+  historyBox.replaceChildren();const title=document.createElement('h3');title.textContent='Histórico de cápsulas';title.style.fontSize='15px';
+  const summary=document.createElement('p');summary.textContent=CentralSales.monthTitle(currentMonth)+': '+CentralSales.num(monthBalance)+' cápsulas · '+(monthBalance>0?'Positivado':'A positivar');
+  const total=document.createElement('p');total.textContent='Acumulado no ano até este mês: '+CentralSales.num(annual)+' cápsulas';total.style.marginTop='9px';
+  const link=document.createElement('a');link.href=historyLink.href;link.className='text-link';link.textContent='Ver meses, pedidos e devoluções';historyBox.append(title,summary,total,link);
+ }).catch(()=>{if(historyBox.isConnected)historyBox.textContent='Não foi possível carregar o histórico. Use Histórico de vendas para tentar novamente.';});
+ document.getElementById('detalhesModal').style.display='flex';
  document.querySelector('#detalhesModal .close-btn').focus();
 }
 
@@ -258,4 +271,5 @@ document.addEventListener('keydown',event=>{
  if(event.shiftKey && document.activeElement===first){event.preventDefault();last.focus();}
  else if(!event.shiftKey && document.activeElement===last){event.preventDefault();first.focus();}
 });
+
 
