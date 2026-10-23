@@ -26,6 +26,9 @@ if (typeof supabase !== 'undefined') {
 }
 
 let clientes = [];
+let formInicial='';
+let salvando=false;
+const assinaturaForm=()=>JSON.stringify(Array.from(new FormData(document.getElementById('clienteForm')).entries()));
 
 document.addEventListener("DOMContentLoaded", async () => {
     if (await protegerPagina()) {
@@ -62,105 +65,78 @@ async function carregarClientesNuvem() {
     }
 }
 
+
+let paginaAtual=1;
+const tamanhoPagina=20;
+const texto = value => (!value || value === 'EMPTY') ? '' : String(value);
+const normalizar = value => texto(value).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+const escapar = value => texto(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+function aviso(mensagem) { const el=document.getElementById('clientNotice');el.textContent=mensagem;el.hidden=!mensagem; }
 function renderizarTabela() {
-    const tbody = document.getElementById('clientesTableBody');
-    tbody.innerHTML = '';
-
-    const termo = document.getElementById('searchInput').value.toLowerCase();
-
-    const filtrados = clientes.filter(c => {
-        const nn = c.nn ? c.nn.toString().toLowerCase() : '';
-        const fantasia = (c.fantasia && c.fantasia !== 'EMPTY') ? c.fantasia.toLowerCase() : '';
-        const razao = (c.razao || '').toLowerCase();
-        const cnpj = c.cnpj ? c.cnpj.toLowerCase() : '';
-
-        return nn.includes(termo) || 
-               fantasia.includes(termo) || 
-               razao.includes(termo) || 
-               cnpj.includes(termo);
-    });
-
-    if (filtrados.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--muted); padding: 24px;">Nenhum cliente encontrado.</td></tr>`;
-        return;
-    }
-
-    filtrados.forEach(c => {
-        const tr = document.createElement('tr');
-        
-        const razaoExibir = c.razao || '-';
-        const fantasiaExibir = (c.fantasia && c.fantasia !== 'EMPTY') ? c.fantasia : '';
-        
-        const badgeNome = fantasiaExibir 
-            ? `<span style="background: var(--brand-soft); color: var(--brand); padding: 3px 10px; border-radius: 6px; font-size: 12px; font-weight: 500; border: 1px solid var(--brand);">${fantasiaExibir}</span>` 
-            : '-';
-
-        // Monta o endereço completo unindo rua, bairro, cidade e cep
-        let enderecoCompleto = c.endereco || '';
-        if (c.bairro && c.bairro !== 'EMPTY') enderecoCompleto += `, ${c.bairro}`;
-        if (c.cidade) enderecoCompleto += `, ${c.cidade}`;
-        if (c.cep) enderecoCompleto += ` - CEP ${c.cep}`;
-        if (!enderecoCompleto) enderecoCompleto = '-';
-
-        tr.innerHTML = `
-            <td><strong style="color: var(--brand);">${c.nn || ''}</strong></td>
-            <td>${badgeNome}</td>
-            <td style="font-weight: 600; color: var(--ink);">${razaoExibir}</td>
-            <td style="color: var(--muted);">${c.cnpj || ''}</td>
-            <td style="font-size: 13px; color: var(--muted);">${enderecoCompleto}</td>
-            <td style="text-align: center; white-space: nowrap;">
-                <button class="btn btn-view" style="padding: 4px 8px; font-size: 12px;" title="Ver Detalhes" onclick="visualizarCliente(${c.id})">👁️</button>
-                <button class="btn btn-edit" style="padding: 4px 8px; font-size: 12px;" title="Editar" onclick="editarCliente(${c.id})">✏️</button>
-                <button class="btn btn-danger" style="padding: 4px 8px; font-size: 12px;" title="Excluir" onclick="excluirCliente(${c.id})">🗑️</button>
-            </td>
-        `;
-        tbody.appendChild(tr);
-    });
+ const tbody=document.getElementById('clientesTableBody');
+ const cidadeSelect=document.getElementById('cidadeFiltro');
+ const selecionada=cidadeSelect.value;
+ const cidades=[...new Set(clientes.map(c=>texto(c.cidade)).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+ cidadeSelect.innerHTML='<option value="">Todas as cidades</option>'+cidades.map(c=>'<option value="'+escapar(c)+'">'+escapar(c)+'</option>').join('');
+ cidadeSelect.value=selecionada;
+ const termo=normalizar(document.getElementById('searchInput').value);
+ const semTelefone=document.getElementById('contatoFiltro').value==='sem';
+ const ordem=document.getElementById('ordemFiltro').value;
+ const digitos=termo.replace(/\D/g,'');
+ const filtrados=clientes.filter(c=>{
+   const campos=[c.nn,c.fantasia,c.razao,c.cnpj,c.contato,c.telefone];
+   const encontrou=campos.some(v=>normalizar(v).includes(termo)) ||
+     (!!digitos && /^[\d\s()./+\-]+$/.test(termo) && [c.cnpj,c.telefone].some(v=>texto(v).replace(/\D/g,'').includes(digitos)));
+   return encontrou && (!selecionada||texto(c.cidade)===selecionada) && (!semTelefone||!texto(c.telefone).trim());
+ }).sort((a,b)=>ordem==='recente' ? (Date.parse(b.created_at)||0)-(Date.parse(a.created_at)||0) : (texto(a.fantasia)||texto(a.razao)).localeCompare(texto(b.fantasia)||texto(b.razao),'pt-BR'));
+ const paginas=Math.max(1,Math.ceil(filtrados.length/tamanhoPagina));
+ paginaAtual=Math.min(paginaAtual,paginas);
+ const inicio=(paginaAtual-1)*tamanhoPagina;
+ tbody.innerHTML='';
+ filtrados.slice(inicio,inicio+tamanhoPagina).forEach(c=>{
+   const tr=document.createElement('tr');
+   tr.innerHTML='<td><button class="client-open" data-action="ver"><span class="client-name">'+escapar(texto(c.fantasia)||c.razao||'Sem nome')+'</span><span class="client-sub">'+escapar(c.razao)+'</span></button></td>'+
+   '<td data-label="NN">'+escapar(c.nn)+'</td><td data-label="CNPJ">'+escapar(c.cnpj)+'</td>'+
+   '<td data-label="Cidade / Bairro">'+escapar(c.cidade||'Não informado')+'<small class="client-sub">'+escapar(c.bairro)+'</small></td>'+
+   '<td data-label="Contato">'+escapar(c.contato||'Não informado')+'<small class="client-sub">'+escapar(c.telefone)+'</small></td>'+
+   '<td><div class="row-actions"><button class="btn btn-view" data-action="ver">Ver</button><button class="btn btn-edit" data-action="editar">Editar</button><details><summary aria-label="Mais ações">•••</summary><button class="btn btn-danger" data-action="excluir">Excluir</button></details></div></td>';
+   tr.querySelectorAll('[data-action]').forEach(button=>button.addEventListener('click',()=>{
+      const action=button.dataset.action;
+      if(action==='ver')visualizarCliente(c.id);
+      if(action==='editar')editarCliente(c.id);
+      if(action==='excluir')excluirCliente(c.id);
+   }));tbody.appendChild(tr);
+ });
+ if(!filtrados.length)tbody.innerHTML='<tr><td colspan="6">Nenhum cliente encontrado. Tente outro termo ou limpe os filtros.</td></tr>';
+ document.getElementById('clientCount').textContent=filtrados.length+' de '+clientes.length+' clientes';
+ document.getElementById('pageSummary').textContent=filtrados.length ? 'Mostrando '+(inicio+1)+'–'+Math.min(inicio+tamanhoPagina,filtrados.length)+' de '+filtrados.length : '0 resultados';
+ document.getElementById('prevPage').disabled=paginaAtual<=1;
+ document.getElementById('nextPage').disabled=paginaAtual>=paginas;
 }
-
-function filtrarClientes() {
-    renderizarTabela();
-}
+function filtrarClientes(){paginaAtual=1;renderizarTabela();}
+function mudarPagina(delta){paginaAtual+=delta;renderizarTabela();}
+function limparFiltros(){['searchInput','cidadeFiltro','contatoFiltro'].forEach(id=>document.getElementById(id).value='');document.getElementById('ordemFiltro').value='nome';filtrarClientes();}
 
 /* VISUALIZAR DETALHES */
-function visualizarCliente(id) {
-    const c = clientes.find(item => item.id === id);
-    if (!c) return;
 
-    const razaoExibir = c.razao || '-';
-    const fantasiaExibir = (c.fantasia && c.fantasia !== 'EMPTY') ? c.fantasia : '-';
-    
-    let enderecoExibir = c.endereco || '';
-    if (c.bairro && c.bairro !== 'EMPTY') enderecoExibir += `, ${c.bairro}`;
-    if (c.cidade) enderecoExibir += `, ${c.cidade}`;
-    if (c.cep) enderecoExibir += ` - CEP ${c.cep}`;
-    if (!enderecoExibir) enderecoExibir = '-';
-
-    const detalhesHTML = `
-        <div class="detail-item">
-            <div class="detail-label">NN (Número de Negócio)</div>
-            <div class="detail-value highlight">${c.nn || '-'}</div>
-        </div>
-        <div class="detail-item">
-            <div class="detail-label">CNPJ</div>
-            <div class="detail-value">${c.cnpj || '-'}</div>
-        </div>
-        <div class="detail-item">
-            <div class="detail-label">NOME FANTASIA</div>
-            <div class="detail-value">${fantasiaExibir}</div>
-        </div>
-        <div class="detail-item">
-            <div class="detail-label">RAZÃO SOCIAL</div>
-            <div class="detail-value highlight">${razaoExibir}</div>
-        </div>
-        <div class="detail-item full-width" style="grid-column: span 2; background: var(--field); border-color: var(--brand);">
-            <div class="detail-label" style="color: var(--brand); font-weight: bold;">ENDEREÇO COMPLETO</div>
-            <div class="detail-value" style="margin-top: 6px; font-size: 14px; color: var(--ink);">${enderecoExibir}</div>
-        </div>
-    `;
-
-    document.getElementById('detalhesConteudo').innerHTML = detalhesHTML;
-    document.getElementById('detalhesModal').style.display = 'flex';
+function visualizarCliente(id){
+ const c=clientes.find(item=>item.id===id);if(!c)return;
+ const campos=[['NN',c.nn],['CNPJ',c.cnpj],['Nome fantasia',c.fantasia],['Razão social',c.razao],['Contato',c.contato],['Telefone / WhatsApp',c.telefone],['Endereço',c.endereco],['Bairro',c.bairro],['Cidade / UF',c.cidade],['CEP',c.cep]];
+ const el=document.getElementById('detalhesConteudo');
+ el.innerHTML=campos.map(([label,value])=>'<div class="detail-item"><div class="detail-label">'+label+'</div><div class="detail-value">'+escapar(texto(value)||'Não informado')+'</div></div>').join('');
+ const actions=document.createElement('div');actions.className='detail-actions';actions.style.gridColumn='1 / -1';
+ [['Copiar CNPJ',c.cnpj],['Copiar NN',c.nn]].forEach(([label,value])=>{
+ const b=document.createElement('button');b.className='btn btn-secondary';b.textContent=label;b.disabled=!texto(value);
+ b.onclick=async()=>{try{await navigator.clipboard.writeText(texto(value));b.textContent='Copiado';}catch{b.textContent='Não foi possível copiar';}};actions.appendChild(b);
+ });
+ const numero=texto(c.telefone).replace(/\D/g,'');
+ if(numero.length>=10 && numero.length<=13){
+ const a=document.createElement('a');a.className='btn btn-primary';a.textContent='WhatsApp';a.target='_blank';a.rel='noopener noreferrer';
+ a.href='https://wa.me/'+((numero.length===10||numero.length===11)?'55':'')+numero;actions.appendChild(a);
+ }
+ const edit=document.createElement('button');edit.className='btn btn-edit';edit.textContent='Editar cliente';edit.onclick=()=>{fecharModalDetalhes();editarCliente(c.id);};actions.appendChild(edit);
+ el.appendChild(actions);document.getElementById('detalhesModal').style.display='flex';
+ document.querySelector('#detalhesModal .close-btn').focus();
 }
 
 function fecharModalDetalhes() {
@@ -192,13 +168,17 @@ function abrirModal(cliente = null) {
 }
 
 function fecharModal() {
-    document.getElementById('clienteModal').style.display = 'none';
-    document.getElementById('clienteForm').reset();
+ if(salvando)return false;
+ if(formAlterado() && !confirm('Descartar as alterações não salvas?'))return false;
+ document.getElementById('clienteModal').style.display='none';
+ document.getElementById('clienteForm').reset();formInicial='';return true;
 }
 
 async function salvarCliente(e) {
     e.preventDefault();
+    if(salvando)return;
     const id = document.getElementById('clienteId').value;
+    document.getElementById('formStatus').textContent='';
 
     const dadosCliente = {
         id: id ? parseInt(id) : Date.now(),
@@ -214,16 +194,24 @@ async function salvarCliente(e) {
         cep: document.getElementById('cepInput').value.trim()
     };
 
-    const { error } = await supabaseClient
-        .from('clientes')
-        .upsert([dadosCliente]);
+    const button=document.querySelector('#clienteForm button[type=submit]');
+    salvando=true;button.disabled=true;button.textContent='Salvando…';
+    try {
+    const { error, data } = id
+      ? await supabaseClient.from('clientes').update(Object.fromEntries(Object.entries(dadosCliente).filter(([key])=>key!=='id'))).eq('id',parseInt(id)).select('id')
+      : await supabaseClient.from('clientes').insert([dadosCliente]).select('id');
+    if(!error && (!data || data.length!==1))throw Error('O salvamento não foi confirmado. Verifique seu acesso e tente novamente.');
+
 
     if (error) {
-        alert('Erro ao salvar no banco de dados de clientes: ' + error.message);
+        document.getElementById('formStatus').textContent='Não foi possível salvar: '+error.message;
     } else {
-        fecharModal();
-        carregarClientesNuvem();
+        formInicial='';salvando=false;fecharModal();
+        aviso('Cliente salvo com sucesso.');
+        await carregarClientesNuvem();
     }
+    } catch(error){document.getElementById('formStatus').textContent='Não foi possível salvar: '+error.message;}
+    finally{salvando=false;button.disabled=false;button.textContent='Salvar cliente';}
 }
 
 function editarCliente(id) {
@@ -232,7 +220,7 @@ function editarCliente(id) {
 }
 
 async function excluirCliente(id) {
-    if (confirm("Tem certeza que deseja excluir este cliente?")) {
+    if (confirm("Excluir permanentemente este cliente? Esta ação não pode ser desfeita pela página.")) {
         const { error } = await supabaseClient
             .from('clientes')
             .delete()
@@ -245,3 +233,29 @@ async function excluirCliente(id) {
         }
     }
 }
+
+function valoresForm(){return JSON.stringify(Array.from(document.querySelectorAll('#clienteForm input')).map(el=>[el.id,el.value]));}
+function formAlterado(){return !!formInicial && formInicial!==valoresForm();}
+const abrirOriginal=abrirModal;
+abrirModal=function(cliente=null){abrirOriginal(cliente);formInicial=valoresForm();document.getElementById('nnInput').focus();};
+document.addEventListener('click',event=>{
+ const modal=document.getElementById('clienteModal');
+ if(event.target===modal){event.stopImmediatePropagation();fecharModal();}
+},true);
+document.addEventListener('keydown',event=>{
+ if(event.key==='Escape' && document.getElementById('clienteModal').style.display==='flex'){
+ event.preventDefault();event.stopImmediatePropagation();fecharModal();
+ }
+},true);
+window.addEventListener('beforeunload',event=>{if(formAlterado()||salvando){event.preventDefault();event.returnValue='';}});
+
+document.addEventListener('keydown',event=>{
+ if(event.key!=='Tab')return;
+ const modal=Array.from(document.querySelectorAll('.modal')).find(el=>el.style.display==='flex');
+ if(!modal)return;
+ const controls=Array.from(modal.querySelectorAll('button:not(:disabled),a[href],input:not([type=hidden]),select,textarea')).filter(el=>el.getClientRects().length);
+ const first=controls[0],last=controls[controls.length-1];
+ if(event.shiftKey && document.activeElement===first){event.preventDefault();last.focus();}
+ else if(!event.shiftKey && document.activeElement===last){event.preventDefault();first.focus();}
+});
+
