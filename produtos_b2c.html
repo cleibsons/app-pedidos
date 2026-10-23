@@ -7,89 +7,30 @@
     <link rel="stylesheet" href="styles.css?v=4">
     <!-- Biblioteca Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        .filter-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 16px;
-        }
-        .filter-btn {
-            padding: 8px 16px;
-            border-radius: 6px;
-            border: 1px solid var(--line);
-            background: var(--surface);
-            color: var(--muted);
-            cursor: pointer;
-            font-weight: 600;
-        }
-        .filter-btn.active {
-            background: var(--brand);
-            color: var(--surface);
-            border-color: var(--brand);
-        }
-        .badge-vertuo {
-            background: #7c3aed;
-            color: #fff;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: bold;
-        }
-        .badge-original {
-            background: #dc2626;
-            color: #fff;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: bold;
-        }
-    </style>
     <link rel="stylesheet" href="theme-dark.css?v=8">
+    <link rel="stylesheet" href="produtos-pro.css?v=18">
+    <link rel="stylesheet" href="produtos-b2c.css?v=1">
 </head>
-<body class="app-page">
+<body class="app-page b2c-page" data-system="Todos">
 
     <div class="container">
         <!-- CABEÇALHO E NAVEGAÇÃO -->
-        <header class="header">
-            <div>
-                <h1>Cápsulas B2C</h1>
-                <p>Catálogo e consulta de preços para linha doméstica</p>
-            </div>
-            
-        </header>
+        <header class="header pro-catalog-hero b2c-hero" aria-labelledby="catalogTitle"><div class="b2c-hero-copy"><span class="b2c-eyebrow">Nespresso · Original &amp; Vertuo</span><h1 id="catalogTitle">SEU MOMENTO DE CAFÉ,<br>DO SEU JEITO</h1><p>Dos espressos clássicos aos cafés longos e cremosos, explore os sabores das linhas Original e Vertuo.</p></div></header>
 
         <!-- FILTROS DE LINHA -->
-        <div class="filter-tabs">
-            <button class="filter-btn active" id="btnFiltroTodos" onclick="filtrarSistema('Todos')">Todas as Cápsulas</button>
-            <button class="filter-btn" id="btnFiltroVertuo" onclick="filtrarSistema('Vertuo')">🌀 Linha Vertuo</button>
-            <button class="filter-btn" id="btnFiltroOriginal" onclick="filtrarSistema('Original')">🔴 Linha Original</button>
+        <div class="filter-tabs" role="group" aria-label="Filtrar por sistema de cápsulas">
+            <button class="filter-btn active" id="btnFiltroTodos" aria-pressed="true" onclick="filtrarSistema('Todos')">Todas as Cápsulas</button>
+            <button class="filter-btn" id="btnFiltroVertuo" aria-pressed="false" onclick="filtrarSistema('Vertuo')">Linha Vertuo</button>
+            <button class="filter-btn" id="btnFiltroOriginal" aria-pressed="false" onclick="filtrarSistema('Original')">Linha Original</button>
         </div>
 
         <!-- BARRA DE AÇÕES -->
         <div class="actions-bar">
-            <input type="text" id="searchInput" placeholder="🔍 Pesquisar por Nome do Blend ou SKU..." onkeyup="filtrarProdutos()">
+            <input type="text" id="searchInput" placeholder="Pesquisar café, SKU, coleção ou notas de sabor..." oninput="filtrarProdutos()" aria-label="Pesquisar cafés por nome, SKU, categoria ou notas de sabor">
             <button class="btn btn-primary" onclick="abrirModal()">+ Nova Cápsula B2C</button>
         </div>
 
-        <!-- TABELA DE PRODUTOS B2C -->
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 80px; text-align: center;">Foto</th>
-                        <th>Sistema</th>
-                        <th>SKU</th>
-                        <th>Nome do Produto</th>
-                        <th>Cápsulas / Caixa</th>
-                        <th>Preço (Caixa/Unid)</th>
-                        <th style="text-align: center;">Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="produtosTableBody">
-                    <tr><td colspan="7" style="text-align:center; color: var(--muted); padding: 24px;">Carregando catálogo B2C da nuvem...</td></tr>
-                </tbody>
-            </table>
-        </div>
+        <nav id="categoriasNav" class="b2c-category-nav" aria-label="Coleções por sistema"></nav><div class="pro-catalog-heading"><h2>Explore nossos cafés</h2><span id="produtosContagem" role="status"></span></div><div id="produtosTableBody" class="pro-catalog" aria-label="Catálogo de cápsulas Original e Vertuo"><p class="pro-status">Carregando cafés...</p></div>
     </div>
 
     <!-- MODAL DE VISUALIZAR / DETALHES -->
@@ -146,10 +87,10 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label>Cápsulas por caixa:</label>
-                        <input type="number" id="caixaQtdInput" required value="10">
+                        <input type="number" id="caixaQtdInput" required min="1" step="1" value="10">
                     </div>
                     <div class="form-group">
-                        <label>Preço (R$):</label>
+                        <label>Preço por cápsula (R$):</label>
                         <input type="text" id="precoInput" required placeholder="Ex: 3,90">
                     </div>
                 </div>
@@ -174,7 +115,8 @@
 
     <!-- Script JS -->
     <script src="vertuo-images.js?v=8"></script>
-    <script src="produtos_b2c.js?v=8"></script>
+    <script src="b2c-catalogo.js?v=1"></script>
+    <script src="produtos_b2c.js?v=9"></script>
     <script src="ui.js?v=4"></script>
 </body>
 </html>
