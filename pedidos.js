@@ -245,7 +245,7 @@ function atualizarPreview() {
         if (!calculo) return;
         let prod = null;
         let qtd = calculo.qtd;
-        const valores = ` — ${moeda(calculo.preco)} / ${i.tipo === 'acessorios' ? 'embalagem' : 'cápsula'} — Subtotal: ${moeda(calculo.subtotal)}`;
+        const valores = '';
 
         if (i.tipo === 'b2b') {
             prod = produtosB2B.find(p => p.id == i.produtoId);
@@ -316,7 +316,6 @@ function atualizarPreview() {
             texto += `- Total Acessórios: ${String(totalAcessoriosEmbalagens).padStart(2, '0')} ${totalAcessoriosEmbalagens === 1 ? 'embalagem' : 'embalagens'}\n`;
         }
 
-        texto += `\nValor total do pedido: ${moeda(totais.total)}\n`;
         texto += `\nFico no aguardo da confirmação. Obrigado!`;
         preview.innerText = texto;
 
