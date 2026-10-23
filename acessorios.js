@@ -188,28 +188,30 @@ function formatarMoeda(valorNum) {
 }
 
 
+// Categorias e ordem conforme os prints da Nespresso Professional enviados pelo usuário.
 const CATEGORIAS_ACESSORIOS = [
- ['xicaras','Xícaras e copos','Coleções para servir cada café com cuidado.'],
- ['viagem','Canecas térmicas','Seu café acompanha o ritmo do dia.'],
- ['leite','Espumadores de leite','Acessórios para preparar receitas com leite.'],
- ['dispensadores','Porta-cápsulas','Organização e apresentação para seu espaço de café.'],
- ['degustacao','Biscoitos, chocolates e açúcar','Acompanhamentos para completar a pausa.'],
- ['servir','Acessórios para servir','Bandejas, colheres e soluções para o serviço.'],
- ['manutencao','Reciclagem e manutenção','Cuidados para a rotina do café profissional.'],
- ['outros','Outros acessórios','Mais soluções para sua empresa.']
+ ['leite','Espumadores de leite','Prepare receitas com leite com os espumadores Aeroccino.'],
+ ['degustacao','Para acompanhar','Chocolates, biscoitos, açúcar e organização dos acompanhamentos.'],
+ ['reciclagem','Para reciclar','Soluções para guardar e encaminhar cápsulas usadas para reciclagem.'],
+ ['xicaras','Canecas Térmicas, Xícaras & Mexedores','Peças para servir e apreciar seu café, no trabalho ou onde estiver.'],
+ ['dispensadores','Porta-Cápsulas','Organize seus cafés e complete seu espaço de café.'],
+ ['outros','Outros','Acessórios sem correspondência nas categorias acima.']
 ];
 function normalizarAcessorio(valor) {
  return String(valor || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 }
 function categoriaAcessorio(a) {
  const nome=normalizarAcessorio(a.nome);
- if (/termic|travel|tumbler/.test(nome)) return 'viagem';
- if (/porta.?capsul|display|showcase|dispensador|discovery box|capsule box/.test(nome)) return 'dispensadores';
- if (/recicla|descalc|limpeza|pastilha|filtro|cappucc?in.*(kit|device)/.test(nome)) return 'manutencao';
- if (/aeroccino|espumador|barista.*receita/.test(nome)) return 'leite';
- if (/chocolat|biscoit|cantuccini|acucar|adocante/.test(nome)) return 'degustacao';
- if (/descart|tampa|mexedor|colher|bandeja|guardanapo|porta insumos|tray|carafe/.test(nome)) return 'servir';
- if (/xicara|pires|caneca|copo|taca|pixie|pure collection|mug|saucer|cups/.test(nome)) return 'xicaras';
+ // Peças de manutenção e reposição não são espumadores nem itens de reciclagem.
+ if (/descalc|limpeza|pastilha|filtro|cappucc?in.*(kit|device)/.test(nome)) return 'outros';
+ if (/aeroccino|espumador de leite/.test(nome)) return 'leite';
+ // Porta-insumos acompanha açúcar e biscoitos no print do catálogo profissional.
+ if (/chocolat|biscoit|cookie|shortbread|cantuccini|acucar|adocante|porta.?insumos/.test(nome)) return 'degustacao';
+ if (/recicla/.test(nome)) return 'reciclagem';
+ if (/porta.?capsul|drawer|showcase|discovery box|capsule box/.test(nome)) return 'dispensadores';
+ // Tampas avulsas e acessórios de serviço não identificados ficam em Outros.
+ if (/tampa|bandeja|tray|carafe|guardanapo/.test(nome)) return 'outros';
+ if (/termic|travel|tumbler|xicara|pires|caneca|copo|taca|pixie|pure collection|mug|saucer|cups|mexedor|colher/.test(nome)) return 'xicaras';
  return 'outros';
 }
 function elementoAcessorio(tag, classe, texto) {
