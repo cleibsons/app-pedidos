@@ -189,6 +189,66 @@ function formatarMoeda(valorNum) {
 
 
 // Categorias e ordem conforme os prints da Nespresso Professional enviados pelo usuário.
+// Fotos oficiais verificadas por SKU no catálogo Nespresso (outubro de 2026).
+// Não altera as fotos cadastradas no Supabase.
+const FOTOS_OFICIAIS_ACESSORIOS = {
+  "3425": "https://www.nespresso.com/ecom/medias/sys_master/public/13435455209502/A-1065-Discovey-Box-desktop-2000x2000.png",
+  "3430": "https://www.nespresso.com/ecom/medias/sys_master/public/51586744254494/loop-mug.png",
+  "3434": "https://www.nespresso.com/ecom/medias/sys_master/public/51586744188958/loop-lungo.png",
+  "3517": "https://www.nespresso.com/ecom/medias/sys_master/public/51586740355102/brown-sugar-revamp.png",
+  "3524": "https://www.nespresso.com/ecom/medias/sys_master/public/51586746023966/origin-espresso.png",
+  "3527": "https://www.nespresso.com/ecom/medias/sys_master/public/51586746220574/origin-lungo.png",
+  "3532": "https://www.nespresso.com/ecom/medias/sys_master/public/17366245441566.png",
+  "3533": "https://www.nespresso.com/ecom/medias/sys_master/public/17366240755742.png",
+  "3541": "https://www.nespresso.com/ecom/medias/sys_master/public/17366253469726/lume-pro-large-saucer-2x.png",
+  "3545": "https://www.nespresso.com/ecom/medias/sys_master/public/17366251012126.png",
+  "3561": "https://www.nespresso.com/ecom/medias/sys_master/public/14093400440862/2000x2000-Mexedores-de-Bambu-Receitas.png",
+  "3562": "https://www.nespresso.com/ecom/medias/sys_master/public/14093121683486/2000x2000-Mexedores-de-Bambu-Cafe-s..png",
+  "3581": "https://www.nespresso.com/ecom/medias/sys_master/public/51586744156190/reveal-cold-coffee.png",
+  "3783": "https://www.nespresso.com/ecom/medias/sys_master/public/51586741075998/view-small-spoon.png",
+  "3784": "https://www.nespresso.com/ecom/medias/sys_master/public/51586741469214/view-medium-spoon.png",
+  "5116": "https://www.nespresso.com/ecom/medias/sys_master/public/28410061750302/CoposDescartaveis-360ml-2000x2000.png",
+  "5119": "https://www.nespresso.com/ecom/medias/sys_master/public/15309189349406/CoposDescartaveis-110ml-2000x2000.png",
+  "5120": "https://www.nespresso.com/ecom/medias/sys_master/public/15309487439902/CoposDescartaveis-240ml-2000x2000.png",
+  "122520": "https://www.nespresso.com/ecom/medias/sys_master/public/51586747465758/pixie-espresso-cup-paris.png",
+  "122661": "https://www.nespresso.com/ecom/medias/sys_master/public/51586746974238/pixie-espresso-cup-istanbul.png",
+  "124963": "https://www.nespresso.com/ecom/medias/sys_master/public/51586745761822/reveal-espresso-intense.png",
+  "125010": "https://www.nespresso.com/ecom/medias/sys_master/public/51586745892894/reveal-espresso-mild-full.png",
+  "125408": "https://www.nespresso.com/ecom/medias/sys_master/public/51586747695134/pixie-lungo-cups-stockholm.png",
+  "125409": "https://www.nespresso.com/ecom/medias/sys_master/public/51586747629598/pixie-lungo-cup-tokyo.png",
+  "125410": "https://www.nespresso.com/ecom/medias/sys_master/public/51586747564062/pixie-lungo-cup-vienna.png",
+  "125411": "https://www.nespresso.com/ecom/medias/sys_master/public/51586747498526/pixie-lungo-cups-shanghai.png",
+  "128003": "https://www.nespresso.com/ecom/medias/sys_master/public/51586740486174/cantuccini-biscuits.png",
+  "128557": "https://www.nespresso.com/ecom/medias/sys_master/public/51586740944926/recycling-bin.png",
+  "134504": "https://www.nespresso.com/ecom/medias/sys_master/public/51586743566366/gran-lungo-coffee-vl.png",
+  "134508": "https://www.nespresso.com/ecom/medias/sys_master/public/51586743435294/double-espresso-coffee-lungo-vl.png",
+  "134509": "https://www.nespresso.com/ecom/medias/sys_master/public/51586743795742/coffee-large-mug-vl.png",
+  "137101": "https://www.nespresso.com/ecom/medias/sys_master/public/15814731628574/A-1232-ResponsivePLPImage.png",
+  "137102": "https://www.nespresso.com/ecom/medias/sys_master/public/15814729170974/A-1231-ResponsivePLPImage.png",
+  "139891": "https://www.nespresso.com/ecom/medias/sys_master/public/31518229168158/display-drawer-pro-2x.png",
+  "140961": "https://www.nespresso.com/ecom/medias/sys_master/public/51586740092958/drawer-dispenser-ol.png",
+  "142170": "https://www.nespresso.com/ecom/medias/sys_master/public/46051758997534/Sagegreen-PLPimage-nomad-travel-mug-terracotta-2x.png",
+  "142171": "https://www.nespresso.com/ecom/medias/sys_master/public/46051756441630/blue-ResponsivePLPImage-3Q.png",
+  "142172": "https://www.nespresso.com/ecom/medias/sys_master/public/46051755720734/Vanilla-ResponsivePLPImage-3Q.png",
+  "142268": "https://www.nespresso.com/ecom/medias/sys_master/public/51586740158494/dark-cocoa-chocolate.png",
+  "143063": "https://www.nespresso.com/ecom/medias/sys_master/public/35123102679070/A-1407-PLP-320x320.png",
+  "143086": "https://www.nespresso.com/ecom/medias/sys_master/public/35131679113246/A-1408-PLP-320x320.png",
+  "143773": "https://www.nespresso.com/ecom/medias/sys_master/public/13435747663902/A-1065-Discovey-Box-desktop-2000x2000.png",
+  "3594-BRA-BK": "https://www.nespresso.com/ecom/medias/sys_master/public/51585559167006/aeroccino-3-black.png",
+  "3594-BRA-RE": "https://www.nespresso.com/ecom/medias/sys_master/public/51585557757982/aeroccino-3-red.png",
+  "3594-BRB-BK": "https://www.nespresso.com/ecom/medias/sys_master/public/51585559625758/aeroccino-3-black.png",
+  "3594-BRBRE-": "https://www.nespresso.com/ecom/medias/sys_master/public/51585558413342/aeroccino-3-red.png",
+  "4194-BRA-SI-NE": "https://www.nespresso.com/ecom/medias/sys_master/public/51585559855134/aeroccino-4-refresh-on-frontview.png",
+  "4194-BRB-SI-NE": "https://www.nespresso.com/ecom/medias/sys_master/public/51585559986206/aeroccino-4-refresh-on-frontview.png",
+  "5003/1": "https://www.nespresso.com/ecom/medias/sys_master/public/17147513831454/5003-1-2000x2000-1-.png",
+  "3739/BULK": "https://www.nespresso.com/ecom/medias/sys_master/public/10392978096158/A-0176-VIEW-Recipe-2000X2000-2.png"
+};
+function fotosAcessorio(a) {
+ const oficial=FOTOS_OFICIAIS_ACESSORIOS[String(a.sku || '').trim().toUpperCase()];
+ const cadastrada=typeof a.foto === 'string' ? a.foto.trim() : '';
+ return [...new Set([oficial,cadastrada].filter(Boolean))];
+}
+
 const CATEGORIAS_ACESSORIOS = [
  ['leite','Espumadores de leite','Prepare receitas com leite com os espumadores Aeroccino.'],
  ['degustacao','Para acompanhar','Chocolates, biscoitos, açúcar e organização dos acompanhamentos.'],
@@ -238,7 +298,7 @@ function renderizarTabela() {
    const card=elementoAcessorio('article','pro-card');
    const foto=elementoAcessorio('div','pro-photo');
    const fallback=elementoAcessorio('span','pro-photo-fallback','N');fallback.setAttribute('aria-label','Foto indisponível');foto.append(fallback);
-   if(a.foto){const img=document.createElement('img');img.alt=a.nome || 'Acessório';img.loading='lazy';img.addEventListener('load',()=>fallback.hidden=true);img.addEventListener('error',()=>{img.remove();fallback.hidden=false;});img.src=a.foto;foto.append(img);}
+   const fontes=fotosAcessorio(a);if(fontes.length){const img=document.createElement('img');img.alt=a.nome || 'Acessório';img.loading='lazy';img.decoding='async';img.addEventListener('load',()=>fallback.hidden=true);img.addEventListener('error',()=>{if(fontes.length){img.src=fontes.shift();}else{img.remove();fallback.hidden=false;}});img.src=fontes.shift();foto.append(img);}
    const corpo=elementoAcessorio('div','pro-card-body');
    const qtd=parseInt(a.qtd_embalagem)||1;const preco=converterParaNumero(a.preco_embalagem);
    corpo.append(elementoAcessorio('span','pro-sku','SKU '+(a.sku||'—')),elementoAcessorio('h3','pro-name',a.nome||'Acessório'),elementoAcessorio('p','pro-pack',(a.tipo_embalagem||'Unidade')+' · '+qtd+' unid.'));
@@ -459,16 +519,18 @@ async function excluirAcessorio(id) {
 
 // Apresentação das fotos sem alterar os dados do acessório.
 function criarImagemAcessorio(acessorio, detalhes = false) {
-    const foto = typeof acessorio.foto === 'string' ? acessorio.foto.trim() : '';
+    const fontes = fotosAcessorio(acessorio);
+    const foto = fontes.shift() || '';
     if (!foto) return '<span role="img" aria-label="Acessório sem foto" style="font-size:24px">🥄</span>';
     const imagem = document.createElement('img');
     imagem.src = foto;
     imagem.alt = String(acessorio.nome || 'Acessório Nespresso');
-    imagem.width = detalhes ? 160 : 54;
-    imagem.height = detalhes ? 160 : 54;
+    imagem.width = detalhes ? 320 : 54;
+    imagem.height = detalhes ? 320 : 54;
     imagem.loading = detalhes ? 'eager' : 'lazy';
     imagem.decoding = 'async';
     imagem.style.cssText = 'object-fit:contain;max-width:100%;border-radius:6px;background:#fff;vertical-align:middle;';
-    imagem.setAttribute('onerror', "this.hidden=true;this.nextElementSibling.hidden=false;");
+    if (fontes.length) imagem.dataset.fallback = fontes[0];
+    imagem.setAttribute('onerror', "if(this.dataset.fallback){const src=this.dataset.fallback;delete this.dataset.fallback;this.src=src;}else{this.hidden=true;this.nextElementSibling.hidden=false;}");
     return imagem.outerHTML + '<span role="img" aria-label="Imagem indisponível" hidden style="font-size:24px">🥄</span>';
 }
