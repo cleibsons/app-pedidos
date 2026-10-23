@@ -56,7 +56,7 @@ async function carregarDadosNuvem() {
         if (resClientes.error) {
             resClientes = await supabaseClient.from('cliente').select('*');
         }
-        clientesLista = resClientes.data || [];
+        clientesLista = (resClientes.data || []).filter(c=>c.ativo!==false);
         
         registrarBusca(document.getElementById('buscaClienteInput'), {
             obter: () => clientesLista,

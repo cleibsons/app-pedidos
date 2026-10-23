@@ -71,6 +71,7 @@ function renderizarTabela() {
  cidadeSelect.innerHTML='<option value="">Todas as cidades</option>'+cidades.map(c=>'<option value="'+escapar(c)+'">'+escapar(c)+'</option>').join('');
  cidadeSelect.value=selecionada;
  const termo=normalizar(document.getElementById('searchInput').value);
+ const situacao=document.getElementById('statusFiltro').value;
  const semTelefone=document.getElementById('contatoFiltro').value==='sem';
  const ordem=document.getElementById('ordemFiltro').value;
  const digitos=termo.replace(/\D/g,'');
@@ -78,21 +79,21 @@ function renderizarTabela() {
    const campos=[c.nn,c.fantasia,c.razao,c.cnpj,c.contato,c.telefone];
    const encontrou=campos.some(v=>normalizar(v).includes(termo)) ||
      (!!digitos && /^[\d\s()./+\-]+$/.test(termo) && [c.cnpj,c.telefone].some(v=>texto(v).replace(/\D/g,'').includes(digitos)));
-   return encontrou && (!selecionada||texto(c.cidade)===selecionada) && (!semTelefone||!texto(c.telefone).trim());
+   return (situacao==='todos'||(situacao==='inativos'?c.ativo===false:c.ativo!==false)) && encontrou && (!selecionada||texto(c.cidade)===selecionada) && (!semTelefone||!texto(c.telefone).trim());
  }).sort((a,b)=>ordem==='recente' ? (Date.parse(b.created_at)||0)-(Date.parse(a.created_at)||0) : (texto(a.fantasia)||texto(a.razao)).localeCompare(texto(b.fantasia)||texto(b.razao),'pt-BR'));
  tbody.innerHTML='';
  filtrados.forEach(c=>{
-   const tr=document.createElement('tr');
-   tr.innerHTML='<td><button class="client-open" data-action="ver"><span class="client-name">'+escapar(texto(c.fantasia)||c.razao||'Sem nome')+'</span><span class="client-sub">'+escapar(c.razao)+'</span></button></td>'+
+   const tr=document.createElement('tr');if(c.ativo===false)tr.className='client-inactive';
+   tr.innerHTML='<td><button class="client-open" data-action="ver"><span class="client-name">'+escapar(texto(c.fantasia)||c.razao||'Sem nome')+(c.ativo===false?' · Inativo':'')+'</span><span class="client-sub">'+escapar(c.razao)+'</span></button></td>'+
    '<td data-label="NN">'+escapar(c.nn)+'</td><td data-label="CNPJ">'+escapar(c.cnpj)+'</td>'+
    '<td data-label="Cidade / Bairro">'+escapar(c.cidade||'Não informado')+'<small class="client-sub">'+escapar(c.bairro)+'</small></td>'+
    '<td data-label="Contato">'+escapar(c.contato||'Não informado')+'<small class="client-sub">'+escapar(c.telefone)+'</small></td>'+
-   '<td><div class="row-actions"><button class="btn btn-view" data-action="ver">Ver</button><button class="btn btn-edit" data-action="editar">Editar</button><details><summary aria-label="Mais ações">•••</summary><button class="btn btn-danger" data-action="excluir">Excluir</button></details></div></td>';
+   '<td><div class="row-actions"><button class="btn btn-view" data-action="ver">Ver</button><button class="btn btn-edit" data-action="editar">Editar</button><details><summary aria-label="Mais ações">•••</summary><button class="btn btn-secondary" data-action="status">'+(c.ativo===false?'Reativar':'Inativar')+'</button></details></div></td>';
    tr.querySelectorAll('[data-action]').forEach(button=>button.addEventListener('click',()=>{
       const action=button.dataset.action;
       if(action==='ver')visualizarCliente(c.id);
       if(action==='editar')editarCliente(c.id);
-      if(action==='excluir')excluirCliente(c.id);
+      if(action==='status')alterarStatusCliente(c.id);
    }));tbody.appendChild(tr);
  });
  if(!filtrados.length)tbody.innerHTML='<tr><td colspan="6">Nenhum cliente encontrado. Tente outro termo ou limpe os filtros.</td></tr>';
@@ -100,13 +101,13 @@ function renderizarTabela() {
  document.getElementById('pageSummary').textContent=filtrados.length+' cliente(s) exibido(s) · Lista completa do filtro';
 }
 function filtrarClientes(){renderizarTabela();}
-function limparFiltros(){['searchInput','cidadeFiltro','contatoFiltro'].forEach(id=>document.getElementById(id).value='');document.getElementById('ordemFiltro').value='nome';filtrarClientes();}
+function limparFiltros(){['searchInput','cidadeFiltro','contatoFiltro'].forEach(id=>document.getElementById(id).value='');document.getElementById('ordemFiltro').value='nome';document.getElementById('statusFiltro').value='ativos';filtrarClientes();}
 
 /* VISUALIZAR DETALHES */
 
 function visualizarCliente(id){
  const c=clientes.find(item=>item.id===id);if(!c)return;
- const campos=[['NN',c.nn],['CNPJ',c.cnpj],['Nome fantasia',c.fantasia],['Razão social',c.razao],['Contato',c.contato],['Telefone / WhatsApp',c.telefone],['Endereço',c.endereco],['Bairro',c.bairro],['Cidade / UF',c.cidade],['CEP',c.cep]];
+ const campos=[['Situação',c.ativo===false?'Inativo':'Ativo'],['NN',c.nn],['CNPJ',c.cnpj],['Nome fantasia',c.fantasia],['Razão social',c.razao],['Contato',c.contato],['Telefone / WhatsApp',c.telefone],['Endereço',c.endereco],['Bairro',c.bairro],['Cidade / UF',c.cidade],['CEP',c.cep]];
  const el=document.getElementById('detalhesConteudo');
  el.innerHTML=campos.map(([label,value])=>'<div class="detail-item"><div class="detail-label">'+label+'</div><div class="detail-value">'+escapar(texto(value)||'Não informado')+'</div></div>').join('');
  const actions=document.createElement('div');actions.className='detail-actions';actions.style.gridColumn='1 / -1';
@@ -121,9 +122,10 @@ function visualizarCliente(id){
  }
  const edit=document.createElement('button');edit.className='btn btn-edit';edit.textContent='Editar cliente';edit.onclick=()=>{fecharModalDetalhes();editarCliente(c.id);};actions.appendChild(edit);
  
- const historyLink=document.createElement('a');historyLink.className='btn btn-primary';historyLink.href='historico-clientes.html?cliente='+encodeURIComponent(c.id);historyLink.textContent='Histórico de vendas';actions.appendChild(historyLink);
+ const historyLink=document.createElement('a');historyLink.className='btn btn-primary';historyLink.href='historico-clientes.html?cliente='+encodeURIComponent(c.id);historyLink.textContent='Histórico de vendas';if(c.ativo!==false)actions.appendChild(historyLink);
  el.appendChild(actions);
  const historyBox=document.createElement('section');historyBox.className='detail-item';historyBox.style.gridColumn='1 / -1';historyBox.textContent='Carregando histórico de cápsulas…';el.appendChild(historyBox);
+ if(c.ativo===false){historyBox.textContent='Cliente inativo. As cápsulas e a positivação permanecem nos indicadores gerais.';document.getElementById('detalhesModal').style.display='flex';document.querySelector('#detalhesModal .close-btn').focus();return;}
  const currentMonth=CentralSales.today().slice(0,7),year=currentMonth.slice(0,4);
  CentralSales.all('vendas_saldos_mensais','mes,saldo',q=>q.eq('cliente_id',c.id).gte('mes',year+'-01-01').lt('mes',(Number(year)+1)+'-01-01').order('mes')).then(rows=>{
   if(!historyBox.isConnected)return;
@@ -217,21 +219,20 @@ function editarCliente(id) {
     if (cliente) abrirModal(cliente);
 }
 
-async function excluirCliente(id) {
-    if (confirm("Excluir permanentemente este cliente? Esta ação não pode ser desfeita pela página.")) {
-        const { error } = await supabaseClient
-            .from('clientes')
-            .delete()
-            .eq('id', id);
-
-        if (error) {
-            alert('Erro ao excluir do banco de dados: ' + error.message);
-        } else {
-            carregarClientesNuvem();
-        }
-    }
+let alterandoStatus=false;
+async function alterarStatusCliente(id){
+ if(alterandoStatus)return;
+ const c=clientes.find(c=>c.id===id);if(!c)return;
+ const active=c.ativo===false,action=active?'Reativar':'Inativar';
+ if(!confirm(action+' '+(c.fantasia||c.razao||'este cliente')+'? '+(active?'Ele voltará às listas de clientes ativos.':'Ele sairá das listas ativas. As cápsulas e a positivação históricas serão preservadas nos indicadores gerais.')))return;
+ alterandoStatus=true;
+ try{
+  const {data,error}=await supabaseClient.from('clientes').update({ativo:active}).eq('id',id).eq('ativo',c.ativo!==false).select('id,ativo').maybeSingle();
+  if(error)throw error;if(!data)throw Error('O status foi alterado em outra aba. Atualize a lista e tente novamente.');
+  CentralSales.notify();await carregarClientesNuvem();aviso(active?'Cliente reativado.':'Cliente inativado. Cápsulas e positivação preservadas nos indicadores gerais.');
+ }catch(e){aviso(e.code?CentralSales.error(e):e.message||'Não foi possível alterar o status.');}
+ finally{alterandoStatus=false;}
 }
-
 function valoresForm(){return JSON.stringify(Array.from(document.querySelectorAll('#clienteForm input')).map(el=>[el.id,el.value]));}
 function formAlterado(){return !!formInicial && formInicial!==valoresForm();}
 const abrirOriginal=abrirModal;

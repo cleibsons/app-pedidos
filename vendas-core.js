@@ -16,7 +16,7 @@ async function all(table,columns='*',filter=q=>q){
 async function loadYear(year){
  const start=year+'-01-01',end=(Number(year)+1)+'-01-01';
  const [clients,balances,goals,imports,pending]=await Promise.all([
- all('clientes','id,nn,cnpj,fantasia,razao,cidade',q=>q.order('id')),
+ all('clientes','id,nn,cnpj,fantasia,razao,cidade,ativo',q=>q.order('id')),
  all('vendas_saldos_mensais','*',q=>q.gte('mes',start).lt('mes',end).order('mes').order('cliente_id')),
  all('vendas_metas','*',q=>q.gte('mes',start).lt('mes',end).order('mes')),
  all('historico_importacoes','arquivo,ano,data_corte,total_capsulas',q=>q.order('data_corte',{ascending:false})),
@@ -29,10 +29,11 @@ function stats(data,month,client=''){
  const yearRows=data.balances.filter(r=>r.mes<=month+'-01'&&(!client||String(r.cliente_id)===String(client)));
  const byClient=new Map(selected.map(r=>[String(r.cliente_id),r]));
  const historical=new Map();yearRows.forEach(r=>historical.set(String(r.cliente_id),(historical.get(String(r.cliente_id))||0)+n(r.saldo)));
- const ranked=data.clients.filter(c=>!client||String(c.id)===String(client)).map(c=>({...c,...byClient.get(String(c.id)),id:c.id,balance:n(byClient.get(String(c.id))?.saldo),annual:historical.get(String(c.id))||0}));
- const pending=data.pending.filter(p=>!client||String(p.cliente_id)===String(client));
+ const ranked=data.clients.filter(c=>c.ativo!==false&&(!client||String(c.id)===String(client))).map(c=>({...c,...byClient.get(String(c.id)),id:c.id,balance:n(byClient.get(String(c.id))?.saldo),annual:historical.get(String(c.id))||0}));
+ const activeIds=new Set(data.clients.filter(c=>c.ativo!==false).map(c=>String(c.id)));
+ const pending=data.pending.filter(p=>activeIds.has(String(p.cliente_id))&&(!client||String(p.cliente_id)===String(client)));
  const goal=data.goals.find(g=>g.mes===month+'-01')?.meta_positivacao;
- return {imported:selected.reduce((s,r)=>s+n(r.importado),0),sales:selected.reduce((s,r)=>s+n(r.vendas),0),returns:selected.reduce((s,r)=>s+n(r.devolucoes),0),net:selected.reduce((s,r)=>s+n(r.saldo),0),annual:yearRows.reduce((s,r)=>s+n(r.saldo),0),positive:ranked.filter(c=>c.balance>0).length,goal:goal==null?null:n(goal),ranked:ranked.sort((a,b)=>b.balance-a.balance||name(a).localeCompare(name(b),'pt-BR')),targets:ranked.filter(c=>c.balance<=0).sort((a,b)=>b.annual-a.annual||name(a).localeCompare(name(b),'pt-BR')),pending};
+ return {imported:selected.reduce((s,r)=>s+n(r.importado),0),sales:selected.reduce((s,r)=>s+n(r.vendas),0),returns:selected.reduce((s,r)=>s+n(r.devolucoes),0),net:selected.reduce((s,r)=>s+n(r.saldo),0),annual:yearRows.reduce((s,r)=>s+n(r.saldo),0),positive:selected.filter(r=>n(r.saldo)>0).length,goal:goal==null?null:n(goal),ranked:ranked.sort((a,b)=>b.balance-a.balance||name(a).localeCompare(name(b),'pt-BR')),targets:ranked.filter(c=>c.balance<=0).sort((a,b)=>b.annual-a.annual||name(a).localeCompare(name(b),'pt-BR')),pending};
 }
 function trend(data,year,client=''){
  return Array.from({length:12},(_,i)=>{const m=year+'-'+String(i+1).padStart(2,'0');const rows=data.balances.filter(r=>r.mes===m+'-01'&&(!client||String(r.cliente_id)===String(client)));return {month:m,net:rows.reduce((s,r)=>s+n(r.saldo),0),positive:rows.filter(r=>n(r.saldo)>0).length,hasData:rows.length>0};});

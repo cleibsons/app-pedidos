@@ -13,18 +13,20 @@ function limits(month){const [y,m]=month.split('-').map(Number);return {start:mo
 async function reload(){
  const request=++serial;const month=$('historyMonth').value;if(!/^\d{4}-\d{2}$/.test(month))return;
  $('historyReload').disabled=true;message('Atualizando histórico…');
- const client=selectedClient(),pending=$('pendingOnly').checked,range=limits(month);
+ let client=selectedClient();const pending=$('pendingOnly').checked,range=limits(month);
  try{
-  const [data,orders,returns,comparison]=await Promise.all([
-   S.loadYear(month.slice(0,4)),
+  const data=await S.loadYear(month.slice(0,4));
+  const activeIds=new Set(data.clients.filter(c=>c.ativo!==false).map(c=>String(c.id)));
+  if(client&&!activeIds.has(String(client)))client='';
+  const [orders,returns,comparison]=await Promise.all([
    S.all('vendas_pedidos','*',q=>{if(client)q=q.eq('cliente_id',client);if(view==='adjustments')q=q.eq('origem','manual');if(pending)q=q.eq('cancelado',false).is('numero_externo',null);else q=q.gte('data_venda',range.start).lt('data_venda',range.end);return q.order('codigo',{ascending:false});}),
    S.all('vendas_devolucoes','*',q=>{if(client)q=q.eq('cliente_id',client);return q.gte('data_devolucao',range.start).lt('data_devolucao',range.end).order('criado_em',{ascending:false}).order('id');}),
    S.all('vendas_saldos_mensais','*',q=>q.gte('mes',shiftMonth(month,-2)+'-01').lt('mes',range.end).order('mes').order('cliente_id'))
   ]);
   if(request!==serial)return;
-  state={data,orders,returns,comparison,month};
+  state={data,orders:orders.filter(p=>activeIds.has(String(p.cliente_id))),returns:returns.filter(r=>activeIds.has(String(r.cliente_id))),comparison,month};
   const chosen=client;
-  $('historyClient').innerHTML='<option value="">Todos os clientes</option>'+data.clients.slice().sort((a,b)=>S.name(a).localeCompare(S.name(b),'pt-BR')).map(c=>'<option value="'+S.esc(c.id)+'">'+S.esc(S.name(c))+' · NN '+S.esc(c.nn)+'</option>').join('');
+  $('historyClient').innerHTML='<option value="">Todos os clientes ativos</option>'+data.clients.filter(c=>c.ativo!==false).sort((a,b)=>S.name(a).localeCompare(S.name(b),'pt-BR')).map(c=>'<option value="'+S.esc(c.id)+'">'+S.esc(S.name(c))+' · NN '+S.esc(c.nn)+'</option>').join('');
   if(data.clients.some(c=>String(c.id)===String(chosen)))$('historyClient').value=chosen;
   render();updateLinks();message('');
  }catch(e){if(request!==serial)return;message(S.error(e)+' Os dados anteriores podem estar desatualizados.',true);}
@@ -34,7 +36,7 @@ function render(){
  if(!state.data)return;const cid=selectedClient(),s=S.stats(state.data,state.month,cid),global=S.stats(state.data,state.month);
  W.summary($('historyKpis'),s,global);
  $('historyCoverage').textContent=W.coverage(state.data);
- $('historyScope').textContent=cid?'Volumes filtrados por cliente. A meta de positivação continua mostrando a carteira inteira.':'Positivado: cliente com saldo de cápsulas maior que zero no mês. Cada cliente conta uma vez.';
+ $('historyScope').textContent=cid?'Volumes filtrados por cliente ativo. A positivação geral inclui os clientes inativos que compraram no mês.':'Indicadores gerais incluem cápsulas e positivação de clientes inativos. As listas e os totais do filtro mostram apenas clientes ativos. Positivado: saldo maior que zero no mês.';
  $('historyBreakdown').innerHTML='<span>Saldo importado: <b>'+S.num(s.imported)+'</b></span><span>Novas vendas: <b>'+S.num(s.sales)+'</b></span><span>Novas devoluções: <b>'+S.num(s.returns)+'</b></span>';
  W.list($('historyRanking'),s.ranked.filter(c=>c.balance>0),'Nenhum cliente com saldo positivo neste mês.','ranking',state.month);
  W.list($('historyTargets'),s.targets,'Todos os clientes do filtro estão positivados.','targets',state.month);
@@ -47,10 +49,10 @@ function render(){
  $('comparisonHeaders').innerHTML='<th>Cliente</th><th>NN</th>'+months.map(m=>'<th>'+S.esc(S.monthTitle(m))+'</th>').join('')+'<th>Variação vs. mês anterior</th><th>Acumulado no ano</th><th>Positivação</th>';
  function volume(client,month){const row=state.comparison.find(r=>String(r.cliente_id)===String(client)&&r.mes===month+'-01');if(row)return S.n(row.saldo);const covered=state.comparison.some(r=>r.mes===month+'-01')||state.data.imports.some(i=>String(i.ano)===month.slice(0,4)&&i.data_corte>=month+'-01');return covered?0:null;}
  $('historyClientRows').innerHTML=clients.length?clients.map(c=>{const values=months.map(m=>volume(c.id,m)),delta=values[2]===null||values[1]===null?null:values[2]-values[1];return '<tr><td><a class="history-client-link" href="historico-clientes.html?cliente='+encodeURIComponent(c.id)+'&mes='+state.month+'">'+S.esc(S.name(c))+'</a></td><td>'+S.esc(c.nn)+'</td>'+values.map(v=>'<td>'+(v===null?'<span class="sales-note">Sem dados</span>':S.num(v))+'</td>').join('')+'<td>'+(delta===null?'—':(delta>0?'+':'')+S.num(delta)+' cáps.')+'</td><td>'+S.num(c.annual)+'</td><td><span class="sales-badge">'+(c.balance>0?'Positivado':'A positivar')+'</span></td></tr>';}).join(''):'<tr><td colspan="8">Nenhum cliente neste filtro.</td></tr>';
- $('comparisonCaption').textContent='Comparação do mês selecionado com os dois meses anteriores, em cápsulas líquidas. Devoluções são descontadas. “Sem dados” indica um mês sem cobertura no histórico.';
+ $('comparisonCaption').textContent='Comparação dos clientes ativos nos três meses, em cápsulas líquidas. Os indicadores gerais também preservam clientes inativos. Devoluções são descontadas. “Sem dados” indica um mês sem cobertura no histórico.';
  const totals=months.map(m=>{const values=clients.map(c=>volume(c.id,m));return !clients.length?0:values.some(v=>v===null)?null:values.reduce((sum,v)=>sum+v,0);});
  const delta=totals[2]===null||totals[1]===null?null:totals[2]-totals[1],positive=clients.filter(c=>c.balance>0).length,targets=clients.length-positive;
- $('historyClientTotals').innerHTML='<tr><th scope="row">Total do filtro · '+clients.length+' cliente(s)</th><td>—</td>'+totals.map(v=>'<td>'+(v===null?'Sem dados':S.num(v))+'</td>').join('')+'<td>'+(delta===null?'—':(delta>0?'+':'')+S.num(delta)+' cáps.')+'</td><td>'+S.num(clients.reduce((n,c)=>n+c.annual,0))+'</td><td>'+positive+' positivado(s)<br>'+targets+' a positivar</td></tr>';
+ $('historyClientTotals').innerHTML='<tr><th scope="row">Total dos ativos no filtro · '+clients.length+' cliente(s)</th><td>—</td>'+totals.map(v=>'<td>'+(v===null?'Sem dados':S.num(v))+'</td>').join('')+'<td>'+(delta===null?'—':(delta>0?'+':'')+S.num(delta)+' cáps.')+'</td><td>'+S.num(clients.reduce((n,c)=>n+c.annual,0))+'</td><td>'+positive+' positivado(s)<br>'+targets+' a positivar</td></tr>';
  const comparable=clients.map(c=>({previous:volume(c.id,months[1]),current:volume(c.id,months[2])})).filter(v=>v.previous!==null&&v.current!==null);
  const gap=comparable.reduce((sum,v)=>sum+Math.max(0,v.previous-v.current),0),opportunities=comparable.filter(v=>v.previous>v.current).length;
  $('historyOpportunity').innerHTML='<strong>Volume para igualar o mês anterior: '+(comparable.length||!clients.length?S.num(gap)+' cápsulas':'Sem dados comparáveis')+'</strong><p>'+opportunities+' cliente(s) exibido(s) abaixo do mês anterior. Soma das diferenças positivas de cada cliente; quem já superou o mês anterior não reduz esse volume.'+(comparable.length<clients.length?' Clientes sem dados comparáveis ficam fora deste cálculo.':'')+'</p>';
@@ -62,7 +64,7 @@ function render(){
  }).join(''):'<tr><td colspan="7">Nenhum pedido neste filtro. Os saldos importados não são pedidos individuais.</td></tr>';
  $('returnRows').innerHTML=state.returns.length?visibleReturns.map(r=>'<tr><td>'+S.date(r.data_devolucao)+(r.cancelado?'<small>Cancelada</small>':'')+'</td><td>'+S.esc(clientName(r.cliente_id))+'</td><td class="sales-negative">−'+S.num(r.capsulas)+'</td><td>'+S.esc(r.referencia||'Sem referência externa')+'<small>'+S.esc(r.observacao)+'</small></td><td>'+(!r.cancelado?'<button class="btn btn-danger" data-action="cancelReturn" data-id="'+r.id+'">Cancelar lançamento</button>':'—')+'</td></tr>').join(''):'<tr><td colspan="5">Nenhuma nova devolução registrada neste mês. Devoluções antigas já estão no saldo importado.</td></tr>';
 }
-function clientOptions(){return state.data.clients.slice().sort((a,b)=>S.name(a).localeCompare(S.name(b),'pt-BR')).map(c=>'<option value="'+S.esc(c.id)+'">'+S.esc(S.name(c))+' · NN '+S.esc(c.nn)+'</option>').join('');}
+function clientOptions(){return state.data.clients.filter(c=>c.ativo!==false).sort((a,b)=>S.name(a).localeCompare(S.name(b),'pt-BR')).map(c=>'<option value="'+S.esc(c.id)+'">'+S.esc(S.name(c))+' · NN '+S.esc(c.nn)+'</option>').join('');}
 function formBase(mode){
  const ret=mode==='return';
  return '<form id="operationForm" class="sales-form"><label>Cliente<select id="opClient" required><option value="">Selecione o cliente</option>'+clientOptions()+'</select></label>'+

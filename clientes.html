@@ -31,7 +31,7 @@
 .header.workspace-hero p{color:#f2eee7;font-size:15px;line-height:1.65;margin:12px auto 0;max-width:620px;text-wrap:pretty}
 @media(max-width:760px){.header.workspace-hero{min-height:180px;padding:28px 20px;background-image:url('assets/heroes/clientes-v1.webp')}.header.workspace-hero h1{font-size:27px;line-height:1.35}.header.workspace-hero p{font-size:13px;margin-top:10px;max-width:330px}}
 </style>
-</head>
+<style>.client-inactive .client-name{color:#c2bdb3}.client-inactive{opacity:.8}</style></head>
 <body class="app-page">
 
     <div class="container">
@@ -46,7 +46,7 @@
         </div>
 
         <div class="client-filters">
-<label>Cidade<select id="cidadeFiltro" onchange="filtrarClientes()"><option value="">Todas as cidades</option></select></label>
+<label>Situação<select id="statusFiltro" onchange="filtrarClientes()"><option value="ativos">Ativos</option><option value="inativos">Inativos</option><option value="todos">Todos</option></select></label><label>Cidade<select id="cidadeFiltro" onchange="filtrarClientes()"><option value="">Todas as cidades</option></select></label>
 <label>Contato<select id="contatoFiltro" onchange="filtrarClientes()"><option value="">Todos os clientes</option><option value="sem">Sem telefone</option></select></label>
 <label>Ordenar<select id="ordemFiltro" onchange="filtrarClientes()"><option value="nome">Nome A–Z</option><option value="recente">Mais recentes</option></select></label>
 <button class="btn btn-secondary" onclick="limparFiltros()">Limpar filtros</button>
@@ -155,7 +155,7 @@
     </div>
 
     <!-- clientes.js -->
-    <script src="vendas-core.js?v=1"></script><script src="clientes.js?v=9"></script>
+    <script src="vendas-core.js?v=2"></script><script src="clientes.js?v=10"></script>
     <script src="ui.js?v=7"></script>
 </body>
 </html>
