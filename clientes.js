@@ -136,7 +136,7 @@ function visualizarCliente(id){
  }
  const edit=document.createElement('button');edit.className='btn btn-edit';edit.textContent='Editar cliente';edit.onclick=()=>{fecharModalDetalhes();editarCliente(c.id);};actions.appendChild(edit);
  
- const historyLink=document.createElement('a');historyLink.className='btn btn-primary';historyLink.href='historico.html?cliente='+encodeURIComponent(c.id);historyLink.textContent='Histórico de vendas';actions.appendChild(historyLink);
+ const historyLink=document.createElement('a');historyLink.className='btn btn-primary';historyLink.href='historico-clientes.html?cliente='+encodeURIComponent(c.id);historyLink.textContent='Histórico de vendas';actions.appendChild(historyLink);
  el.appendChild(actions);
  const historyBox=document.createElement('section');historyBox.className='detail-item';historyBox.style.gridColumn='1 / -1';historyBox.textContent='Carregando histórico de cápsulas…';el.appendChild(historyBox);
  const currentMonth=CentralSales.today().slice(0,7),year=currentMonth.slice(0,4);

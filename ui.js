@@ -30,11 +30,13 @@
         ['conta.html', 'Minha conta', 'users', 'CONTA']
     ];
     const current = location.pathname.split('/').pop() || 'index.html';
-    const page = routes.find(r => r[0] === current) || routes[0];
+    const historyBranch=current.startsWith('historico-');
+    const activeRoute=historyBranch?'historico.html':current;
+    const page=historyBranch?[current,document.querySelector('h1')?.textContent||'Histórico','clock','']:routes.find(r=>r[0]===current)||routes[0];
     let links = '';
     routes.forEach(([href,label,symbol,group]) => {
         if (group) links += `<p class="nav-label">${group}</p>`;
-        links += `<a href="${href}" class="side-link${current === href ? ' active' : ''}"${current === href ? ' aria-current="page"' : ''}>${icon(symbol)}<span>${label}</span>${current === href ? '<span class="nav-dot"></span>' : ''}</a>`;
+        links += `<a href="${href}" class="side-link${activeRoute === href ? ' active' : ''}"${activeRoute === href ? ' aria-current="page"' : ''}>${icon(symbol)}<span>${label}</span>${activeRoute === href ? '<span class="nav-dot"></span>' : ''}</a>`;
     });
     document.body.insertAdjacentHTML('afterbegin', `
         <a class="skip-link" href="#mainContent">Ir para o conteúdo</a>

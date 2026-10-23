@@ -9,7 +9,7 @@ async function load(){
   W.list($('dashboardSalesTargets'),stats.targets,'Todos os clientes estão positivados.','targets',month);
   $('dashboardSalesChart').innerHTML=S.chart(S.trend(data,month.slice(0,4)));
   $('dashboardSalesCoverage').textContent=W.coverage(data)+' Positivação: saldo de cápsulas maior que zero no mês.';
-  $('dashboardGoalLink').href='historico.html?mes='+month;$('dashboardTrendLink').href='historico.html?mes='+month;
+  $('dashboardGoalLink').href='historico-relatorio.html?mes='+month;$('dashboardTrendLink').href='historico-relatorio.html?mes='+month;
   $('dashboardSalesStatus').hidden=true;
  }catch(e){if(req!==serial)return;$('dashboardSalesStatus').textContent=S.error(e)+' Os dados anteriores podem estar desatualizados.';$('dashboardSalesStatus').classList.add('error');}
  finally{if(req===serial)$('dashboardSalesRefresh').disabled=false;}

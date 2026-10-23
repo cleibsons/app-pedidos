@@ -16,7 +16,7 @@
 <section class="home-hero" aria-labelledby="welcomeTitle"><div class="home-hero-copy"><p id="dashboardDate" class="home-date"></p><h2 id="welcomeTitle"><span id="greetingTime">Olá</span>, <span id="greetingName">bem-vindo</span>.</h2><p class="home-hero-lead">Tudo pronto para o próximo pedido.</p><p class="home-hero-description">Clientes, cafés e novas oportunidades.<br>Organize sua rotina em um só lugar.</p><div class="home-hero-actions"><a href="pedidos.html" class="btn btn-primary"><span data-icon="plus"></span>Criar novo pedido<span data-icon="arrow"></span></a><a href="clientes.html" class="btn home-secondary">Ver clientes</a></div></div></section>
         <section class="sales-section" aria-labelledby="salesDashTitle">
 <div class="sales-heading"><div><p class="eyebrow">RESULTADOS COMERCIAIS</p><h2 id="salesDashTitle">Vendas e positivação</h2></div><a class="text-link" href="historico.html">Abrir histórico completo →</a></div>
-<div class="sales-toolbar"><label>Mês de referência<input id="dashboardSalesMonth" type="month" min="2000-01" max="2100-12" required></label><button class="btn btn-secondary" id="dashboardSalesRefresh">Atualizar vendas</button><a class="text-link sales-spacer" id="dashboardGoalLink" href="historico.html">Ajustar meta / Registrar movimento</a></div>
+<div class="sales-toolbar"><label>Mês de referência<input id="dashboardSalesMonth" type="month" min="2000-01" max="2100-12" required></label><button class="btn btn-secondary" id="dashboardSalesRefresh">Atualizar vendas</button><a class="text-link sales-spacer" id="dashboardGoalLink" href="historico.html">Definir meta do mês</a></div>
 <p id="dashboardSalesStatus" class="sales-message" role="status" aria-live="polite">Carregando resultados…</p>
 <div class="sales-kpis" id="dashboardSalesKpis"></div><p class="sales-note" id="dashboardSalesCoverage"></p>
 <div class="sales-split"><section class="sales-panel"><h2>Melhores clientes do mês</h2><div id="dashboardSalesRanking"></div></section><section class="sales-panel"><h2>Clientes para positivar</h2><p class="sales-note">Saldo do mês igual ou menor que zero, priorizando o maior volume acumulado.</p><div id="dashboardSalesTargets"></div></section></div>
@@ -34,7 +34,7 @@
         <footer class="dashboard-footer"><span>Central Nespresso <span class="footer-separator">/</span> Seu negócio, bem cuidado.</span><span id="dashboardStatus" role="status" aria-live="polite">Conectando...</span></footer>
     </div>
     <script src="dashboard.js?v=2"></script>
-    <script src="vendas-core.js?v=1"></script><script src="vendas-widgets.js?v=1"></script><script src="vendas-dashboard.js?v=1"></script><script src="ui.js?v=6"></script>
+    <script src="vendas-core.js?v=1"></script><script src="vendas-widgets.js?v=2"></script><script src="vendas-dashboard.js?v=2"></script><script src="ui.js?v=7"></script>
 </body>
 </html>
 

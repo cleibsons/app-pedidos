@@ -19,7 +19,7 @@ function lock(locked){
 function overlap(){const needs=!!cutoff&&$('saleDate').value<=cutoff;$('saleOverlap').hidden=!needs;$('saleCheck').required=needs;if(!needs)$('saleCheck').checked=false;}
 function receipt(order){
  $('saleSavedLink').href='historico.html?mes='+order.data_venda.slice(0,7);$('saleSavedLink').hidden=false;
- notice(S.code(order)+' registrado: '+S.num(order.capsulas)+' cápsulas. '+(order.numero_externo?'Número externo: '+order.numero_externo+'.':'Número externo pendente. Informe depois no histórico.')+' Para outra venda, use Limpar / Novo pedido.');
+ notice(S.code(order)+' registrado: '+S.num(order.capsulas)+' cápsulas. '+(order.numero_externo?'Número do pedido: '+order.numero_externo+'.':'Número do pedido pendente. Informe depois no histórico.')+' Para outra venda, use Limpar / Novo pedido.');
  lock(true);$('saveSale').textContent='Venda registrada';
 }
 async function init(){
